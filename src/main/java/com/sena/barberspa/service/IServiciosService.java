@@ -8,11 +8,11 @@ import com.sena.barberspa.model.Servicio;
 public interface IServiciosService {
 	public Servicio save(Servicio servicio);
 
-	public Optional<Servicio> get(Integer id);
+	public Optional<Servicio> get(Long id);
 
 	public void update(Servicio servicio);
 
-	public void delete(Integer id);
+	public void delete(Long id);
 
 	public List<Servicio> findAll();
 }

@@ -10,7 +10,7 @@ import com.sena.barberspa.model.Servicio;
 import com.sena.barberspa.repository.IServiciosRepository;
 
 @Service
-public class ServicioServiceImplement implements IServiciosService{
+public class ServicioServiceImplement implements IServiciosService {
 
 	@Autowired
 	private IServiciosRepository servicioRepository;
@@ -22,7 +22,7 @@ public class ServicioServiceImplement implements IServiciosService{
 	}
 
 	@Override
-	public Optional<Servicio> get(Integer id) {
+	public Optional<Servicio> get(Long id) {
 		// TODO Auto-generated method stub
 		return servicioRepository.findById(id);
 	}
@@ -34,7 +34,7 @@ public class ServicioServiceImplement implements IServiciosService{
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(Long id) {
 		// TODO Auto-generated method stub
 		servicioRepository.deleteById(id);
 

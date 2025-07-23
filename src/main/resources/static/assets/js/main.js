@@ -299,4 +299,188 @@
 		}
 
 	}
+
+	/**
+	 * Custom Slider for Services & Sucursales
+	 */
+	const customSliderContainer = document.querySelector('.slider-container');
+	const sliderTrack = document.querySelector('.slider-track');
+	const sliderDots = document.querySelectorAll('.slider-dot');
+	
+	if (customSliderContainer && sliderTrack && sliderDots.length > 0) {
+		let currentSlide = 0;
+		const totalSlides = sliderDots.length;
+		let isAnimating = false;
+		let autoSlideInterval;
+
+		// Initialize slider
+		function initSlider() {
+			updateSlider();
+			startAutoSlide();
+			
+			// Add touch/swipe support
+			addTouchSupport();
+			
+			// Add keyboard support
+			document.addEventListener('keydown', handleKeyPress);
+		}
+
+		// Update slider position and active dot
+		function updateSlider() {
+			if (isAnimating) return;
+			
+			isAnimating = true;
+			const translateX = -currentSlide * 100;
+			sliderTrack.style.transform = `translateX(${translateX}%)`;
+			
+			// Update active dot
+			sliderDots.forEach((dot, index) => {
+				dot.classList.toggle('active', index === currentSlide);
+			});
+			
+			// Reset animation flag after transition
+			setTimeout(() => {
+				isAnimating = false;
+			}, 600);
+		}
+
+		// Go to specific slide
+		function goToSlide(slideIndex) {
+			if (slideIndex >= 0 && slideIndex < totalSlides && slideIndex !== currentSlide) {
+				currentSlide = slideIndex;
+				updateSlider();
+			}
+		}
+
+		// Go to next slide
+		function nextSlide() {
+			const nextIndex = (currentSlide + 1) % totalSlides;
+			goToSlide(nextIndex);
+		}
+
+		// Go to previous slide
+		function prevSlide() {
+			const prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
+			goToSlide(prevIndex);
+		}
+
+		// Auto slide functionality
+		function startAutoSlide() {
+			autoSlideInterval = setInterval(nextSlide, 5000); // 5 seconds
+		}
+
+		function stopAutoSlide() {
+			if (autoSlideInterval) {
+				clearInterval(autoSlideInterval);
+			}
+		}
+
+		function restartAutoSlide() {
+			stopAutoSlide();
+			startAutoSlide();
+		}
+
+		// Touch/swipe support
+		function addTouchSupport() {
+			let startX = 0;
+			let startY = 0;
+			let isSwipe = false;
+
+			customSliderContainer.addEventListener('touchstart', (e) => {
+				startX = e.touches[0].clientX;
+				startY = e.touches[0].clientY;
+				isSwipe = false;
+				stopAutoSlide();
+			});
+
+			customSliderContainer.addEventListener('touchmove', (e) => {
+				if (!startX || !startY) return;
+				
+				const deltaX = Math.abs(e.touches[0].clientX - startX);
+				const deltaY = Math.abs(e.touches[0].clientY - startY);
+				
+				if (deltaX > deltaY && deltaX > 30) {
+					isSwipe = true;
+					e.preventDefault();
+				}
+			});
+
+			customSliderContainer.addEventListener('touchend', (e) => {
+				if (!isSwipe || !startX) return;
+				
+				const endX = e.changedTouches[0].clientX;
+				const diffX = startX - endX;
+				
+				if (Math.abs(diffX) > 50) {
+					if (diffX > 0) {
+						nextSlide();
+					} else {
+						prevSlide();
+					}
+				}
+				
+				startX = 0;
+				startY = 0;
+				isSwipe = false;
+				restartAutoSlide();
+			});
+		}
+
+		// Keyboard navigation
+		function handleKeyPress(e) {
+			if (!customSliderContainer.matches(':hover')) return;
+			
+			switch(e.key) {
+				case 'ArrowLeft':
+					e.preventDefault();
+					prevSlide();
+					restartAutoSlide();
+					break;
+				case 'ArrowRight':
+					e.preventDefault();
+					nextSlide();
+					restartAutoSlide();
+					break;
+			}
+		}
+
+		// Dot navigation
+		sliderDots.forEach((dot, index) => {
+			dot.addEventListener('click', () => {
+				goToSlide(index);
+				restartAutoSlide();
+			});
+		});
+
+		// Pause auto-slide on hover
+		customSliderContainer.addEventListener('mouseenter', stopAutoSlide);
+		customSliderContainer.addEventListener('mouseleave', startAutoSlide);
+
+		// Initialize the slider
+		initSlider();
+	}
+
+	/**
+	 * Login Form Toggle Animation
+	 */
+	const loginContainer = document.getElementById('containerL');
+	const registerBtn = document.getElementById('register');
+	const loginBtn = document.getElementById('login');
+
+	if (loginContainer && registerBtn && loginBtn) {
+		registerBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			loginContainer.classList.add("active");
+			console.log('Switched to register form');
+		});
+
+		loginBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			loginContainer.classList.remove("active");
+			console.log('Switched to login form');
+		});
+		
+		console.log('Login toggle functionality initialized');
+	}
+
 })();

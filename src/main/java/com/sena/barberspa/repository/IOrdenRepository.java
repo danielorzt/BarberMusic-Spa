@@ -9,6 +9,11 @@ import com.sena.barberspa.model.Orden;
 import com.sena.barberspa.model.Usuario;
 
 @Repository
-public interface IOrdenRepository extends JpaRepository<Orden, Integer> {
-	List<Orden> findByusuario(Usuario usuario);
+public interface IOrdenRepository extends JpaRepository<Orden, Long> {
+	List<Orden> findByClienteUsuario(Usuario clienteUsuario);
+	
+	// Convenience method for backward compatibility
+	default List<Orden> findByUsuario(Usuario usuario) {
+		return findByClienteUsuario(usuario);
+	}
 }

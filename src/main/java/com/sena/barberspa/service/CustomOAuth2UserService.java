@@ -63,7 +63,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String userNameAttributeName = getUserNameAttributeName(provider);
 
             return new DefaultOAuth2User(
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getTipo())),
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + mapRoleToSpringRole(user.getRol()))),
                     attributes,
                     userNameAttributeName
             );
@@ -138,10 +138,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 user = new Usuario();
                 user.setEmail(email);
                 user.setNombre(name);
-                user.setDireccion("Por definir");
-                user.setTipo("USER");
+                user.setRol("CLIENTE");
                 user.setPassword(passwordEncoder.encode("oauth_default_password"));
-                user.setEstado("ACTIVO");
+                user.setActivo(true);
 
                 user = usuarioService.save(user);
                 logger.info("New user created: {}", user.getId());
@@ -153,6 +152,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } catch (Exception e) {
             logger.error("Error processing user: {}", e.getMessage(), e);
             throw e;
+        }
+    }
+
+    private String mapRoleToSpringRole(String rol) {
+        if (rol == null) {
+            return "CLIENTE";
+        }
+        switch (rol.toUpperCase()) {
+            case "USER":
+                return "CLIENTE";
+            case "ADMIN":
+                return "ADMIN_GENERAL";
+            case "CLIENTE":
+                return "CLIENTE";
+            case "EMPLEADO":
+                return "EMPLEADO";
+            case "ADMIN_SUCURSAL":
+                return "ADMIN_SUCURSAL";
+            case "ADMIN_GENERAL":
+                return "ADMIN_GENERAL";
+            default:
+                return "CLIENTE";
         }
     }
 }

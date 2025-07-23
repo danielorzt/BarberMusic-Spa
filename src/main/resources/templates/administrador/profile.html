@@ -31,7 +31,7 @@
                 <!-- Tarjeta de Perfil -->
                 <div class="profile-card">
                     <div class="profile-image-container">
-                        <img th:src="${usuario.imagen != null} ? @{'/uploads/' + ${usuario.imagen}} : @{/assetsADMINS/img/default_admin.png}"
+                        <img th:src="${usuario.imagen != null} ? @{'/uploads/' + ${usuario.imagen}} : @{/assets/img/default_admin.png}"
                              th:alt="${usuario.nombre}" class="profile-image">
                         <label for="img" class="change-image-btn">
                             <span class="material-icons-sharp">edit</span>

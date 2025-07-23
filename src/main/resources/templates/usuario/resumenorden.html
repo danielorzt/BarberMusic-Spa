@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{usuario/template_user.html::head}">
     <title>Confirmar Orden | BarberMusicSpa</title>
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy"
-          content="frame-src https://*.mercadopago.com; script-src 'self' https://*.mercadopago.com;">
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="frame-src https://*.mercadopago.com; script-src 'self' https://*.mercadopago.com;"
+    />
 </head>
 <script>
     // Puedes agregar esto al inicio de tu script
-    fetch('https://sdk.mercadopago.com/js/v2')
-        .then(response => {
+    fetch("https://sdk.mercadopago.com/js/v2")
+      .then((response) => {
             if (!response.ok) {
-                console.error('No se pudo cargar el SDK de MercadoPago');
+          console.error("No se pudo cargar el SDK de MercadoPago");
             }
         })
-        .catch(error => {
-            console.error('Error de red al intentar cargar el SDK:', error);
+      .catch((error) => {
+        console.error("Error de red al intentar cargar el SDK:", error);
         });
 </script>
 <style>
@@ -102,9 +103,14 @@
 </style>
 
 <body class="index-page">
-
-<div th:insert="~{usuario/template_user.html::header}" th:if="${sesion == null}"></div>
-<div th:insert="~{usuario/template_user.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
+    <div
+      th:insert="~{usuario/template_user.html::header}"
+      th:if="${sesion == null}"
+    ></div>
+    <div
+      th:insert="~{usuario/template_user.html::usuarioCabecera}"
+      th:unless="${sesion == null}"
+    ></div>
 
 <main id="main">
     <!-- ======= Breadcrumbs Section ======= -->
@@ -117,7 +123,8 @@
                 <li class="breadcrumb-item active">Confirmación</li>
             </ol>
         </div>
-    </section><!-- End Breadcrumbs -->
+      </section>
+      <!-- End Breadcrumbs -->
 
     <!-- ======= Order Confirmation Section ======= -->
     <section class="inner-page">
@@ -131,17 +138,31 @@
                             <div class="customer-info-card">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <h5 class="mb-2"><i class="bi bi-person me-2"></i> Información Personal</h5>
-                                        <p class="mb-1"><strong>Nombre:</strong> <span
-                                                th:text="${usuario.nombre}"></span></p>
-                                        <p class="mb-1"><strong>Correo:</strong> <span
-                                                th:text="${usuario.email}"></span></p>
-                                        <p class="mb-0"><strong>Teléfono:</strong> <span
-                                                th:text="${usuario.telefono ?: 'No especificado'}"></span></p>
+                        <h5 class="mb-2">
+                          <i class="bi bi-person me-2"></i> Información Personal
+                        </h5>
+                        <p class="mb-1">
+                          <strong>Nombre:</strong>
+                          <span th:text="${usuario.nombre}"></span>
+                        </p>
+                        <p class="mb-1">
+                          <strong>Correo:</strong>
+                          <span th:text="${usuario.email}"></span>
+                        </p>
+                        <p class="mb-0">
+                          <strong>Teléfono:</strong>
+                          <span
+                            th:text="${usuario.telefono ?: 'No especificado'}"
+                          ></span>
+                        </p>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <h5 class="mb-2"><i class="bi bi-geo-alt me-2"></i> Dirección de Envío</h5>
-                                        <p th:text="${usuario.direccion ?: 'No especificada'}"></p>
+                        <h5 class="mb-2">
+                          <i class="bi bi-geo-alt me-2"></i> Dirección de Envío
+                        </h5>
+                        <p
+                          th:text="${usuario.direccion ?: 'No especificada'}"
+                        ></p>
                                         <a href="#" class="btn btn-outline-primary btn-sm mt-2">
                                             <i class="bi bi-pencil me-1"></i> Editar dirección
                                         </a>
@@ -153,27 +174,43 @@
 
                             <!-- Nuevas Opciones de Pago -->
                             <div class="payment-options">
-                                <div class="payment-option selected" id="mercadopago-option"
-                                     onclick="selectPaymentMethod('mercadopago')">
+                    <div
+                      class="payment-option selected"
+                      id="mercadopago-option"
+                      onclick="selectPaymentMethod('mercadopago')"
+                    >
                                     <div class="d-flex align-items-center">
-                                        <img src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.19.1/mercadopago/logo__large.png"
-                                             alt="MercadoPago" class="payment-logo">
+                        <img
+                          src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.19.1/mercadopago/logo__large.png"
+                          alt="MercadoPago"
+                          class="payment-logo"
+                        />
                                         <div>
                                             <h5 class="mb-0">MercadoPago</h5>
-                                            <p class="text-muted small mb-0">Paga con tarjeta de crédito, débito o saldo
-                                                en MercadoPago</p>
+                          <p class="text-muted small mb-0">
+                            Paga con tarjeta de crédito, débito o saldo en
+                            MercadoPago
+                          </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="payment-option" id="paypal-option" onclick="selectPaymentMethod('paypal')">
+                    <div
+                      class="payment-option"
+                      id="paypal-option"
+                      onclick="selectPaymentMethod('paypal')"
+                    >
                                     <div class="d-flex align-items-center">
-                                        <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
-                                             alt="PayPal" class="payment-logo">
+                        <img
+                          src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
+                          alt="PayPal"
+                          class="payment-logo"
+                        />
                                         <div>
                                             <h5 class="mb-0">PayPal</h5>
-                                            <p class="text-muted small mb-0">Paga de manera segura con tu cuenta de
-                                                PayPal</p>
+                          <p class="text-muted small mb-0">
+                            Paga de manera segura con tu cuenta de PayPal
+                          </p>
                                         </div>
                                     </div>
                                 </div>
@@ -186,61 +223,115 @@
                                 <!-- Formulario de checkout para MercadoPago -->
                                 <form id="form-checkout">
                                     <div class="form-group">
-                                        <label for="form-checkout__cardNumber">Número de la tarjeta</label>
-                                        <input type="tel" id="form-checkout__cardNumber" class="form-control"
-                                               inputmode="numeric" maxlength="19"
-                                               placeholder="1234 5678 9012 3456" autocomplete="cc-number">
+                        <label for="form-checkout__cardNumber"
+                          >Número de la tarjeta</label
+                        >
+                        <input
+                          type="tel"
+                          id="form-checkout__cardNumber"
+                          class="form-control"
+                          inputmode="numeric"
+                          maxlength="19"
+                          placeholder="1234 5678 9012 3456"
+                          autocomplete="cc-number"
+                        />
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="form-checkout__expirationDate">Fecha de vencimiento</label>
-                                                <input type="tel" id="form-checkout__expirationDate"
+                            <label for="form-checkout__expirationDate"
+                              >Fecha de vencimiento</label
+                            >
+                            <input
+                              type="tel"
+                              id="form-checkout__expirationDate"
                                                        class="form-control"
-                                                       inputmode="numeric" maxlength="5"
-                                                       placeholder="MM/YY" autocomplete="cc-exp">
+                              inputmode="numeric"
+                              maxlength="5"
+                              placeholder="MM/YY"
+                              autocomplete="cc-exp"
+                            />
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="form-checkout__securityCode">Código de seguridad</label>
-                                                <input type="tel" id="form-checkout__securityCode" class="form-control"
-                                                       inputmode="numeric" maxlength="4"
-                                                       placeholder="CVV" autocomplete="cc-csc">
+                            <label for="form-checkout__securityCode"
+                              >Código de seguridad</label
+                            >
+                            <input
+                              type="tel"
+                              id="form-checkout__securityCode"
+                              class="form-control"
+                              inputmode="numeric"
+                              maxlength="4"
+                              placeholder="CVV"
+                              autocomplete="cc-csc"
+                            />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="form-checkout__cardholderName">Titular de la tarjeta</label>
-                                        <input type="text" id="form-checkout__cardholderName" class="form-control"
-                                               placeholder="Nombre completo del titular" autocomplete="cc-name"
-                                               required/>
+                        <label for="form-checkout__cardholderName"
+                          >Titular de la tarjeta</label
+                        >
+                        <input
+                          type="text"
+                          id="form-checkout__cardholderName"
+                          class="form-control"
+                          placeholder="Nombre completo del titular"
+                          autocomplete="cc-name"
+                          required
+                        />
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="form-checkout__cardholderEmail">E-mail</label>
-                                        <input type="email" id="form-checkout__cardholderEmail" class="form-control"
-                                               th:value="${usuario.email}" placeholder="ejemplo@correo.com"
-                                               autocomplete="email" required/>
+                        <label for="form-checkout__cardholderEmail"
+                          >E-mail</label
+                        >
+                        <input
+                          type="email"
+                          id="form-checkout__cardholderEmail"
+                          class="form-control"
+                          th:value="${usuario.email}"
+                          placeholder="ejemplo@correo.com"
+                          autocomplete="email"
+                          required
+                        />
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="form-checkout__identificationType">Tipo de documento</label>
-                                        <select id="form-checkout__identificationType" class="form-control">
+                        <label for="form-checkout__identificationType"
+                          >Tipo de documento</label
+                        >
+                        <select
+                          id="form-checkout__identificationType"
+                          class="form-control"
+                        >
                                             <!-- El SDK de MercadoPago llenará automáticamente estas opciones -->
                                         </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="form-checkout__identificationNumber">Número de documento</label>
-                                        <input type="text" id="form-checkout__identificationNumber" class="form-control"
-                                               pattern="[0-9]*" inputmode="numeric"
-                                               placeholder="Número de identificación" required/>
+                        <label for="form-checkout__identificationNumber"
+                          >Número de documento</label
+                        >
+                        <input
+                          type="text"
+                          id="form-checkout__identificationNumber"
+                          class="form-control"
+                          pattern="[0-9]*"
+                          inputmode="numeric"
+                          placeholder="Número de identificación"
+                          required
+                        />
                                     </div>
 
                                     <div class="form-group">
                                         <label for="form-checkout__installments">Cuotas</label>
-                                        <select id="form-checkout__installments" class="form-control">
+                        <select
+                          id="form-checkout__installments"
+                          class="form-control"
+                        >
                                             <!-- El SDK de MercadoPago llenará automáticamente estas opciones -->
                                         </select>
                                     </div>
@@ -252,34 +343,68 @@
                                         </select>
                                     </div>
 
-                                    <button type="submit" id="form-checkout__submit"
-                                            class="btn btn-danger w-100 py-3 mb-2">
-                                        <i class="bi bi-credit-card me-2"></i> Pagar con MercadoPago
+                      <button
+                        type="submit"
+                        id="form-checkout__submit"
+                        class="btn btn-danger w-100 py-3 mb-2"
+                      >
+                        <i class="bi bi-credit-card me-2"></i> Pagar con
+                        MercadoPago
                                     </button>
 
-                                    <progress value="0" class="progress-bar progress-bar-danger w-100 mp-hidden"
-                                              id="loading-progress">Procesando...
+                      <progress
+                        value="0"
+                        class="progress-bar progress-bar-danger w-100 mp-hidden"
+                        id="loading-progress"
+                      >
+                        Procesando...
                                     </progress>
 
                                     <!-- Campos ocultos para datos de la orden -->
-                                    <input type="hidden" name="transactionAmount" id="transactionAmount"
-                                           th:value="${orden.total}"/>
-                                    <input type="hidden" name="description" id="description"
-                                           value="Productos de BarberMusicSpa"/>
-                                    <input type="hidden" name="orderId" id="orderId" th:value="${orden.id}"/>
+                      <input
+                        type="hidden"
+                        name="transactionAmount"
+                        id="transactionAmount"
+                        th:value="${orden.total}"
+                      />
+                      <input
+                        type="hidden"
+                        name="description"
+                        id="description"
+                        value="Productos de BarberMusicSpa"
+                      />
+                      <input
+                        type="hidden"
+                        name="orderId"
+                        id="orderId"
+                        th:value="${orden.id}"
+                      />
                                 </form>
                             </div>
 
-                            <div id="paypal-details" class="payment-details" style="display: none;">
+                  <div
+                    id="paypal-details"
+                    class="payment-details"
+                    style="display: none"
+                  >
                                 <div class="alert alert-info mt-4">
                                     <i class="bi bi-info-circle me-2"></i>
-                                    Serás redirigido a PayPal para completar tu pago de forma segura.
+                      Serás redirigido a PayPal para completar tu pago de forma
+                      segura.
                                 </div>
 
                                 <!-- Botón para PayPal -->
-                                <form id="paypal-form" th:action="@{/paypalOrder}" method="post">
-                                    <input type="hidden" name="orderId" th:value="${orden.id}"/>
-                                    <button type="submit" class="btn btn-primary w-100 py-3 mb-2">
+                    <form id="paypal-form" method="post">
+                      <input
+                        type="hidden"
+                        name="total"
+                        th:value="${resumen.total}"
+                      />
+                      <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                        style="background-color: #0070ba; border-color: #0070ba"
+                      >
                                         <i class="bi bi-paypal me-2"></i> Pagar con PayPal
                                     </button>
                                 </form>
@@ -306,12 +431,15 @@
                                     <tr th:each="dtorden: ${cart}">
                                         <td>
                                             <span th:text="${dtorden.nombre}"></span>
-                                            <small class="d-block text-muted"
-                                                   th:text="'Cantidad: ' + ${dtorden.cantidad}"></small>
+                            <small
+                              class="d-block text-muted"
+                              th:text="'Cantidad: ' + ${dtorden.cantidad}"
+                            ></small>
                                         </td>
-                                        <td class="text-end"
-                                            th:text="${#strings.concat('$', #numbers.formatDecimal(dtorden.total, 0, 'POINT',0, 'POINT'))}">
-                                        </td>
+                          <td
+                            class="text-end"
+                            th:text="${#strings.concat('$', #numbers.formatDecimal(dtorden.total, 0, 'POINT',0, 'POINT'))}"
+                          ></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -321,7 +449,8 @@
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal:</span>
                                     <span
-                                            th:text="${#strings.concat('$', #numbers.formatDecimal(orden.total, 0, 'POINT',0, 'POINT'))}"></span>
+                        th:text="${#strings.concat('$', #numbers.formatDecimal(orden.total, 0, 'POINT',0, 'POINT'))}"
+                      ></span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Envío:</span>
@@ -331,26 +460,35 @@
                                     <span>Descuento:</span>
                                     <span class="text-danger">$0</span>
                                 </div>
-                                <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+                    <div
+                      class="d-flex justify-content-between mt-3 pt-2 border-top"
+                    >
                                     <h5>Total:</h5>
-                                    <h5 class="text-primary"
-                                        th:text="${#strings.concat('$', #numbers.formatDecimal(orden.total, 0, 'POINT',0, 'POINT'))}">
-                                    </h5>
+                      <h5
+                        class="text-primary"
+                        th:text="${#strings.concat('$', #numbers.formatDecimal(orden.total, 0, 'POINT',0, 'POINT'))}"
+                      ></h5>
                                 </div>
                             </div>
 
                             <div class="form-check mt-3 mb-4">
-                                <input class="form-check-input" type="checkbox" id="termsCheck">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="termsCheck"
+                    />
                                 <label class="form-check-label small" for="termsCheck">
-                                    Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de
-                                    privacidad</a>
+                      Acepto los <a href="#">términos y condiciones</a> y la
+                      <a href="#">política de privacidad</a>
                                 </label>
                             </div>
 
                             <div class="alert alert-light border mt-3">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-shield-lock fs-4 me-3 text-primary"></i>
-                                    <span class="small">Transacción segura protegida por encriptación SSL</span>
+                      <span class="small"
+                        >Transacción segura protegida por encriptación SSL</span
+                      >
                                 </div>
                             </div>
                         </div>
@@ -358,13 +496,18 @@
                 </div>
             </div>
         </div>
-    </section><!-- End Order Confirmation Section -->
+      </section>
+      <!-- End Order Confirmation Section -->
 </main>
 
 <div th:insert="~{usuario/template_user.html::footer}"></div>
 
 <!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+    >
     <i class="bi bi-arrow-up-short"></i>
 </a>
 
@@ -380,224 +523,345 @@
     /*]]>*/
 </script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
-<script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      const totalAmount = /*[[${resumen.total}]]*/ "0.00";
+      const publicKey = "TEST-691b031d-dfc9-4995-8123-72fd7866d738"; // Reemplazar con tu clave pública de producción
+      /*]]>*/
+
+      // --- Funciones de Utilidad ---
+      function showProcessingOverlay(message) {
+        document.getElementById("processing-message").textContent = message;
+        document.getElementById("processing-overlay").style.display = "flex";
+      }
+
+      function hideProcessingOverlay() {
+        document.getElementById("processing-overlay").style.display = "none";
+      }
+
     function selectPaymentMethod(method) {
-        // Remover la clase 'selected' de todas las opciones
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.classList.remove('selected');
-        });
+        document
+          .querySelectorAll(".payment-option")
+          .forEach((opt) => opt.classList.remove("selected"));
+        document.getElementById(method + "-option").classList.add("selected");
 
-        // Ocultar todos los detalles de pago
-        document.querySelectorAll('.payment-details').forEach(detail => {
-            detail.style.display = 'none';
-        });
+        document
+          .querySelectorAll(".payment-details")
+          .forEach((det) => (det.style.display = "none"));
+        document.getElementById(method + "-details").style.display = "block";
 
-        // Activar la opción seleccionada
-        document.getElementById(method + '-option').classList.add('selected');
+        const mainButton = document.getElementById("main-payment-button");
+        if (method === "paypal") {
+          mainButton.textContent = "Pagar con PayPal";
+        } else {
+          mainButton.textContent = "Pagar con Tarjeta";
+        }
+      }
 
-        // Mostrar los detalles correspondientes
-        document.getElementById(method + '-details').style.display = 'block';
-    }
+      // --- Lógica Principal de la Página ---
+      document.addEventListener("DOMContentLoaded", function () {
+        // Estado inicial
+        selectPaymentMethod("mercadopago");
+        let mp, cardForm;
 
-
-    // Reemplaza tu actual script con esto:
-    document.addEventListener('DOMContentLoaded', function () {
-        // Primero verifica si MercadoPago está cargado
-        if (typeof MercadoPago === 'undefined') {
-            console.error('El SDK de MercadoPago no se cargó correctamente');
-            // Puedes intentar cargarlo nuevamente o mostrar un mensaje al usuario
+        // --- Inicialización de MercadoPago ---
+        function initMercadoPago() {
+          if (typeof MercadoPago === "undefined") {
+            console.error("El SDK de MercadoPago no está disponible.");
+            Swal.fire(
+              "Error",
+              "No se pudo cargar el componente de pago. Por favor, refresca la página.",
+              "error"
+            );
             return;
         }
-
-        selectPaymentMethod('mercadopago');
-
-        // Validación para aceptación de términos
-        const termsCheck = document.getElementById('termsCheck');
-        const submitButtons = document.querySelectorAll('#form-checkout__submit, #paypal-form button');
-
-        termsCheck.addEventListener('change', function () {
-            submitButtons.forEach(button => {
-                button.disabled = !this.checked;
-            });
-        });
-
-        // Inicialmente deshabilitar botones si no están marcados los términos
-        submitButtons.forEach(button => {
-            button.disabled = !termsCheck.checked;
-        });
-
-        // Inicializar MercadoPago
-        initMercadoPago();
-    });
-
-    function initMercadoPago() {
-        try {
-            console.log('Inicializando MercadoPago...');
-
-            if (typeof MercadoPago === 'undefined') {
-                throw new Error('MercadoPago no está disponible');
-            }
-
-            const mp = new MercadoPago('TEST-691b031d-dfc9-4995-8123-72fd7866d738', {
-                locale: 'es-CO',
-                advancedFraudPrevention: false
-            });
-
-            // Inicializar el formulario de tarjeta
-            const cardForm = mp.cardForm({
-                amount: document.getElementById('transactionAmount').value,
+          if (!mp) {
+            mp = new MercadoPago(publicKey, { locale: "es-MX" });
+          }
+          if (!cardForm) {
+            mp.cardForm({
+              amount: totalAmount.toString(),
                 autoMount: true,
                 form: {
-                    id: 'form-checkout',
+                id: "form-checkout",
                     cardholderName: {
-                        id: 'form-checkout__cardholderName',
-                        placeholder: 'Nombre como aparece en la tarjeta',
+                  id: "form-checkout__cardholderName",
+                  placeholder: "Titular de la tarjeta",
                     },
                     cardholderEmail: {
-                        id: 'form-checkout__cardholderEmail',
-                        placeholder: 'E-mail',
+                  id: "form-checkout__cardholderEmail",
+                  placeholder: "E-mail",
                     },
                     cardNumber: {
-                        id: 'form-checkout__cardNumber',
-                        placeholder: 'Número de tarjeta',
+                  id: "form-checkout__cardNumber",
+                  placeholder: "Número de la tarjeta",
                     },
-                    expirationDate: {
-                        id: 'form-checkout__expirationDate',
-                        placeholder: 'MM/YY',
+                cardExpirationMonth: {
+                  id: "form-checkout__cardExpirationMonth",
                     },
+                cardExpirationYear: { id: "form-checkout__cardExpirationYear" },
                     securityCode: {
-                        id: 'form-checkout__securityCode',
-                        placeholder: 'CVV',
+                  id: "form-checkout__securityCode",
+                  placeholder: "Código de seguridad",
                     },
                     installments: {
-                        id: 'form-checkout__installments',
-                        placeholder: 'Cuotas',
+                  id: "form-checkout__installments",
+                  placeholder: "Cuotas",
                     },
-                    identificationType: {
-                        id: 'form-checkout__identificationType',
-                        placeholder: 'Tipo de documento',
-                    },
+                identificationType: { id: "form-checkout__identificationType" },
                     identificationNumber: {
-                        id: 'form-checkout__identificationNumber',
-                        placeholder: 'Número de documento',
+                  id: "form-checkout__identificationNumber",
+                  placeholder: "Número de documento",
                     },
                     issuer: {
-                        id: 'form-checkout__issuer',
-                        placeholder: 'Banco emisor',
-                    },
+                  id: "form-checkout__issuer",
+                  placeholder: "Banco emisor",
                 },
-                callbacks: {
-                    onFormMounted: error => {
+              },
+              callbacks: {
+                onFormMounted: (error) => {
+                  if (error)
+                    return console.warn("Form Mounted Handling error: ", error);
+                },
+                onFormUnmounted: (error) => {
+                  if (error)
+                    return console.warn(
+                      "Form Unmounted Handling error: ",
+                      error
+                    );
+                },
+                onIdentificationTypesReceived: (error, identificationTypes) => {
+                  if (error)
+                    return console.warn(
+                      "onIdentificationTypesReceived Error: ",
+                      error
+                    );
+                },
+                onPaymentMethodsReceived: (error, paymentMethods) => {
+                  if (error)
+                    return console.warn(
+                      "onPaymentMethodsReceived Error: ",
+                      error
+                    );
+                },
+                onIssuersReceived: (error, issuers) => {
+                  if (error)
+                    return console.warn("onIssuersReceived Error: ", error);
+                },
+                onInstallmentsReceived: (error, installments) => {
+                  if (error)
+                    return console.warn(
+                      "onInstallmentsReceived Error: ",
+                      error
+                    );
+                },
+                onCardTokenReceived: (error, token) => {
                         if (error) {
-                            console.warn('Form Mounted error: ', error);
-                            return;
-                        }
-                        console.log('Form mounted successfully');
+                    console.warn("Token Receival Error: ", error);
+                    Swal.fire(
+                      "Error",
+                      "Hubo un problema con los datos de tu tarjeta. Por favor, verifica.",
+                      "error"
+                    );
+                    hideProcessingOverlay();
+                  } else {
+                    processMercadoPagoPayment(token.id);
+                  }
+                },
+              },
+            })
+              .then((cf) => {
+                cardForm = cf;
+              })
+              .catch((error) => {
+                console.error("Error al inicializar CardForm:", error);
+              });
+          }
+        }
+        initMercadoPago();
 
-                        // Agregar event listener para prevenir el refresh
-                        const form = document.getElementById('form-checkout');
-                        form.addEventListener('submit', (e) => {
-                            e.preventDefault(); // Esto previene el refresh
-                            console.log('Form submission prevented');
-                        });
-                    },
-                    onSubmit: async (event) => {
-                        event.preventDefault(); // Prevenir el comportamiento por defecto
+        // --- Manejador del Botón de Pago Principal ---
+        document
+          .getElementById("main-payment-button")
+          .addEventListener("click", async function (event) {
+            event.preventDefault();
+            const selectedMethod = document
+              .querySelector(".payment-option.selected")
+              .id.split("-")[0];
 
-                        console.log('Iniciando procesamiento de pago...');
-                        const loadingIndicator = document.getElementById('loading-progress');
-                        loadingIndicator.classList.remove('mp-hidden');
+            if (selectedMethod === "mercadopago") {
+              if (cardForm) {
+                showProcessingOverlay("Procesando tu pago...");
+                cardForm.createCardToken(); // Esto llamará a onCardTokenReceived
+              } else {
+                Swal.fire(
+                  "Error",
+                  "El formulario de pago no está listo. Intenta de nuevo.",
+                  "error"
+                );
+              }
+            } else if (selectedMethod === "paypal") {
+              processPayPalPayment();
+            }
+          });
 
-                        try {
-                            const {
-                                paymentMethodId: payment_method_id,
-                                issuerId: issuer_id,
-                                cardholderEmail: email,
-                                amount,
-                                token,
-                                installments,
-                                identificationNumber,
-                                identificationType,
-                            } = cardForm.getCardFormData();
+        // --- Procesamiento de Pagos ---
+        async function processMercadoPagoPayment(token) {
+          try {
+            const paymentData = {
+              token: token,
+              installments: Number(
+                document.getElementById("form-checkout__installments").value
+              ),
+              identificationNumber: document.getElementById(
+                "form-checkout__identificationNumber"
+              ).value,
+              identificationType: document.getElementById(
+                "form-checkout__identificationType"
+              ).value,
+              email: document.getElementById("form-checkout__cardholderEmail")
+                .value,
+              description: "Compra en BarberMusic&Spa",
+            };
 
-                            const paymentData = {
-                                token,
-                                issuer_id,
-                                payment_method_id,
-                                transaction_amount: Number(amount),
-                                installments: Number(installments),
-                                description: document.getElementById('description').value,
-                                order_id: document.getElementById('orderId').value,
-                                payer: {
-                                    email,
-                                    identification: {
-                                        type: identificationType,
-                                        number: identificationNumber
-                                    }
-                                }
-                            };
-
-                            console.log('Enviando datos de pago...', paymentData);
-
-                            const response = await fetch('/mercadopago/process_payment', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify(paymentData)
+            const response = await fetch("/mercadopago/process", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(paymentData),
                             });
 
                             const result = await response.json();
-                            console.log('Respuesta del pago:', result);
-
-                            loadingIndicator.classList.add('mp-hidden');
 
                             if (!response.ok) {
-                                throw new Error(result.message || 'Error en el pago');
-                            }
+              throw new Error(result.error || "Error en el pago");
+            }
 
-                            if (result.status === 'approved') {
-                                window.location.href = "/success?payment_id=" + result.id;
-                            } else if (result.status === 'in_process') {
-                                window.location.href = "/pending?payment_id=" + result.id;
+            if (
+              result.status === "approved" ||
+              result.status === "authorized"
+            ) {
+              window.location.href = "/pagos/pago_exitoso";
+            } else if (result.status === "in_process") {
+              window.location.href = "/pagos/pago_pendiente";
                             } else {
-                                window.location.href = "/failure?payment_id=" + result.id + "&status=" + result.status + "&error=" + (result.status_detail || '');
+              window.location.href = "/pagos/pago_fallido";
                             }
                         } catch (error) {
-                            loadingIndicator.classList.add('mp-hidden');
-                            console.error('Error al procesar el pago:', error);
-                            alert('Hubo un problema al procesar el pago: ' + error.message);
-                        }
-                    },
-                    onFetching: (resource) => {
-                        console.log("Fetching resource: ", resource);
-                        const loadingIndicator = document.getElementById('loading-progress');
-                        loadingIndicator.classList.remove('mp-hidden');
-                        return () => {
-                            loadingIndicator.classList.add('mp-hidden');
-                        };
-                    }
-                },
+            Swal.fire("Error de Pago", error.message, "error");
+          } finally {
+            hideProcessingOverlay();
+          }
+        }
+
+        async function processPayPalPayment() {
+          try {
+            showProcessingOverlay("Redirigiendo a PayPal...");
+            const response = await fetch("/paypal/create-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ total: totalAmount }),
             });
+
+            const result = await response.json();
+
+            if (response.ok && result.approval_url) {
+              window.location.href = result.approval_url;
+            } else {
+              throw new Error(
+                result.error || "No se pudo iniciar el pago con PayPal."
+              );
+            }
         } catch (error) {
-            console.error('Error en initMercadoPago:', error);
-            alert('Error al inicializar el sistema de pagos: ' + error.message);
+            hideProcessingOverlay();
+            Swal.fire("Error", error.message, "error");
+          }
         }
-    }
 
-    // Añade un timeout para reintentar si los campos no se cargan
-    setTimeout(() => {
-        if (document.querySelector('#form-checkout__identificationType').options.length <= 1) {
-            console.log('Reintentando inicializar MercadoPago...');
-            initMercadoPago();
+        const procesarPagoBtn = document.getElementById("procesarPagoBtn");
+
+        if (procesarPagoBtn) {
+          procesarPagoBtn.addEventListener("click", async function () {
+            const sucursalId = document.getElementById("sucursal").value;
+            const fechaHora = document.getElementById("fechaHora").value;
+            const metodoPago = document.querySelector(
+              'input[name="metodoPago"]:checked'
+            );
+
+            if (!sucursalId || !fechaHora) {
+              showErrorAlert(
+                "Por favor, completa todos los campos del agendamiento."
+              );
+              return;
+            }
+            if (!metodoPago) {
+              showErrorAlert("Por favor, selecciona un método de pago.");
+              return;
+            }
+
+            const agendamientoData = {
+              sucursal: { id: sucursalId },
+              fechaHora: fechaHora,
+            };
+
+            try {
+              // Muestra una alerta de carga
+              Swal.fire({
+                title: "Procesando tu orden...",
+                text: "Por favor, espera.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+                },
+              });
+
+              // Primero, crear el agendamiento
+              const agendamientoResponse = await fetch(
+                "/api/agendamientos/crear",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(agendamientoData),
+                }
+              );
+
+              if (!agendamientoResponse.ok) {
+                throw new Error("Error al crear el agendamiento.");
+              }
+
+              // Ahora, procesar el pago según el método seleccionado
+              if (metodoPago.value === "mercadopago") {
+                const response = await fetch("/mercadopago/process", {
+                  method: "POST",
+                });
+                const data = await response.json();
+                if (data.init_point) {
+                  window.location.href = data.init_point;
+                } else {
+                  throw new Error(
+                    "No se pudo iniciar el pago con MercadoPago."
+                  );
+                }
+              } else if (metodoPago.value === "paypal") {
+                const response = await fetch("/paypal/create-order", {
+                  method: "POST",
+                });
+                const data = await response.json();
+                if (data.approval_url) {
+                  window.location.href = data.approval_url;
+                } else {
+                  throw new Error("No se pudo iniciar el pago con PayPal.");
+                }
+              }
+            } catch (error) {
+              console.error("Error en el proceso:", error);
+              showErrorAlert(
+                "Hubo un problema al procesar tu orden.",
+                "Por favor, intenta de nuevo más tarde."
+              );
+            }
+          });
         }
-    }, 3000);
-
-    document.getElementById('form-checkout')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        console.log('Form submission prevented by global listener');
     });
 </script>
-
 </body>
 </html>

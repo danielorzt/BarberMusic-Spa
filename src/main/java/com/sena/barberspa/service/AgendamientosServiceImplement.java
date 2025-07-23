@@ -18,31 +18,44 @@ public class AgendamientosServiceImplement implements IAgendamientosService {
 
 	@Override
 	public Agendamiento save(Agendamiento agendamiento) {
+		// TODO Auto-generated method stub
 		return agendamientoRepository.save(agendamiento);
 	}
 
 	@Override
-	public Optional<Agendamiento> get(Integer id) {
+	public Optional<Agendamiento> get(Long id) {
+		// TODO Auto-generated method stub
 		return agendamientoRepository.findById(id);
 	}
 
 	@Override
+	public Agendamiento findById(Long id) {
+		// TODO Auto-generated method stub
+		return agendamientoRepository.findById(id).orElse(null);
+	}
+
+	@Override
 	public void update(Agendamiento agendamiento) {
+		// TODO Auto-generated method stub
 		agendamientoRepository.save(agendamiento);
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
 		agendamientoRepository.deleteById(id);
 	}
 
 	@Override
 	public List<Agendamiento> findAll() {
+		// TODO Auto-generated method stub
 		return agendamientoRepository.findAll();
 	}
 
 	@Override
 	public List<Agendamiento> findByUsuario(Usuario usuario) {
+		// TODO Auto-generated method stub
 		return agendamientoRepository.findByUsuario(usuario);
 	}
+
 }

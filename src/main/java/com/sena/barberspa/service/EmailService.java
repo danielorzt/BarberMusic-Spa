@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.sena.barberspa.controller.UsuarioController;
+import com.sena.barberspa.controller.web.UsuarioController;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

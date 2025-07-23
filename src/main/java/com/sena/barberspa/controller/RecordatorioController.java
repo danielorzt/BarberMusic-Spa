@@ -37,8 +37,9 @@ public class RecordatorioController {
 
     @ModelAttribute
     public void addUsuarioToModel(Model model, HttpSession session) {
-        Integer idUsuario = (Integer) session.getAttribute("idUsuario");
-        if (idUsuario != null) {
+        Object idUsuarioObj = session.getAttribute("idUsuario");
+        if (idUsuarioObj != null) {
+            Long idUsuario = Long.parseLong(idUsuarioObj.toString());
             Usuario usuario = usuarioService.findById(idUsuario).orElse(null);
             if (usuario != null) {
                 model.addAttribute("usuario", usuario);
@@ -55,8 +56,9 @@ public class RecordatorioController {
 
     @GetMapping("")
     public String listarRecordatorios(Model model, HttpSession session) {
-        Integer idUsuario = (Integer) session.getAttribute("idUsuario");
-        if (idUsuario != null) {
+        Object idUsuarioObj = session.getAttribute("idUsuario");
+        if (idUsuarioObj != null) {
+            Long idUsuario = Long.parseLong(idUsuarioObj.toString());
             Usuario usuario = usuarioService.findById(idUsuario).orElse(null);
             if (usuario != null) {
                 List<Recordatorio> recordatorios = recordatorioService.findByUsuario(usuario);
@@ -74,10 +76,11 @@ public class RecordatorioController {
 
     @PostMapping("/save")
     public String guardarRecordatorio(@ModelAttribute Recordatorio recordatorio,
-                                      HttpSession session,
-                                      RedirectAttributes redirectAttributes) {
-        Integer idUsuario = (Integer) session.getAttribute("idUsuario");
-        if (idUsuario != null) {
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        Object idUsuarioObj = session.getAttribute("idUsuario");
+        if (idUsuarioObj != null) {
+            Long idUsuario = Long.parseLong(idUsuarioObj.toString());
             Usuario usuario = usuarioService.findById(idUsuario).orElse(null);
             if (usuario != null) {
                 recordatorio.setUsuario(usuario);
@@ -93,7 +96,7 @@ public class RecordatorioController {
 
     @PostMapping("/desactivar/{id}")
     @ResponseBody
-    public ResponseEntity<?> desactivarRecordatorio(@PathVariable Integer id) {
+    public ResponseEntity<?> desactivarRecordatorio(@PathVariable Long id) {
         try {
             recordatorioService.desactivar(id);
             return ResponseEntity.ok().build();
@@ -104,7 +107,7 @@ public class RecordatorioController {
 
     @PostMapping("/fijar/{id}")
     @ResponseBody
-    public ResponseEntity<?> fijarRecordatorio(@PathVariable Integer id) {
+    public ResponseEntity<?> fijarRecordatorio(@PathVariable Long id) {
         try {
             recordatorioService.cambiarFijado(id);
             return ResponseEntity.ok().build();
@@ -115,7 +118,7 @@ public class RecordatorioController {
 
     @PostMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> eliminarRecordatorio(@PathVariable Integer id) {
+    public ResponseEntity<?> eliminarRecordatorio(@PathVariable Long id) {
         try {
             Optional<Recordatorio> optRecordatorio = recordatorioService.get(id);
             if (optRecordatorio.isPresent() && optRecordatorio.get().getAgendamiento() == null) {

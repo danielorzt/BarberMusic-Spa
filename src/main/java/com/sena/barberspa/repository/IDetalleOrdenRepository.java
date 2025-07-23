@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.sena.barberspa.model.DetalleOrden;
 
 @Repository
-public interface IDetalleOrdenRepository extends JpaRepository<DetalleOrden, Integer> {
+public interface IDetalleOrdenRepository extends JpaRepository<DetalleOrden, Long> {
 
 }

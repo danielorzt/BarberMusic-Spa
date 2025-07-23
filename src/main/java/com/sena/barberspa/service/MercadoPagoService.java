@@ -48,7 +48,7 @@ public class MercadoPagoService {
         // Crear items de preferencia
         List<PreferenceItemRequest> items = new ArrayList<>();
 
-        for (DetalleOrden detalle : orden.getDetalle()) {
+        for (DetalleOrden detalle : orden.getDetalles()) {
             PreferenceItemRequest item = PreferenceItemRequest.builder().title(detalle.getNombre())
                     .quantity(detalle.getCantidad().intValue()).unitPrice(new BigDecimal(detalle.getPrecio())).build();
             items.add(item);

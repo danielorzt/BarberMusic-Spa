@@ -1,11 +1,15 @@
 package com.sena.barberspa.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -15,70 +19,102 @@ public class Usuario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	private String nombre;
 
-	private String imagen;
-
 	private String email;
 
-	private String direccion;
-
-	private String telefono;
-
-	private String tipo; // Puede ser un enum para los roles (ADMIN, USER, etc.)
+	@Column(name = "email_verified_at")
+	private LocalDateTime emailVerifiedAt;
 
 	private String password;
 
-	private String estado;
+	@Column(name = "imagen_path")
+	private String imagenPath;
 
-	// Relación con Productos
-	@OneToMany(mappedBy = "usuario")
-	private List<Producto> productos;
+	private String telefono;
 
-	// Relación con Servicios
-	@OneToMany(mappedBy = "usuario")
-	private List<Servicio> servicios; // Aquí era Producto antes, debería ser Servicio
+	private String rol; // CLIENTE, EMPLEADO, ADMIN_SUCURSAL, GERENTE
+
+	@Column(name = "activo")
+	private Boolean activo;
+
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
+
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
+
+	// Relación con Sucursal preferida
+	@ManyToOne
+	@JoinColumn(name = "sucursal_preferida_id")
+	private Sucursal sucursalPreferida;
+
+	// Relación con Música Preferencia
+	@ManyToOne
+	@JoinColumn(name = "musica_preferencia_navegacion_id")
+	private MusicaPreferenciasNavegacion musicaPreferencia;
 
 	// Relación con Ordenes
-	@OneToMany(mappedBy = "usuario")
+	@OneToMany(mappedBy = "clienteUsuario")
 	private List<Orden> ordenes;
+
+	// Relación con Personal (si es empleado)
+	@OneToMany(mappedBy = "usuario")
+	private List<Personal> personalRegistros;
 
 	// Constructor vacío
 	public Usuario() {
 	}
 
 	// Constructor con parámetros
-	public Usuario(Integer id, String nombre, String email, String imagen, String direccion, String telefono,
-			String tipo, String password, String estado) {
+	public Usuario(Long id, String nombre, String email, String telefono,
+			String rol, String password, Boolean activo, String imagenPath,
+			LocalDateTime emailVerifiedAt) {
 		this.id = id;
 		this.nombre = nombre;
 		this.email = email;
-		this.imagen = imagen;
-		this.direccion = direccion;
 		this.telefono = telefono;
-		this.tipo = tipo;
+		this.rol = rol;
 		this.password = password;
-		this.estado = estado;
+		this.activo = activo;
+		this.imagenPath = imagenPath;
+		this.emailVerifiedAt = emailVerifiedAt;
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	// Getters y setters
-	public String getEstado() {
-		return estado;
+	public Boolean getActivo() {
+		return activo;
 	}
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
 	}
 
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-	public Integer getId() {
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -90,20 +126,28 @@ public class Usuario {
 		this.nombre = nombre;
 	}
 
+	public String getImagenPath() {
+		return imagenPath;
+	}
+
+	public void setImagenPath(String imagenPath) {
+		this.imagenPath = imagenPath;
+	}
+
+	public LocalDateTime getEmailVerifiedAt() {
+		return emailVerifiedAt;
+	}
+
+	public void setEmailVerifiedAt(LocalDateTime emailVerifiedAt) {
+		this.emailVerifiedAt = emailVerifiedAt;
+	}
+
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getDireccion() {
-		return direccion;
-	}
-
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
 	}
 
 	public String getTelefono() {
@@ -114,12 +158,12 @@ public class Usuario {
 		this.telefono = telefono;
 	}
 
-	public String getTipo() {
-		return tipo;
+	public String getRol() {
+		return rol;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 
 	public String getPassword() {
@@ -130,20 +174,12 @@ public class Usuario {
 		this.password = password;
 	}
 
-	public List<Producto> getProductos() {
-		return productos;
+	public List<Personal> getPersonalRegistros() {
+		return personalRegistros;
 	}
 
-	public void setProductos(List<Producto> productos) {
-		this.productos = productos;
-	}
-
-	public List<Servicio> getServicios() {
-		return servicios;
-	}
-
-	public void setServicios(List<Servicio> servicios) {
-		this.servicios = servicios;
+	public void setPersonalRegistros(List<Personal> personalRegistros) {
+		this.personalRegistros = personalRegistros;
 	}
 
 	public List<Orden> getOrdenes() {
@@ -154,20 +190,64 @@ public class Usuario {
 		this.ordenes = ordenes;
 	}
 
+	// Getters y setters para Sucursal Preferida
+	public Sucursal getSucursalPreferida() {
+		return sucursalPreferida;
+	}
+
+	public void setSucursalPreferida(Sucursal sucursalPreferida) {
+		this.sucursalPreferida = sucursalPreferida;
+	}
+
+	// Getters y setters para Música Preferencia
+	public MusicaPreferenciasNavegacion getMusicaPreferencia() {
+		return musicaPreferencia;
+	}
+
+	public void setMusicaPreferencia(MusicaPreferenciasNavegacion musicaPreferencia) {
+		this.musicaPreferencia = musicaPreferencia;
+	}
+
+	// Métodos de compatibilidad para código antiguo
+	public String getEstado() {
+		return this.activo != null && this.activo ? "activo" : "inactivo";
+	}
+
+	public void setEstado(String estado) {
+		this.activo = "activo".equalsIgnoreCase(estado);
+	}
+
 	public String getImagen() {
-		return imagen;
+		return this.imagenPath;
 	}
 
 	public void setImagen(String imagen) {
-		this.imagen = imagen;
+		this.imagenPath = imagen;
 	}
 
-	// Método toString para depuración
+	public String getDireccion() {
+		// Por ahora retornamos un valor predeterminado
+		// TODO: Implementar relación con direcciones si es necesario
+		return "Dirección no especificada";
+	}
+
+	public void setDireccion(String direccion) {
+		// Por ahora no hace nada
+		// TODO: Implementar relación con direcciones si es necesario
+	}
+
+	// Alias para sucursal (compatibility)
+	public Sucursal getSucursal() {
+		return this.sucursalPreferida;
+	}
+
+	public void setSucursal(Sucursal sucursal) {
+		this.sucursalPreferida = sucursal;
+	}
+
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", nombre=" + nombre + ", email=" + email + ", imagen=" + imagen + ", direccion="
-				+ direccion + ", telefono=" + telefono + ", tipo=" + tipo + ", password=" + password + ", estado="
-				+ estado + "]";
+		return "Usuario [id=" + id + ", nombre=" + nombre + ", email=" + email + ", rol=" + rol + ", activo=" + activo
+				+ "]";
 	}
-
 }

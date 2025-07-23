@@ -77,14 +77,15 @@ public class OrdenServiceImplement implements IOrdenService {
 	@Override
 	public List<Orden> findByUsuario(Usuario usuario) {
 		// TODO Auto-generated method stub
-		return ordenRepository.findByusuario(usuario);
+		return ordenRepository.findByUsuario(usuario);
 	}
 
 	@Override
-	public Optional<Orden> findById(Integer id) {
+	public Optional<Orden> findById(Long id) {
 		// TODO Auto-generated method stub
 		return ordenRepository.findById(id);
 	}
+
 	@Override
 	public long countAll() {
 		return ordenRepository.count();

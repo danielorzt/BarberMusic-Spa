@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.sena.barberspa.model.Servicio;
 
 @Repository
-public interface IServiciosRepository extends JpaRepository<Servicio, Integer> {
-	
+public interface IServiciosRepository extends JpaRepository<Servicio, Long> {
+
 }

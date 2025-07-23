@@ -1,5 +1,9 @@
 package com.sena.barberspa.model;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,24 +13,36 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "detalles")
+@Table(name = "detalle_ordenes")
 public class DetalleOrden {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private String nombre;
-    private Double cantidad;
-    private Double precio;
-    private Double total;
+    @Column(name = "nombre_producto_historico")
+    private String nombreProductoHistorico;
+
+    private Integer cantidad;
+
+    @Column(name = "precio_unitario_historico")
+    private BigDecimal precioUnitarioHistorico;
+
+    @Column(name = "subtotal_linea")
+    private BigDecimal subtotalLinea;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "orden_id", nullable = false) // Relación con la tabla de órdenes
+    @JoinColumn(name = "orden_id", nullable = false)
     private Orden orden;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id", nullable = false) // Relación con la tabla de productos
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
     // Constructor vacío
@@ -34,56 +50,73 @@ public class DetalleOrden {
     }
 
     // Constructor con parámetros
-    public DetalleOrden(Integer id, String nombre, Double cantidad, Double precio, Double total, Orden orden,
-            Producto producto) {
-        this.id = id;
-        this.nombre = nombre;
+    public DetalleOrden(String nombreProductoHistorico, Integer cantidad, BigDecimal precioUnitarioHistorico,
+            BigDecimal subtotalLinea, Orden orden, Producto producto) {
+        this.nombreProductoHistorico = nombreProductoHistorico;
         this.cantidad = cantidad;
-        this.precio = precio;
-        this.total = total;
+        this.precioUnitarioHistorico = precioUnitarioHistorico;
+        this.subtotalLinea = subtotalLinea;
         this.orden = orden;
         this.producto = producto;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters y Setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreProductoHistorico() {
+        return nombreProductoHistorico;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreProductoHistorico(String nombreProductoHistorico) {
+        this.nombreProductoHistorico = nombreProductoHistorico;
     }
 
-    public Double getCantidad() {
+    public Integer getCantidadInt() {
         return cantidad;
     }
 
-    public void setCantidad(Double cantidad) {
+    public void setCantidadInt(Integer cantidad) {
         this.cantidad = cantidad;
     }
 
-    public Double getPrecio() {
-        return precio;
+    public BigDecimal getPrecioUnitarioHistorico() {
+        return precioUnitarioHistorico;
     }
 
-    public void setPrecio(Double precio) {
-        this.precio = precio;
+    public void setPrecioUnitarioHistorico(BigDecimal precioUnitarioHistorico) {
+        this.precioUnitarioHistorico = precioUnitarioHistorico;
     }
 
-    public Double getTotal() {
-        return total;
+    public BigDecimal getSubtotalLinea() {
+        return subtotalLinea;
     }
 
-    public void setTotal(Double total) {
-        this.total = total;
+    public void setSubtotalLinea(BigDecimal subtotalLinea) {
+        this.subtotalLinea = subtotalLinea;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Orden getOrden() {
@@ -102,17 +135,47 @@ public class DetalleOrden {
         this.producto = producto;
     }
 
-    // Método toString
+    // Métodos de compatibilidad con código existente
+    public String getNombre() {
+        return nombreProductoHistorico;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombreProductoHistorico = nombre;
+    }
+
+    public Double getCantidad() {
+        return cantidad != null ? cantidad.doubleValue() : null;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad != null ? cantidad.intValue() : null;
+    }
+
+    public Double getPrecio() {
+        return precioUnitarioHistorico != null ? precioUnitarioHistorico.doubleValue() : null;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precioUnitarioHistorico = precio != null ? BigDecimal.valueOf(precio) : null;
+    }
+
+    public Double getTotal() {
+        return subtotalLinea != null ? subtotalLinea.doubleValue() : null;
+    }
+
+    public void setTotal(Double total) {
+        this.subtotalLinea = total != null ? BigDecimal.valueOf(total) : null;
+    }
+
     @Override
     public String toString() {
         return "DetalleOrden{" +
                 "id=" + id +
-                ", nombre='" + nombre + '\'' +
+                ", nombreProductoHistorico='" + nombreProductoHistorico + '\'' +
                 ", cantidad=" + cantidad +
-                ", precio=" + precio +
-                ", total=" + total +
-                ", orden=" + orden +
-                ", producto=" + producto +
+                ", precioUnitarioHistorico=" + precioUnitarioHistorico +
+                ", subtotalLinea=" + subtotalLinea +
                 '}';
     }
 }

@@ -1,0 +1,29 @@
+{
+  "name": "barberspa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile:sass": "sass --load-path=node_modules src/main/resources/static/assets/scss/main.scss src/main/resources/static/assets/css/main.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielorzt/BarberMusic-Spa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/danielorzt/BarberMusic-Spa/issues"
+  },
+  "homepage": "https://github.com/danielorzt/BarberMusic-Spa#readme",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.7"
+  },
+  "devDependencies": {
+    "sass": "^1.89.2"
+  }
+}

@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sena.barberspa.model.Usuario;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface IUsuarioService {
+public interface IUsuarioService extends UserDetailsService {
 
 	public Usuario save(Usuario usuario);
 
-	public Optional<Usuario> get(Integer id);
+	public Optional<Usuario> get(Long id);
 
 	public void update(Usuario usuario);
 
-	public void delete(Integer id);
+	public void delete(Long id);
 
-	Optional<Usuario> findById(Integer id);
+	Optional<Usuario> findById(Long id);
 
 	Optional<Usuario> findByEmail(String email);
 

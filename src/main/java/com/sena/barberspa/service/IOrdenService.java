@@ -10,7 +10,7 @@ public interface IOrdenService {
 
 	public Orden save(Orden orden);
 
-	public Orden update(Orden orden);  // New update method
+	public Orden update(Orden orden); // New update method
 
 	public List<Orden> findAll();
 
@@ -18,7 +18,7 @@ public interface IOrdenService {
 
 	public List<Orden> findByUsuario(Usuario usuario);
 
-	public Optional<Orden> findById(Integer id);
+	public Optional<Orden> findById(Long id);
 
 	// Nuevo método para contar todas las órdenes
 	public long countAll();

@@ -9,16 +9,21 @@ public class Recordatorio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String titulo;
     private String descripcion;
+    private String mensaje;
 
     @Column(name = "fecha_hora")
     private LocalDateTime fechaHora;
 
+    @Column(name = "fecha_recordatorio")
+    private LocalDateTime fechaRecordatorio;
+
     private boolean activo;
     private boolean fijado;
+    private String estado;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
@@ -54,11 +59,11 @@ public class Recordatorio {
     }
 
     // Getters y Setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,12 +83,28 @@ public class Recordatorio {
         this.descripcion = descripcion;
     }
 
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
     public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
+    }
+
+    public LocalDateTime getFechaRecordatorio() {
+        return fechaRecordatorio;
+    }
+
+    public void setFechaRecordatorio(LocalDateTime fechaRecordatorio) {
+        this.fechaRecordatorio = fechaRecordatorio;
     }
 
     public boolean isActivo() {
@@ -102,6 +123,14 @@ public class Recordatorio {
         this.fijado = fijado;
     }
 
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
@@ -118,15 +147,27 @@ public class Recordatorio {
         this.agendamiento = agendamiento;
     }
 
+    // Métodos de compatibilidad con código existente
+    public LocalDateTime getFechaHoraRecordatorio() {
+        return fechaRecordatorio != null ? fechaRecordatorio : fechaHora;
+    }
+
+    public void setFechaHoraRecordatorio(LocalDateTime fechaHoraRecordatorio) {
+        this.fechaRecordatorio = fechaHoraRecordatorio;
+    }
+
     @Override
     public String toString() {
         return "Recordatorio{" +
                 "id=" + id +
                 ", titulo='" + titulo + '\'' +
                 ", descripcion='" + descripcion + '\'' +
+                ", mensaje='" + mensaje + '\'' +
                 ", fechaHora=" + fechaHora +
+                ", fechaRecordatorio=" + fechaRecordatorio +
                 ", activo=" + activo +
                 ", fijado=" + fijado +
+                ", estado='" + estado + '\'' +
                 '}';
     }
 }

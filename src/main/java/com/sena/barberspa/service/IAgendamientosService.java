@@ -9,11 +9,13 @@ import com.sena.barberspa.model.Usuario;
 public interface IAgendamientosService {
 	public Agendamiento save(Agendamiento agendamiento);
 
-	public Optional<Agendamiento> get(Integer id);
+	public Optional<Agendamiento> get(Long id);
+
+	public Agendamiento findById(Long id);
 
 	public void update(Agendamiento agendamiento);
 
-	public void delete(Integer id);
+	public void delete(Long id);
 
 	public List<Agendamiento> findAll();
 

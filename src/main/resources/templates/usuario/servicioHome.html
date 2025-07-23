@@ -8,7 +8,7 @@
 
 <main class="main">
 
-    <div class="page-title light-background">
+    <div class="page-title theme-background">
         <div class="container">
             <h1 th:text="${servicio != null ? servicio.nombre : 'Servicio'}">Servicios</h1>
             <nav class="breadcrumbs">
@@ -153,72 +153,7 @@
 
 <div th:insert="~{usuario/template_user.html::jsFiles}"></div>
 
-<style>
-    .modal-cita {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1050; /* Sit on top */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-        padding-top: 60px; /* Location of the box */
-    }
-
-    .modal-contenido {
-        background-color: #fefefe;
-        margin: 5% auto; /* 5% from the top and centered */
-        padding: 25px 30px;
-        border: 1px solid #888;
-        width: 90%; /* Could be more or less, depending on screen size */
-        max-width: 600px;
-        border-radius: 8px;
-        position: relative;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        animation: fadeInModal 0.4s; /* Animation */
-    }
-
-    /* Add Animation */
-    @keyframes fadeInModal {
-        from {opacity: 0}
-        to {opacity: 1}
-    }
-
-
-    .cerrar-modal {
-        position: absolute;
-        right: 15px;
-        top: 10px;
-        color: #aaa;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .cerrar-modal:hover,
-    .cerrar-modal:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    /* Estilos formulario modal */
-    .modal-contenido .contact-form h3 {
-        text-align: center;
-        margin-bottom: 1rem;
-        color: var(--bs-primary);
-    }
-    .modal-contenido .contact-form p {
-        text-align: center;
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
-        color: #666;
-    }
-
-    /* Asegúrate que el CSS que te pasé antes para service-details esté en main.css */
-
-</style>
+<!-- Modal styles moved to main.scss for proper dark theme support -->
 
 <script>
     function abrirModal() {

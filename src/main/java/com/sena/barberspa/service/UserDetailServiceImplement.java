@@ -32,19 +32,45 @@ public class UserDetailServiceImplement implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		log.info("Este es el username: {}", username);
+		log.info("Intentando autenticar usuario con email: {}", username);
 		Optional<Usuario> optionalUser = usuarioService.findByEmail(username);
 		if (optionalUser.isPresent()) {
-			log.info("Esto es el ID del usuario: {}", optionalUser.get().getId());
-			session.setAttribute("idUsuario", optionalUser.get().getId());
 			Usuario usuario = optionalUser.get();
+			log.info("Usuario encontrado: {} con ID: {}", usuario.getNombre(), usuario.getId());
+			log.info("Rol del usuario: {}", usuario.getRol());
+
+			// Establecer la sesión
+			session.setAttribute("idUsuario", usuario.getId());
+
+			String mappedRole = mapRoleToSpringRole(usuario.getRol());
+			log.info("Rol mapeado para Spring Security: {}", mappedRole);
+
 			return User.builder()
-					.username(usuario.getNombre())
+					.username(usuario.getEmail()) // Usar email como username
 					.password(usuario.getPassword())
-					.roles(usuario.getTipo())
+					.roles(mappedRole)
 					.build();
 		} else {
-			throw new UsernameNotFoundException("usuario no encontrado");
+			log.warn("Usuario no encontrado con email: {}", username);
+			throw new UsernameNotFoundException("Usuario no encontrado con email: " + username);
+		}
+	}
+
+	private String mapRoleToSpringRole(String rol) {
+		if (rol == null) {
+			return "CLIENTE";
+		}
+		switch (rol.toUpperCase()) {
+			case "CLIENTE":
+				return "CLIENTE";
+			case "EMPLEADO":
+				return "EMPLEADO";
+			case "ADMIN_SUCURSAL":
+				return "ADMIN_SUCURSAL";
+			case "GERENTE":
+				return "GERENTE";
+			default:
+				return "CLIENTE";
 		}
 	}
 }

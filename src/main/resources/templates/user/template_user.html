@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html
+  lang="es"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:fragment="head">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>BarberSpa</title>
+    <meta content="" name="description" />
+    <meta content="" name="keywords" />
+
+    <!-- Favicons -->
+    <link th:href="@{/assets/img/LogoBarberMusicSpa.png}" rel="icon" />
+    <link
+      th:href="@{/assets/img/apple-touch-icon.png}"
+      rel="apple-touch-icon"
+    />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}"
+      rel="stylesheet"
+    />
+    <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet" />
+    <link
+      th:href="@{/assets/vendor/glightbox/css/glightbox.min.css}"
+      rel="stylesheet"
+    />
+    <link
+      th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}"
+      rel="stylesheet"
+    />
+
+    <!-- Main CSS File -->
+    <link th:href="@{/assets/css/main.css?v=1.1}" rel="stylesheet" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/assets/js/sweetalert-config.js}"></script>
+  </head>
+
+  <body>
+    <header
+      th:fragment="header"
+      id="header"
+      class="header-scroll d-flex align-items-center"
+    >
+      <div class="container d-flex align-items-center justify-content-between">
+        <a
+          th:href="@{/home}"
+          class="logo d-flex align-items-center me-auto me-lg-0"
+        >
+          <img th:src="@{/assets/img/LogoBarberMusicSpa.png}" alt="" />
+          <h1>BarberSpa<span>.</span></h1>
+        </a>
+
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/usuario/productos}">Productos</a></li>
+            <li><a th:href="@{/usuario/servicios}">Servicios</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#chefs">Chefs</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a th:href="@{/usuario/compras}">Mis Compras</a></li>
+            <li sec:authorize="isAuthenticated()">
+              <a th:href="@{/usuario/perfil}">Mi Perfil</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="d-flex align-items-center">
+          <a class="btn-book-a-table" href="#book-a-table">Book a Table</a>
+          <a class="btn-book-a-table" th:href="@{/usuario/carrito}">
+            <i class="bi bi-cart4"></i>
+            <span
+              th:if="${session.carrito != null}"
+              th:text="${session.carrito.size()}"
+            ></span>
+          </a>
+          <button id="theme-toggle" class="btn-theme-toggle">
+            <i class="bi bi-sun"></i>
+          </button>
+          <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display: inline">
+              <button type="submit" class="btn-logout">Logout</button>
+            </form>
+          </div>
+          <div sec:authorize="!isAuthenticated()">
+            <a class="btn-login" th:href="@{/usuario/login}">Login</a>
+          </div>
+        </div>
+
+        <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+        <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+      </div>
+    </header>
+
+    <main id="main" class="main">
+      <div th:replace="${view} :: content"></div>
+    </main>
+
+    <footer th:fragment="footer" id="footer" class="footer">
+      <!-- Footer content -->
+    </footer>
+
+    <!-- Vendor JS Files -->
+    <script
+      th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js}"
+    ></script>
+    <script th:src="@{/assets/vendor/aos/aos.js}"></script>
+    <script th:src="@{/assets/vendor/glightbox/js/glightbox.min.js}"></script>
+    <script
+      th:src="@{/assets/vendor/purecounter/purecounter_vanilla.js}"
+    ></script>
+    <script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
+
+    <!-- Main JS File -->
+    <script th:src="@{/assets/js/main.js}"></script>
+    <script th:src="@{/assets/js/theme.js}" defer></script>
+  </body>
+</html>

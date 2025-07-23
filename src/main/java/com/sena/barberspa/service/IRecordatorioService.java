@@ -11,15 +11,17 @@ import java.util.Optional;
 public interface IRecordatorioService {
     Recordatorio save(Recordatorio recordatorio);
 
-    Optional<Recordatorio> get(Integer id);
+    Optional<Recordatorio> get(Long id);
 
     void update(Recordatorio recordatorio);
 
-    void delete(Integer id);
+    void delete(Long id);
 
-    void desactivar(Integer id);
+    void desactivar(Long id);
 
-    void cambiarFijado(Integer id);
+    void cambiarFijado(Long id);
+
+    List<Recordatorio> findAll();
 
     List<Recordatorio> findByUsuario(Usuario usuario);
 

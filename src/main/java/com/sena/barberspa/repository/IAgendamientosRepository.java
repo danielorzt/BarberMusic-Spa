@@ -9,6 +9,11 @@ import com.sena.barberspa.model.Agendamiento;
 import com.sena.barberspa.model.Usuario;
 
 @Repository
-public interface IAgendamientosRepository extends JpaRepository<Agendamiento, Integer> {
-    List<Agendamiento> findByUsuario(Usuario usuario);
+public interface IAgendamientosRepository extends JpaRepository<Agendamiento, Long> {
+    List<Agendamiento> findByClienteUsuario(Usuario clienteUsuario);
+    
+    // Convenience method for backward compatibility
+    default List<Agendamiento> findByUsuario(Usuario usuario) {
+        return findByClienteUsuario(usuario);
+    }
 }

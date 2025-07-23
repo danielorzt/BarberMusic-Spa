@@ -1,6 +1,8 @@
 package com.sena.barberspa.model;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,65 +17,134 @@ public class Agendamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private LocalDateTime fechaHora;  // Maneja solo fecha, hora y minutos
+    @Column(name = "fecha_hora_inicio")
+    private LocalDateTime fechaHoraInicio;
+
+    @Column(name = "fecha_hora_fin")
+    private LocalDateTime fechaHoraFin;
+
+    @Column(name = "precio_final")
+    private Double precioFinal;
+
     private String estado;
-    private String mensaje;
+
+    @Column(name = "notas_cliente")
+    private String notasCliente;
+
+    @Column(name = "notas_internas")
+    private String notasInternas;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     // Relaciones con otras tablas
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false) // Aseguramos que este campo haga referencia correcta al modelo ER
-    private Usuario usuario;
+    @JoinColumn(name = "cliente_usuario_id", nullable = false)
+    private Usuario clienteUsuario;
 
     @ManyToOne
-    @JoinColumn(name = "servicio_id", nullable = false) // Lo mismo para servicio
+    @JoinColumn(name = "personal_id", nullable = true)
+    private Personal personal;
+
+    @ManyToOne
+    @JoinColumn(name = "servicio_id", nullable = false)
     private Servicio servicio;
 
     @ManyToOne
-    @JoinColumn(name = "sucursal_id", nullable = false) // Y sucursal
+    @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
 
     // Constructor vacío
     public Agendamiento() {
     }
 
-    
-
-	// Constructor con parámetros
-    public Agendamiento(Integer id, LocalDateTime fechaHora, String estado, Usuario usuario, Servicio servicio, Sucursal sucursal, String mensaje) {
-        this.id = id;
-        this.fechaHora = fechaHora;
-        this.estado = estado;
-        this.usuario = usuario;
+    // Constructor con parámetros
+    public Agendamiento(Usuario clienteUsuario, Personal personal, Servicio servicio, Sucursal sucursal,
+            LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, Double precioFinal, String estado,
+            String notasCliente, String notasInternas) {
+        this.clienteUsuario = clienteUsuario;
+        this.personal = personal;
         this.servicio = servicio;
         this.sucursal = sucursal;
-        this.mensaje = mensaje;
+        this.fechaHoraInicio = fechaHoraInicio;
+        this.fechaHoraFin = fechaHoraFin;
+        this.precioFinal = precioFinal;
+        this.estado = estado;
+        this.notasCliente = notasCliente;
+        this.notasInternas = notasInternas;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters y Setters
-    
-    public String getMensaje() {
-		return mensaje;
-	}
 
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
-	}
-    public Integer getId() {
+    public LocalDateTime getFechaHoraInicio() {
+        return fechaHoraInicio;
+    }
+
+    public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
+        this.fechaHoraInicio = fechaHoraInicio;
+    }
+
+    public LocalDateTime getFechaHoraFin() {
+        return fechaHoraFin;
+    }
+
+    public void setFechaHoraFin(LocalDateTime fechaHoraFin) {
+        this.fechaHoraFin = fechaHoraFin;
+    }
+
+    public Double getPrecioFinal() {
+        return precioFinal;
+    }
+
+    public void setPrecioFinal(Double precioFinal) {
+        this.precioFinal = precioFinal;
+    }
+
+    public String getNotasCliente() {
+        return notasCliente;
+    }
+
+    public void setNotasCliente(String notasCliente) {
+        this.notasCliente = notasCliente;
+    }
+
+    public String getNotasInternas() {
+        return notasInternas;
+    }
+
+    public void setNotasInternas(String notasInternas) {
+        this.notasInternas = notasInternas;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public LocalDateTime getFechaHora() {
-        return fechaHora;
-    }
-
-    public void setFechaHora(LocalDateTime fechaHora) {
-        this.fechaHora = fechaHora;
     }
 
     public String getEstado() {
@@ -84,12 +155,20 @@ public class Agendamiento {
         this.estado = estado;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Usuario getClienteUsuario() {
+        return clienteUsuario;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setClienteUsuario(Usuario clienteUsuario) {
+        this.clienteUsuario = clienteUsuario;
+    }
+
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
     }
 
     public Servicio getServicio() {
@@ -108,17 +187,44 @@ public class Agendamiento {
         this.sucursal = sucursal;
     }
 
+    // Métodos de compatibilidad con código existente
+    public LocalDateTime getFechaHora() {
+        return fechaHoraInicio;
+    }
+
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHoraInicio = fechaHora;
+    }
+
+    public String getMensaje() {
+        return notasCliente;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.notasCliente = mensaje;
+    }
+
+    public Usuario getUsuario() {
+        return clienteUsuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.clienteUsuario = usuario;
+    }
+
     // Método toString
     @Override
     public String toString() {
         return "Agendamiento{" +
                 "id=" + id +
-                ", fechaHora='" + fechaHora + '\'' +
+                ", fechaHoraInicio=" + fechaHoraInicio +
+                ", fechaHoraFin=" + fechaHoraFin +
                 ", estado='" + estado + '\'' +
-                ", usuario=" + usuario +
+                ", clienteUsuario=" + clienteUsuario +
+                ", personal=" + personal +
                 ", servicio=" + servicio +
                 ", sucursal=" + sucursal +
-                ", mensaje=" + mensaje +
+                ", precioFinal=" + precioFinal +
                 '}';
     }
 }

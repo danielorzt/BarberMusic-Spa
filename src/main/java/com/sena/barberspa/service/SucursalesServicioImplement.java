@@ -22,9 +22,15 @@ public class SucursalesServicioImplement implements ISucursalesService {
 	}
 
 	@Override
-	public Optional<Sucursal> get(Integer id) {
+	public Optional<Sucursal> get(Long id) {
 		// TODO Auto-generated method stub
 		return sucursalRepository.findById(id);
+	}
+
+	@Override
+	public Sucursal findById(Long id) {
+		// TODO Auto-generated method stub
+		return sucursalRepository.findById(id).orElse(null);
 	}
 
 	@Override
@@ -34,7 +40,7 @@ public class SucursalesServicioImplement implements ISucursalesService {
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(Long id) {
 		// TODO Auto-generated method stub
 		sucursalRepository.deleteById(id);
 	}

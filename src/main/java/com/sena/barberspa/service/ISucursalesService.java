@@ -8,13 +8,15 @@ import com.sena.barberspa.model.Sucursal;
 public interface ISucursalesService {
 	public Sucursal save(Sucursal sucursal);
 
-	public Optional<Sucursal> get(Integer id);
+	public Optional<Sucursal> get(Long id);
+
+	public Sucursal findById(Long id);
 
 	public void update(Sucursal sucursal);
 
-	public void delete(Integer id);
+	public void delete(Long id);
 
 	public List<Sucursal> findAll();
-	
-	//public List<Sucursal> findbyNombre(String Nombre);
+
+	// public List<Sucursal> findbyNombre(String Nombre);
 }

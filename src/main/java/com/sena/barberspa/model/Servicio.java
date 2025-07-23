@@ -1,5 +1,8 @@
 package com.sena.barberspa.model;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,44 +17,66 @@ public class Servicio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
+    @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "imagen_path")
     private String imagen;
 
+    @Column(name = "nombre")
     private String nombre;
 
-    private Double precio; // Cambiado a Double para representar valores numéricos correctamente
+    @Column(name = "precio_base")
+    private Double precio;
 
-    private Integer duracion; // Cambiado a Integer para manejar la duración como minutos (por ejemplo)
+    @Column(name = "duracion_minutos")
+    private Integer duracionMinutos;
+
+    @Column(name = "activo")
+    private Boolean activo;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false) // Llave foránea hacia la tabla usuarios
-    private Usuario usuario;
+    @JoinColumn(name = "categoria_id", nullable = true)
+    private Categoria categoria;
+
+    @ManyToOne
+    @JoinColumn(name = "especialidad_requerida_id", nullable = true)
+    private Especialidad especialidadRequerida;
 
     // Constructor vacío
     public Servicio() {
     }
 
     // Constructor con parámetros
-    public Servicio(Integer id, String descripcion, String imagen, String nombre, Double precio, Integer duracion,
-                    Usuario usuario) {
-        this.id = id;
+    public Servicio(String descripcion, String imagen, String nombre, Double precio,
+            Integer duracionMinutos, Boolean activo, Categoria categoria,
+            Especialidad especialidadRequerida) {
         this.descripcion = descripcion;
         this.imagen = imagen;
         this.nombre = nombre;
         this.precio = precio;
-        this.duracion = duracion;
-        this.usuario = usuario;
+        this.duracionMinutos = duracionMinutos;
+        this.activo = activo;
+        this.categoria = categoria;
+        this.especialidadRequerida = especialidadRequerida;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters y Setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -87,20 +112,69 @@ public class Servicio {
         this.precio = precio;
     }
 
-    public Integer getDuracion() {
-        return duracion;
+    public Integer getDuracionMinutos() {
+        return duracionMinutos;
     }
 
-    public void setDuracion(Integer duracion) {
-        this.duracion = duracion;
+    public void setDuracionMinutos(Integer duracionMinutos) {
+        this.duracionMinutos = duracionMinutos;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public Especialidad getEspecialidadRequerida() {
+        return especialidadRequerida;
+    }
+
+    public void setEspecialidadRequerida(Especialidad especialidadRequerida) {
+        this.especialidadRequerida = especialidadRequerida;
+    }
+
+    // Métodos de compatibilidad con código existente
+    public Double getPrecioBase() {
+        return precio;
+    }
+
+    public void setPrecioBase(Double precioBase) {
+        this.precio = precioBase;
     }
 
     public Usuario getUsuario() {
-        return usuario;
+        return null; // Los servicios no tienen usuario asociado en la nueva estructura
     }
 
     public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+        // No hacer nada, los servicios no tienen usuario asociado
     }
 
     @Override
@@ -111,8 +185,10 @@ public class Servicio {
                 ", imagen='" + imagen + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", precio=" + precio +
-                ", duracion=" + duracion +
-                ", usuario=" + usuario +
+                ", duracionMinutos=" + duracionMinutos +
+                ", activo=" + activo +
+                ", categoria=" + categoria +
+                ", especialidadRequerida=" + especialidadRequerida +
                 '}';
     }
 }

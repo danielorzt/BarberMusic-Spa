@@ -1,17 +1,9 @@
 package com.sena.barberspa.model;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import java.math.BigDecimal; // <-- IMPORT AGREGADO
+import java.time.LocalDateTime;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "ordenes")
@@ -19,117 +11,191 @@ public class Orden {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private String numero;
+    @Column(name = "numero_orden")
+    private String numeroOrden;
 
-    private Date fechacreacion;
+    @Column(name = "fecha_orden")
+    private LocalDateTime fechaOrden;
 
-    private Date fecharecibida;
+    @Column(nullable = false)
+    private BigDecimal subtotal; // Tipo de dato corregido a BigDecimal
 
-    private Double total;
+    @Column(name = "descuento_total")
+    private BigDecimal descuentoTotal; // Tipo de dato corregido a BigDecimal
 
-    private String estado;
+    @Column(name = "impuestos_total")
+    private BigDecimal impuestosTotal; // Tipo de dato corregido a BigDecimal
+
+    @Column(name = "total_orden")
+    private BigDecimal totalOrden; // Tipo de dato corregido a BigDecimal
+
+    @Column(name = "estado_orden")
+    private String estadoOrden;
+
+    @Column(name = "notas_orden")
+    private String notasOrden;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false) // Relación con la tabla usuarios
-    private Usuario usuario;
+    @JoinColumn(name = "cliente_usuario_id", nullable = false)
+    private Usuario clienteUsuario;
 
     @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleOrden> detalle;
+    private List<DetalleOrden> detalles;
 
     // Constructor vacío
     public Orden() {
     }
 
-    // Constructor con parámetros
-    public Orden(Integer id, String numero, Date fechacreacion, Date fecharecibida, Double total, String estado,
-            Usuario usuario) {
-        this.id = id;
-        this.numero = numero;
-        this.fechacreacion = fechacreacion;
-        this.fecharecibida = fecharecibida;
-        this.total = total;
-        this.estado = estado;
-        this.usuario = usuario;
+    // Método para actualizar las fechas antes de persistir o actualizar
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (fechaOrden == null) {
+            fechaOrden = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
     // Getters y Setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
+    public String getNumeroOrden() {
+        return numeroOrden;
+    }
+
+    public void setNumeroOrden(String numeroOrden) {
+        this.numeroOrden = numeroOrden;
+    }
+
+    public LocalDateTime getFechaOrden() {
+        return fechaOrden;
+    }
+
+    public void setFechaOrden(LocalDateTime fechaOrden) {
+        this.fechaOrden = fechaOrden;
+    }
+
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public BigDecimal getDescuentoTotal() {
+        return descuentoTotal;
+    }
+
+    public void setDescuentoTotal(BigDecimal descuentoTotal) {
+        this.descuentoTotal = descuentoTotal;
+    }
+
+    public BigDecimal getImpuestosTotal() {
+        return impuestosTotal;
+    }
+
+    public void setImpuestosTotal(BigDecimal impuestosTotal) {
+        this.impuestosTotal = impuestosTotal;
+    }
+
+    public BigDecimal getTotalOrden() {
+        return totalOrden;
+    }
+
+    public void setTotalOrden(BigDecimal totalOrden) {
+        this.totalOrden = totalOrden;
+    }
+
+    public String getEstadoOrden() {
+        return estadoOrden;
+    }
+
+    public void setEstadoOrden(String estadoOrden) {
+        this.estadoOrden = estadoOrden;
+    }
+
+    public String getNotasOrden() {
+        return notasOrden;
+    }
+
+    public void setNotasOrden(String notasOrden) {
+        this.notasOrden = notasOrden;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Usuario getClienteUsuario() {
+        return clienteUsuario;
+    }
+
+    public void setClienteUsuario(Usuario clienteUsuario) {
+        this.clienteUsuario = clienteUsuario;
+    }
+
+    public List<DetalleOrden> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleOrden> detalles) {
+        this.detalles = detalles;
+    }
+
+    // Convenience methods for backward compatibility
     public String getNumero() {
-        return numero;
+        return this.numeroOrden;
     }
 
     public void setNumero(String numero) {
-        this.numero = numero;
+        this.numeroOrden = numero;
     }
 
-    public Date getFechacreacion() {
-        return fechacreacion;
+    public BigDecimal getTotal() {
+        return this.totalOrden;
     }
 
-    public void setFechacreacion(Date fechacreacion) {
-        this.fechacreacion = fechacreacion;
-    }
-
-    public Date getFecharecibida() {
-        return fecharecibida;
-    }
-
-    public void setFecharecibida(Date fecharecibida) {
-        this.fecharecibida = fecharecibida;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
+    public void setTotal(BigDecimal total) {
+        this.totalOrden = total;
     }
 
     public String getEstado() {
-        return estado;
+        return this.estadoOrden;
     }
 
     public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public List<DetalleOrden> getDetalle() {
-        return detalle;
-    }
-
-    public void setDetalle(List<DetalleOrden> detalle) {
-        this.detalle = detalle;
-    }
-
-    @Override
-    public String toString() {
-        return "Orden{" +
-                "id=" + id +
-                ", numero='" + numero + '\'' +
-                ", fechacreacion=" + fechacreacion +
-                ", fecharecibida=" + fecharecibida +
-                ", total=" + total +
-                ", estado='" + estado + '\'' +
-                ", usuario=" + usuario +
-                ", detalle=" + detalle +
-                '}';
+        this.estadoOrden = estado;
     }
 }

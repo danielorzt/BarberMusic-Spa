@@ -1,5 +1,8 @@
 package com.sena.barberspa.model;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,43 +17,64 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
+    @Column(name = "nombre")
     private String nombreproducto;
 
+    @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "imagen_path")
     private String imagen;
 
-    private Double precio;
+    @Column(name = "precio")
+    private java.math.BigDecimal precio;
 
-    private Integer cantidad; // Cambiado a Integer para manejar cantidades numéricas correctamente
+    @Column(name = "stock")
+    private Integer stock;
+
+    @Column(name = "sku")
+    private String sku;
+
+    @Column(name = "activo")
+    private Boolean activo;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false) // Llave foránea hacia la tabla usuarios
-    private Usuario usuario;
+    @JoinColumn(name = "categoria_id", nullable = true)
+    private Categoria categoria;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     // Constructor vacío
     public Producto() {
     }
 
     // Constructor con parámetros
-    public Producto(Integer id, String nombreproducto, String descripcion, String imagen, Double precio, Integer cantidad, Usuario usuario) {
-        this.id = id;
+    public Producto(String nombreproducto, String descripcion, String imagen, java.math.BigDecimal precio,
+            Integer stock, String sku, Boolean activo, Categoria categoria) {
         this.nombreproducto = nombreproducto;
         this.descripcion = descripcion;
         this.imagen = imagen;
         this.precio = precio;
-        this.cantidad = cantidad;
-        this.usuario = usuario;
+        this.stock = stock;
+        this.sku = sku;
+        this.activo = activo;
+        this.categoria = categoria;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters y Setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,40 +102,83 @@ public class Producto {
         this.imagen = imagen;
     }
 
-    public Double getPrecio() {
+    public java.math.BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(java.math.BigDecimal precio) {
         this.precio = precio;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    // Métodos de compatibilidad con código existente
+    public String getNombre() {
+        return nombreproducto;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombreproducto = nombre;
     }
 
     public Usuario getUsuario() {
-        return usuario;
+        return null; // Los productos no tienen usuario asociado en la nueva estructura
     }
 
     public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+        // No hacer nada, los productos no tienen usuario asociado
     }
 
     @Override
     public String toString() {
-        return "Producto{" +
-                "id=" + id +
-                ", nombreproducto='" + nombreproducto + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", imagen='" + imagen + '\'' +
-                ", precio=" + precio +
-                ", cantidad=" + cantidad +
-                ", usuario=" + usuario +
-                '}';
+        return "Producto [id=" + id + ", nombreproducto=" + nombreproducto + ", descripcion=" + descripcion
+                + ", imagen=" + imagen + ", precio=" + precio + ", stock=" + stock + ", sku=" + sku + ", activo="
+                + activo + ", categoria=" + categoria + "]";
     }
 }
