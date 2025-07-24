@@ -3,6 +3,8 @@ package com.sena.barberspa.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,10 +39,13 @@ public class Categoria {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    // @JsonIgnore para evitar recursión al cargar productos/servicios con sus categorías
     @OneToMany(mappedBy = "categoria")
+    @JsonIgnore
     private List<Producto> productos;
 
     @OneToMany(mappedBy = "categoria")
+    @JsonIgnore
     private List<Servicio> servicios;
 
     public Categoria() {

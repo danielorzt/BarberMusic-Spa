@@ -187,8 +187,8 @@ public class Servicio {
                 ", precio=" + precio +
                 ", duracionMinutos=" + duracionMinutos +
                 ", activo=" + activo +
-                ", categoria=" + categoria +
-                ", especialidadRequerida=" + especialidadRequerida +
+                ", categoriaId=" + (categoria != null ? categoria.getId() : null) +
+                ", especialidadRequeridaId=" + (especialidadRequerida != null ? especialidadRequerida.getId() : null) +
                 '}';
     }
 }

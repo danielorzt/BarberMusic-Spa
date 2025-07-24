@@ -3,6 +3,7 @@ package com.sena.barberspa.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,20 +43,20 @@ public class Agendamiento {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Relaciones con otras tablas
-    @ManyToOne
+    // Relaciones con otras tablas - Optimizadas con FetchType.LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_usuario_id", nullable = false)
     private Usuario clienteUsuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_id", nullable = true)
     private Personal personal;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "servicio_id", nullable = false)
     private Servicio servicio;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
 
@@ -212,7 +213,7 @@ public class Agendamiento {
         this.clienteUsuario = usuario;
     }
 
-    // Método toString
+    // Método toString - CORREGIDO para evitar StackOverflowError
     @Override
     public String toString() {
         return "Agendamiento{" +
@@ -220,10 +221,10 @@ public class Agendamiento {
                 ", fechaHoraInicio=" + fechaHoraInicio +
                 ", fechaHoraFin=" + fechaHoraFin +
                 ", estado='" + estado + '\'' +
-                ", clienteUsuario=" + clienteUsuario +
-                ", personal=" + personal +
-                ", servicio=" + servicio +
-                ", sucursal=" + sucursal +
+                ", clienteUsuarioId=" + (clienteUsuario != null ? clienteUsuario.getId() : null) +
+                ", personalId=" + (personal != null ? personal.getId() : null) +
+                ", servicioId=" + (servicio != null ? servicio.getId() : null) +
+                ", sucursalId=" + (sucursal != null ? sucursal.getId() : null) +
                 ", precioFinal=" + precioFinal +
                 '}';
     }

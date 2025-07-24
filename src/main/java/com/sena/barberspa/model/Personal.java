@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,11 +24,11 @@ public class Personal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = true) // Cambiado a nullable = true
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sucursal_asignada_id") // Nombre correcto de la columna
     private Sucursal sucursalAsignada; // Nombre corregido del campo
 
@@ -175,8 +176,8 @@ public class Personal {
     public String toString() {
         return "Personal{" +
                 "id=" + id +
-                ", usuario=" + usuario +
-                ", sucursalAsignada=" + sucursalAsignada +
+                ", usuarioId=" + (usuario != null ? usuario.getId() : null) +
+                ", sucursalId=" + (sucursalAsignada != null ? sucursalAsignada.getId() : null) +
                 ", tipoPersonal='" + tipoPersonal + '\'' +
                 ", numeroEmpleado='" + numeroEmpleado + '\'' +
                 ", fechaContratacion=" + fechaContratacion +

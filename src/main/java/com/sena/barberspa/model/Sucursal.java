@@ -3,6 +3,8 @@ package com.sena.barberspa.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,11 +47,13 @@ public class Sucursal {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	// Relaciones
+	// Relaciones - @JsonIgnore para evitar recursión infinita al cargar sucursales
 	@OneToMany(mappedBy = "sucursal")
+	@JsonIgnore
 	private List<HorarioSucursal> horarios;
 
 	@OneToMany(mappedBy = "sucursal")
+	@JsonIgnore
 	private List<Direccion> direcciones;
 
 	// Constructor vacío

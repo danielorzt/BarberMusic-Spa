@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="https://thymeLeaf.org">
+<html lang="es" xmlns:th="https://thymeleaf.org">
 
 <head th:replace="~{usuario/template_user.html::head}"></head>
 
@@ -11,7 +11,6 @@
 <main class="main">
     <!-- Hero Section -->
     <section id="hero" class="hero section">
-
         <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="row align-items-center">
                 <div class="col-lg-6">
@@ -33,14 +32,9 @@
 
                         <div class="hero-buttons">
                             <a href="#contacto" class="btn btn-primary me-0 me-sm-2 mx-1">Iniciar</a>
-
-
                             <a href="https://www.instagram.com/reel/C9-kDfMykqh/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
                                class="btn btn-link mt-2 mt-sm-0 glightbox">
-
-                                <i class="bi bi-play-circle me-1"></i>Conocenos</a>
-
-
+                                <i class="bi bi-play-circle me-1"></i>Conocenos
                             </a>
                         </div>
                     </div>
@@ -53,12 +47,11 @@
 
                         <div class="customers-badge">
                             <div class="customer-avatars">
-                                <img src="assets/img/musicspavillahermosa-500x500.jpg" alt="Sucursal 1"
-                                     class="avatar"/>
-                                <img src="assets/img/musisss-500x500.jpg" alt="Sucursal 2" class="avatar"/>
-                                <img src="assets/img/proxim500x500.jpg" alt="Sucursal 3" class="avatar"/>
-                                <img src="assets/img/barbermusicspa-500x500.jpg" alt="Sucursal 4" class="avatar"/>
-                                <img src="assets/img/bspa500x500.jpg" alt="Sucursal 5" class="avatar"/>
+                                <img th:src="@{/assets/img/musicspavillahermosa-500x500.jpg}" alt="Sucursal 1" class="avatar"/>
+                                <img th:src="@{/assets/img/musisss-500x500.jpg}" alt="Sucursal 2" class="avatar"/>
+                                <img th:src="@{/assets/img/proxim500x500.jpg}" alt="Sucursal 3" class="avatar"/>
+                                <img th:src="@{/assets/img/barbermusicspa-500x500.jpg}" alt="Sucursal 4" class="avatar"/>
+                                <img th:src="@{/assets/img/bspa500x500.jpg}" alt="Sucursal 5" class="avatar"/>
                                 <span class="avatar more">3+</span>
                             </div>
                             <p class="mb-0 mt-2">
@@ -82,9 +75,8 @@
                     <span class="about-meta">MÁS INFORMACIÓN</span>
                     <h2 class="about-title">BarberMusic&Spa</h2>
                     <p class="about-description">
-                        En <strong>Music Spa Villahermosa y Barber Music Spa</strong> , te ofrecemos una experiencia
-                        única de
-                        relajación y cuidado personal diseñada especialmente para hombres y mujeres que buscan
+                        En <strong>Music Spa Villahermosa y Barber Music Spa</strong>, te ofrecemos una experiencia
+                        única de relajación y cuidado personal diseñada especialmente para hombres y mujeres que buscan
                         bienestar, estilo y renovación. Somos un exclusivo centro de spa y barbería en México que
                         combina técnicas profesionales, atención personalizada y un ambiente moderno y musical que
                         invita al descanso y la armonía.
@@ -105,12 +97,9 @@
                                              style="max-width: 100px; height: auto; flex-shrink: 0;"/>
                                         <figcaption>
                                             <h3 class="profile-name mb-1 fw-bold text-primary">BarberMusic&Spa</h3>
-                                            <p class="profile-position mb-0 text-muted lead"> Centro de Spa &amp;
-                                                Barberia
-                                            </p>
+                                            <p class="profile-position mb-0 text-muted lead">Centro de Spa & Barberia</p>
                                         </figcaption>
                                     </figure>
-
                                 </div>
                             </div>
                         </div>
@@ -124,7 +113,6 @@
                                  class="img-fluid main-image rounded-4"/>
                             <img th:src="@{/assets/img/02.jfif}" alt="Team Discussion"
                                  class="img-fluid small-image rounded-4"/>
-
                         </div>
                         <div class="experience-badge floating">
                             <h3>+20 <span>Años</span></h3>
@@ -136,6 +124,7 @@
         </div>
     </section>
     <!-- /About Section -->
+    
     <!-- Custom Slider Section -->
     <section id="slider" class="custom-slider section">
         <div class="container" data-aos="fade-up">
@@ -160,15 +149,12 @@
                                 <p>En BarberMusicSpa ofrecemos una experiencia única de relajación y cuidado personal
                                     con nuestros tratamientos profesionales.</p>
                                 <ul class="slide-features">
-                                    <li><i class="bi bi-check-circle"></i> Tratamientos corporales con tecnología
-                                        avanzada
-                                    </li>
+                                    <li><i class="bi bi-check-circle"></i> Tratamientos corporales con tecnología avanzada</li>
                                     <li><i class="bi bi-check-circle"></i> Terapias faciales personalizadas</li>
                                     <li><i class="bi bi-check-circle"></i> Servicios de barbería de lujo</li>
-                                    <li><i class="bi bi-check-circle"></i> Ambiente relajante con música terapéutica
-                                    </li>
+                                    <li><i class="bi bi-check-circle"></i> Ambiente relajante con música terapéutica</li>
                                 </ul>
-                                <a th:href="@{/servicios/servicioHome/{id}(id=5)}" class="btn-slider">
+                                <a th:href="@{/home/serviciosVista}" class="btn-slider">
                                     Ver todos los servicios <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
@@ -176,7 +162,7 @@
                     </div>
 
                     <!-- Slide 2 - Sucursales -->
-                    <div  class="slide">
+                    <div class="slide">
                         <div class="slide-content">
                             <div class="slide-image">
                                 <img th:src="@{/assets/img/Sucursal San Luis Potosí_barbermusicspa-500x500.jpg}"
@@ -192,7 +178,7 @@
                                     <li><i class="bi bi-geo-alt"></i> Plaza Altabrisa - Mérida</li>
                                     <li><i class="bi bi-geo-alt"></i> Plaza Zentralia - Ciudad del Carmen</li>
                                 </ul>
-                                <a th:href="@{#contacto}" class="btn-slider">
+                                <a href="#contacto" class="btn-slider">
                                     Ver todas las sucursales <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
@@ -208,9 +194,9 @@
         </div>
     </section>
     <!-- End Custom Slider Section -->
+    
     <!-- Features Section -->
     <section id="productos" class="features section">
-
         <!-- Section Title -->
         <div class="container section-title" data-aos="fade-up">
             <h2>Productos</h2>
@@ -219,11 +205,8 @@
         </div><!-- End Section Title -->
 
         <div class="container">
-
             <div class="d-flex justify-content-center">
-
                 <ul class="nav nav-tabs" data-aos="fade-up" data-aos-delay="100">
-
                     <li class="nav-item">
                         <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#features-tab-1">
                             <h4>Aceite</h4>
@@ -234,24 +217,20 @@
                         <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-2">
                             <h4>Crema</h4>
                         </a><!-- End tab nav item -->
-
                     </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-3">
                             <h4>Mascarilla</h4>
                         </a>
                     </li><!-- End tab nav item -->
-
                 </ul>
-
             </div>
 
             <div class="tab-content" data-aos="fade-up" data-aos-delay="200">
-
                 <div class="tab-pane fade active show" id="features-tab-1">
                     <div class="row">
-                        <div
-                                class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center">
+                        <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center">
                             <h3>Aceite Pre-afeitado</h3>
                             <p class="fst-italic">
                                 Prepara tu piel para un afeitado suave y sin irritaciones. Nuestro aceite
@@ -259,24 +238,20 @@
                                 acabado perfecto.
                             </p>
                             <ul>
-                                <li><i class="bi bi-check2-all"></i> <span>Fórmula enriquecida con aceites naturales
-											para una máxima hidratación.</span></li>
-                                <li><i class="bi bi-check2-all"></i> <span>Reduce el riesgo de cortes, irritación y
-											enrojecimiento.</span></li>
-                                <li><i class="bi bi-check2-all"></i> <span>UIdeal para todo tipo de piel, incluso
-											las más sensibles.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Fórmula enriquecida con aceites naturales para una máxima hidratación.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Reduce el riesgo de cortes, irritación y enrojecimiento.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Ideal para todo tipo de piel, incluso las más sensibles.</span></li>
                             </ul>
                         </div>
                         <div class="col-lg-6 order-1 order-lg-2 text-center">
-                            <img th:src="@{assets/img/aceitepreafeitadoroyalbarber.webp}" alt="" class="img-fluid">
+                            <img th:src="@{/assets/img/aceitepreafeitadoroyalbarber.webp}" alt="" class="img-fluid">
                         </div>
                     </div>
                 </div><!-- End tab content item -->
 
                 <div class="tab-pane fade" id="features-tab-2">
                     <div class="row">
-                        <div
-                                class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center">
+                        <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center">
                             <h3>Crema de afeitar</h3>
                             <p class="fst-italic">
                                 Consigue un afeitado al ras y sin irritaciones con nuestra crema de afeitar premium.
@@ -284,27 +259,23 @@
                                 disfrutas de una experiencia suave y refrescante.
                             </p>
                             <ul>
-                                <li><i class="bi bi-check2-all"></i> <span>Proporciona una hidratación profunda para
-											un afeitado cómodo.</span></li>
-                                <li><i class="bi bi-check2-all"></i> <span>Reduce la irritación y deja la piel suave
-											al tacto.</span></li>
-                                <li><i class="bi bi-check2-all"></i> <span>Ideal para pieles sensibles y cualquier
-											tipo de barba.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Proporciona una hidratación profunda para un afeitado cómodo.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Reduce la irritación y deja la piel suave al tacto.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Ideal para pieles sensibles y cualquier tipo de barba.</span></li>
                             </ul>
                             <p class="fst-italic">
                                 Haz que cada afeitado sea una experiencia excepcional. ¡Descúbrela ahora!
                             </p>
                         </div>
                         <div class="col-lg-6 order-1 order-lg-2 text-center">
-                            <img th:src="@{assets/img/cremadeafeitar.webp}" alt="" class="img-fluid">
+                            <img th:src="@{/assets/img/cremadeafeitar.webp}" alt="" class="img-fluid">
                         </div>
                     </div>
                 </div><!-- End tab content item -->
 
                 <div class="tab-pane fade" id="features-tab-3">
                     <div class="row">
-                        <div
-                                class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center">
+                        <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0 d-flex flex-column justify-content-center">
                             <h3>Mascarilla Facial</h3>
                             <p class="fst-italic">
                                 Renueva tu piel con nuestra mascarilla facial de acción profunda. Formulada con
@@ -312,30 +283,25 @@
                                 luminoso.
                             </p>
                             <ul>
-                                <li><i class="bi bi-check2-all"></i> <span>Elimina impurezas y restos de
-											contaminación.</span></li>
-                                <li><i class="bi bi-check2-all"></i> <span>Hidrata y nutre profundamente la
-											piel.</span></li>
-                                <li><i class="bi bi-check2-all"></i> <span>Ideal para todo tipo de piel,
-											especialmente la piel fatigada o seca.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Elimina impurezas y restos de contaminación.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Hidrata y nutre profundamente la piel.</span></li>
+                                <li><i class="bi bi-check2-all"></i> <span>Ideal para todo tipo de piel, especialmente la piel fatigada o seca.</span></li>
                             </ul>
                             <p class="fst-italic">
                                 Dale a tu piel el cuidado que se merece. ¡Pruébala hoy mismo!
                             </p>
                         </div>
                         <div class="col-lg-6 order-1 order-lg-2 text-center">
-                            <img th:src="@{assets/img/mascarillafacialwakeup.webp}" alt="" class="img-fluid">
+                            <img th:src="@{/assets/img/mascarillafacialwakeup.webp}" alt="" class="img-fluid">
                         </div>
                     </div>
                 </div><!-- End tab content item -->
-
             </div>
+            
             <div class="text-center">
-                <a th:href="@{/productosVista}" class="btn btn-danger btn-lg me-0 me-sm-2 mx-1">Ir a productos</a>
+                <a th:href="@{/home/productosVista}" class="btn btn-danger btn-lg me-0 me-sm-2 mx-1">Ir a productos</a>
             </div>
-
         </div>
-
     </section><!-- /Features Section -->
 
     <!-- Contact Section -->
@@ -357,7 +323,7 @@
                         <h3>Información de Contacto</h3>
                         <p>
                             ¡Bienvenido a BarberMusic&Spa somos un centro de relajación y
-                            estilo en multiples ciudades de Mexico!.
+                            estilo en múltiples ciudades de México!
                         </p>
 
                         <div class="info-item" data-aos="fade-up" data-aos-delay="300">
@@ -374,7 +340,6 @@
                                 <p>Coatzacoalcos, México</p>
                                 <p>+52 921 145 8851</p>
                                 <br/>
-                                <p></p>
                                 <p>Plaza Altabrisa</p>
                                 <p>Merida, México</p>
                                 <p>+52 999 503 8545</p>
@@ -385,7 +350,6 @@
                                 <br/>
                                 <p>Plaza Altabrisa</p>
                                 <p>Villahermosa, México</p>
-                                <p></p>
                                 <br/>
                                 <p>Plaza Strada</p>
                                 <p>Villahermosa, México</p>
@@ -396,7 +360,6 @@
                                 <p>+52 921 145 8851</p>
                             </div>
                         </div>
-
 
                         <div class="info-item" data-aos="fade-up" data-aos-delay="500">
                             <div class="icon-box">
@@ -429,7 +392,6 @@
                                             <option th:each="servicio : ${servicios}" th:value="${servicio.id}"
                                                     th:text="${servicio.nombre}"></option>
                                         </select>
-
                                     </div>
 
                                     <div class="col-12">
@@ -440,13 +402,13 @@
                                     </div>
 
                                     <div class="col-12">
-											<textarea class="form-control" id="mensaje" name="mensaje" rows="6"
-                                                      placeholder="Mensaje / Asunto" required></textarea>
+                                        <textarea class="form-control" id="mensaje" name="mensaje" rows="6"
+                                                  placeholder="Mensaje / Asunto" required></textarea>
                                     </div>
 
                                     <div class="col-12 text-center">
-                                        <div class="loading">oLading</div>
-                                        <div class=""></div>
+                                        <div class="loading">Loading</div>
+                                        <div class="error-message"></div>
                                         <div class="sent-message">
                                             Tu reserva ha sido enviada. Gracias!
                                         </div>
@@ -455,21 +417,20 @@
                                                 Enviar Mensaje
                                             </button>
                                         </a>
-
                                     </div>
                                 </div>
                             </form>
                         </div>
+                        
                         <div th:unless="${sesion == null}">
-                            <form th:action="@{/agendamientos/save}" method="post" enctype="multipart/form-data"
+                            <form th:action="@{/home/save}" method="post" enctype="multipart/form-data"
                                   class="php-email-form" data-aos="fade-up" data-aos-delay="200">
                                 <div class="row gy-4">
                                     <div class="col-12">
                                         <input placeholder="Selecciona fecha y hora" class="form-control"
-                                               type="datetime-local" id="fechaHora" name="fechaHora" step="900"
+                                               type="datetime-local" id="fechaHoraAuth" name="fechaHora" step="900"
                                                min="08:00" max="20:00" required>
-                                        <small class="text-muted">Seleccione en intervalos de 15 minutos (8:00 am -
-                                            8:00 pm)</small>
+                                        <small class="text-muted">Seleccione en intervalos de 15 minutos (8:00 am - 8:00 pm)</small>
                                     </div>
 
                                     <div class="col-12">
@@ -487,8 +448,8 @@
                                     </div>
 
                                     <div class="col-12">
-											<textarea class="form-control" id="mensaje" name="mensaje" rows="6"
-                                                      placeholder="Mensaje / Asunto" required></textarea>
+                                        <textarea class="form-control" id="mensajeAuth" name="mensaje" rows="6"
+                                                  placeholder="Mensaje / Asunto" required></textarea>
                                     </div>
 
                                     <div class="col-12 text-center">
@@ -504,60 +465,67 @@
                                 </div>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </section>
     <!-- /Contact Section -->
-
 </main>
 
 <div th:insert="~{usuario/template_user.html::footer}"></div>
 <!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
-        class="bi bi-arrow-up-short"></i></a>
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
 
 <!-- Preloader -->
 <div id="preloader"></div>
 
-<div th:insert="~{usuario/template_user.html::jsFiles}">
-
-
-</div>
+<div th:insert="~{usuario/template_user.html::jsFiles}"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const fechaHoraInput = document.getElementById('fechaHora');
+        const fechaHoraAuthInput = document.getElementById('fechaHoraAuth');
+        
+        function validateDateTime(input) {
+            if (!input) return;
+            
+            input.addEventListener('change', function () {
+                const fechaHora = new Date(this.value);
+                const horas = fechaHora.getHours();
+                const minutos = fechaHora.getMinutes();
 
-        fechaHoraInput.addEventListener('change', function () {
-            const fechaHora = new Date(this.value);
-            const horas = fechaHora.getHours();
-            const minutos = fechaHora.getMinutes();
+                // Validar horario
+                if (horas < 8 || horas >= 20) {
+                    alert('Por favor seleccione un horario entre 8:00 am y 8:00 pm');
+                    this.value = '';
+                    return;
+                }
 
-            // Validar horario
-            if (horas < 8 || horas >= 20) {
-                alert('Por favor seleccione un horario entre 8:00 am y 8:00 pm');
-                this.value = '';
-                return;
-            }
-
-            // Validar intervalos de 15 minutos
-            if (minutos % 15 !== 0) {
-                alert('Las citas deben ser en intervalos de 15 minutos (00, 15, 30, 45)');
-                this.value = '';
-            }
-        });
+                // Validar intervalos de 15 minutos
+                if (minutos % 15 !== 0) {
+                    alert('Las citas deben ser en intervalos de 15 minutos (00, 15, 30, 45)');
+                    this.value = '';
+                }
+            });
+        }
+        
+        validateDateTime(fechaHoraInput);
+        validateDateTime(fechaHoraAuthInput);
     });
-
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Slider functionality
         const sliderTrack = document.querySelector('.slider-track');
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.slider-dot');
+        
+        if (!sliderTrack || slides.length === 0) return;
+        
         let currentIndex = 0;
         const slideCount = slides.length;
 
@@ -592,14 +560,15 @@
 
         // Pause on hover
         const sliderContainer = document.querySelector('.slider-container');
-        sliderContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
-        sliderContainer.addEventListener('mouseleave', () => {
-            clearInterval(slideInterval);
-            slideInterval = setInterval(nextSlide, 5000);
-        });
+        if (sliderContainer) {
+            sliderContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            sliderContainer.addEventListener('mouseleave', () => {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(nextSlide, 5000);
+            });
+        }
     });
 </script>
 
 </body>
-
 </html>

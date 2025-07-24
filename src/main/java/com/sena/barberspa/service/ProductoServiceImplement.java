@@ -5,11 +5,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sena.barberspa.model.Producto;
 import com.sena.barberspa.repository.IProductoRepository;
 
 @Service
+@Transactional
 public class ProductoServiceImplement implements IProductoService {
 
 	@Autowired

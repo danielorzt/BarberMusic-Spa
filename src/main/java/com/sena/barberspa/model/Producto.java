@@ -179,6 +179,6 @@ public class Producto {
     public String toString() {
         return "Producto [id=" + id + ", nombreproducto=" + nombreproducto + ", descripcion=" + descripcion
                 + ", imagen=" + imagen + ", precio=" + precio + ", stock=" + stock + ", sku=" + sku + ", activo="
-                + activo + ", categoria=" + categoria + "]";
+                + activo + ", categoriaId=" + (categoria != null ? categoria.getId() : null) + "]";
     }
 }
