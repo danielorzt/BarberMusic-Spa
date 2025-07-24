@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.sena.barberspa.model.Agendamiento;
 import com.sena.barberspa.model.Orden;
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.EmailService;
 import com.sena.barberspa.service.IAgendamientosService;
 import com.sena.barberspa.service.IOrdenService;
@@ -60,37 +61,8 @@ public class UsuarioController {
 	// datos)
 	private static final ConcurrentHashMap<String, String> resetTokens = new ConcurrentHashMap<>();
 
-	@GetMapping("/registro")
-	public String showRegistrationForm(Model model) {
-		model.addAttribute("usuario", new Usuario());
-		return "usuario/registro";
-	}
 
-	@PostMapping("/save")
-	public String registerUser(Usuario usuario, RedirectAttributes redirectAttributes, HttpSession session) {
-		try {
-			usuario.setRol("CLIENTE");
-			usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-			usuario.setActivo(true);
-			Usuario savedUsuario = usuarioService.save(usuario);
 
-			// Iniciar sesión automáticamente después del registro
-			session.setAttribute("idUsuario", savedUsuario.getId());
-
-			redirectAttributes.addFlashAttribute("success", "¡Registro exitoso! Bienvenido a Barber Music Spa.");
-			return "redirect:/usuario/acceder";
-		} catch (Exception e) {
-			LOGGER.error("Error al registrar usuario: {}", e.getMessage());
-			redirectAttributes.addFlashAttribute("error", "Error al registrar. Intente nuevamente.");
-			return "redirect:/usuario/registro";
-		}
-	}
-
-	@GetMapping("/login")
-	public String showLoginForm(Model model) {
-		model.addAttribute("usuario", new Usuario());
-		return "usuario/login";
-	}
 
 	@GetMapping("/acceder")
 	public String acceder(HttpSession session) {
@@ -111,16 +83,16 @@ public class UsuarioController {
 
 				// Redirigir según el rol
 				switch (usuario.getRol()) {
-					case "GERENTE":
+					case GERENTE:
 						LOGGER.info("Redirigiendo gerente a dashboard");
 						return "redirect:/administrador";
-					case "ADMIN_SUCURSAL":
+					case ADMIN_SUCURSAL:
 						LOGGER.info("Redirigiendo admin sucursal a panel");
 						return "redirect:/admin-sucursal";
-					case "EMPLEADO":
+					case EMPLEADO:
 						LOGGER.info("Redirigiendo empleado a panel");
 						return "redirect:/empleado";
-					case "CLIENTE":
+					case CLIENTE:
 					default:
 						LOGGER.info("Redirigiendo cliente a home");
 						return "redirect:/";
@@ -361,7 +333,7 @@ public class UsuarioController {
 			Usuario admin = new Usuario();
 			admin.setNombre("Admin Sistema");
 			admin.setEmail("admin@barberspa.com");
-			admin.setRol("GERENTE");
+			admin.setRol(RolUsuario.GERENTE);
 			admin.setPassword(passwordEncoder.encode("admin123"));
 			admin.setActivo(true);
 			admin.setTelefono("1234567890");

@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.sena.barberspa.model.*;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.*;
 
 import jakarta.servlet.http.HttpSession;
@@ -149,8 +150,8 @@ public class GerenteController {
 
             if (gerente != null && empleado != null && sucursal != null) {
                 // Cambiar rol
-                String rolAnterior = empleado.getRol();
-                empleado.setRol("ADMIN_SUCURSAL");
+                RolUsuario rolAnterior = empleado.getRol();
+                empleado.setRol(RolUsuario.ADMIN_SUCURSAL);
                 empleado.setSucursalPreferida(sucursal);
                 usuarioService.save(empleado);
 

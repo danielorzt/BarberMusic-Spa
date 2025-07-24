@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.repository.IUsuarioRepository;
 
 @Service
@@ -78,26 +79,72 @@ public class UsuarioServiceImplement implements IUsuarioService {
 		return new User(usuario.getEmail(), usuario.getPassword(), authorities);
 	}
 
-	private String mapRoleToSpringRole(String rol) {
+	/**
+	 * Mapea el rol del usuario al formato requerido por Spring Security
+	 * Actualizado para usar RolUsuario enum
+	 */
+	private String mapRoleToSpringRole(RolUsuario rol) {
 		if (rol == null) {
 			return "CLIENTE";
 		}
-		switch (rol.toUpperCase()) {
-			case "USER":
-				return "CLIENTE";
-			case "ADMIN":
-				return "GERENTE";
-			case "CLIENTE":
-				return "CLIENTE";
-			case "EMPLEADO":
-				return "EMPLEADO";
-			case "ADMIN_SUCURSAL":
-				return "ADMIN_SUCURSAL";
-			case "GERENTE":
-				return "GERENTE";
-			default:
-				return "CLIENTE";
+		return rol.getCodigo();
+	}
+	
+	/**
+	 * Método de compatibilidad para roles string (deprecado)
+	 */
+	@Deprecated
+	private String mapRoleToSpringRole(String rol) {
+		RolUsuario rolEnum = RolUsuario.fromCodigo(rol);
+		return mapRoleToSpringRole(rolEnum);
+	}
+	
+	// Métodos adicionales para gestión de roles según Manual BarberMusic&Spa
+	
+	/**
+	 * Buscar usuarios por rol
+	 */
+	public List<Usuario> findByRol(RolUsuario rol) {
+		return repository.findAll().stream()
+			.filter(u -> u.getRol() == rol)
+			.filter(u -> !u.isDeleted())
+			.toList();
+	}
+	
+	/**
+	 * Buscar usuarios activos únicamente
+	 */
+	public List<Usuario> findActiveUsers() {
+		return repository.findAll().stream()
+			.filter(u -> u.getActivo() && !u.isDeleted())
+			.toList();
+	}
+	
+	/**
+	 * Promover usuario al siguiente rol en la jerarquía
+	 */
+	public Usuario promoverUsuario(Long userId) {
+		Optional<Usuario> usuarioOpt = repository.findById(userId);
+		if (usuarioOpt.isEmpty()) {
+			throw new RuntimeException("Usuario no encontrado");
 		}
+		
+		Usuario usuario = usuarioOpt.get();
+		RolUsuario nuevoRol = usuario.getRol().getSiguienteRol();
+		
+		if (nuevoRol != usuario.getRol()) { // Si hay cambio
+			usuario.setRol(nuevoRol);
+			return repository.save(usuario);
+		}
+		
+		return usuario; // Ya está en el máximo rol
+	}
+	
+	/**
+	 * Verificar si un email ya existe (para validaciones)
+	 */
+	public boolean existsByEmail(String email) {
+		return findByEmail(email).isPresent();
 	}
 
 }

@@ -35,12 +35,17 @@ public class SecurityConfig {
                 // Configurar las reglas de autorización de las peticiones HTTP
                 .authorizeHttpRequests(auth -> auth
                         // Permitir acceso público (sin autenticación) a estas rutas
+                        // Rutas públicas (sin autenticación)
                         .requestMatchers(
                                 new AntPathRequestMatcher("/"),
                                 new AntPathRequestMatcher("/home/**"),
-                                new AntPathRequestMatcher("/debug/**"), // CRITICO: Permitir acceso a debug
+                                new AntPathRequestMatcher("/debug/**"),
                                 new AntPathRequestMatcher("/usuario/login"),
                                 new AntPathRequestMatcher("/usuario/registro"),
+                                new AntPathRequestMatcher("/usuario/save"),
+                                new AntPathRequestMatcher("/usuario/validar-email"),
+                                new AntPathRequestMatcher("/usuario/test-registro"),
+                                new AntPathRequestMatcher("/usuario/test-login"),
                                 new AntPathRequestMatcher("/assets/**"),
                                 new AntPathRequestMatcher("/static/**"),
                                 new AntPathRequestMatcher("/images/**"),
@@ -55,16 +60,38 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/productosVista"),
                                 new AntPathRequestMatcher("/serviciosVista"))
                         .permitAll()
-                        // Cualquier otra petición debe ser autenticada
+                        
+                        // Rutas por ROL según Manual de Roles BarberMusic&Spa
+                        
+                        // EMPLEADO - Panel de empleado y gestión de agendamientos
+                        .requestMatchers("/empleado/**")
+                        .hasAnyRole("EMPLEADO", "ADMIN_SUCURSAL", "GERENTE")
+                        
+                        // ADMIN_SUCURSAL - Gestión de sucursal específica
+                        .requestMatchers("/admin-sucursal/**")
+                        .hasAnyRole("ADMIN_SUCURSAL", "GERENTE")
+                        
+                        // GERENTE - Acceso total del sistema (Super Admin)
+                        .requestMatchers("/administrador/**", "/gerente/**")
+                        .hasRole("GERENTE")
+                        
+                        // CLIENTE - Rutas específicas de cliente (resto requiere autenticación)
                         .anyRequest().authenticated())
-                // Configurar login form para web y session management
+                // Configurar login form con redirección por rol
                 .formLogin(formLogin -> formLogin
                         .loginPage("/usuario/login")
-                        .defaultSuccessUrl("/home", true)
+                        .loginProcessingUrl("/login") // URL que procesa el formulario
+                        .successHandler((request, response, authentication) -> {
+                            // Redirección personalizada según rol después del login
+                            response.sendRedirect("/usuario/login-success");
+                        })
+                        .failureUrl("/usuario/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/home")
+                        .logoutSuccessUrl("/usuario/logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll())
                 // Configurar la gestión de sesiones - STATEFUL para web, STATELESS para APIs
                 .sessionManagement(sessionManager -> sessionManager

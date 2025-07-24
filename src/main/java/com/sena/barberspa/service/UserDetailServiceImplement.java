@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.enums.RolUsuario;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -42,7 +43,7 @@ public class UserDetailServiceImplement implements UserDetailsService {
 			// Establecer la sesión
 			session.setAttribute("idUsuario", usuario.getId());
 
-			String mappedRole = mapRoleToSpringRole(usuario.getRol());
+			String mappedRole = usuario.getRol().getCodigo();
 			log.info("Rol mapeado para Spring Security: {}", mappedRole);
 
 			return User.builder()
@@ -56,21 +57,5 @@ public class UserDetailServiceImplement implements UserDetailsService {
 		}
 	}
 
-	private String mapRoleToSpringRole(String rol) {
-		if (rol == null) {
-			return "CLIENTE";
-		}
-		switch (rol.toUpperCase()) {
-			case "CLIENTE":
-				return "CLIENTE";
-			case "EMPLEADO":
-				return "EMPLEADO";
-			case "ADMIN_SUCURSAL":
-				return "ADMIN_SUCURSAL";
-			case "GERENTE":
-				return "GERENTE";
-			default:
-				return "CLIENTE";
-		}
-	}
+	// Método removido - ahora usamos directamente RolUsuario.getCodigo()
 }

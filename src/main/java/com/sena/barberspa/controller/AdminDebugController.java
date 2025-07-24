@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.IUsuarioService;
 
 import jakarta.servlet.http.HttpSession;
@@ -53,8 +54,8 @@ public class AdminDebugController {
                     debug.append("<b>User Active:</b> ").append(usuario.getActivo()).append("<br><br>");
 
                     // Check if should have admin access
-                    String rol = usuario.getRol();
-                    boolean shouldHaveAdminAccess = "ADMIN_GENERAL".equals(rol) || "ADMIN_SUCURSAL".equals(rol);
+                    RolUsuario rol = usuario.getRol();
+                    boolean shouldHaveAdminAccess = RolUsuario.GERENTE.equals(rol) || RolUsuario.ADMIN_SUCURSAL.equals(rol);
                     debug.append("<b>Should have admin access:</b> ").append(shouldHaveAdminAccess).append("<br>");
 
                     if (shouldHaveAdminAccess) {
@@ -98,7 +99,7 @@ public class AdminDebugController {
             Usuario admin = new Usuario();
             admin.setNombre("Admin Sistema");
             admin.setEmail("admin@barberspa.com");
-            admin.setRol("ADMIN_GENERAL");
+            admin.setRol(RolUsuario.GERENTE);
             admin.setPassword("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"); // admin123
             admin.setActivo(true);
             admin.setTelefono("1234567890");

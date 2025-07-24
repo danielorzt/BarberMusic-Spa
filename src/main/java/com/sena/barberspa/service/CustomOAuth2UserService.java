@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.enums.RolUsuario;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -63,7 +64,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String userNameAttributeName = getUserNameAttributeName(provider);
 
             return new DefaultOAuth2User(
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + mapRoleToSpringRole(user.getRol()))),
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRol().getCodigo())),
                     attributes,
                     userNameAttributeName
             );
@@ -138,7 +139,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 user = new Usuario();
                 user.setEmail(email);
                 user.setNombre(name);
-                user.setRol("CLIENTE");
+                user.setRol(RolUsuario.CLIENTE);
                 user.setPassword(passwordEncoder.encode("oauth_default_password"));
                 user.setActivo(true);
 
@@ -155,25 +156,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    private String mapRoleToSpringRole(String rol) {
+    private String mapRoleToSpringRole(RolUsuario rol) {
         if (rol == null) {
             return "CLIENTE";
         }
-        switch (rol.toUpperCase()) {
-            case "USER":
-                return "CLIENTE";
-            case "ADMIN":
-                return "ADMIN_GENERAL";
-            case "CLIENTE":
-                return "CLIENTE";
-            case "EMPLEADO":
-                return "EMPLEADO";
-            case "ADMIN_SUCURSAL":
-                return "ADMIN_SUCURSAL";
-            case "ADMIN_GENERAL":
-                return "ADMIN_GENERAL";
-            default:
-                return "CLIENTE";
-        }
+        return rol.getCodigo();
     }
 }

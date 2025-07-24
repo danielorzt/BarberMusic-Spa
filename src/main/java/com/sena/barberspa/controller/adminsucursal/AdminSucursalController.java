@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.sena.barberspa.model.*;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.*;
 
 import jakarta.servlet.http.HttpSession;
@@ -179,7 +180,7 @@ public class AdminSucursalController {
 
             if (admin != null && cliente != null) {
                 // Cambiar rol de cliente a empleado
-                cliente.setRol("EMPLEADO");
+                cliente.setRol(RolUsuario.EMPLEADO);
                 usuarioService.save(cliente);
 
                 // Crear registro en personal

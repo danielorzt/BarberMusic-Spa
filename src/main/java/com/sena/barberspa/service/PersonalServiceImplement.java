@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sena.barberspa.model.Personal;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.model.Usuario;
 import com.sena.barberspa.repository.IPersonalRepository;
 
@@ -52,11 +53,11 @@ public class PersonalServiceImplement implements IPersonalService {
             return false;
         }
         
-        // Verificar si el rol es EMPLEADO, ADMIN_SUCURSAL o ADMIN_GENERAL
-        String rol = usuario.getRol();
-        if ("EMPLEADO".equals(rol) || "ADMIN_SUCURSAL".equals(rol) || "ADMIN_GENERAL".equals(rol)) {
+        // Verificar si el rol es EMPLEADO, ADMIN_SUCURSAL o GERENTE
+        RolUsuario rol = usuario.getRol();
+        if (RolUsuario.EMPLEADO.equals(rol) || RolUsuario.ADMIN_SUCURSAL.equals(rol) || RolUsuario.GERENTE.equals(rol)) {
             // Para EMPLEADO, verificar que tenga registro en la tabla personal
-            if ("EMPLEADO".equals(rol)) {
+            if (RolUsuario.EMPLEADO.equals(rol)) {
                 return personalRepository.findByUsuario(usuario).isPresent();
             }
             return true; // ADMIN_SUCURSAL y ADMIN_GENERAL no requieren registro en personal
@@ -71,10 +72,10 @@ public class PersonalServiceImplement implements IPersonalService {
             return false;
         }
         
-        String rol = usuario.getRol();
+        RolUsuario rol = usuario.getRol();
         
-        // ADMIN_GENERAL tiene acceso a todas las sucursales
-        if ("ADMIN_GENERAL".equals(rol)) {
+        // GERENTE tiene acceso a todas las sucursales
+        if (RolUsuario.GERENTE.equals(rol)) {
             return true;
         }
         

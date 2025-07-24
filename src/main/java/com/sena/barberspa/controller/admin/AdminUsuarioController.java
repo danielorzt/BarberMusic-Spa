@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.IUsuarioService;
 
 import jakarta.servlet.http.HttpSession;
@@ -80,13 +81,13 @@ public class AdminUsuarioController {
             return "redirect:/admin/usuarios";
         }
 
-        // Cambiar el rol del usuario (CLIENTE <-> ADMIN_GENERAL)
-        if ("CLIENTE".equals(usuario.getRol())) {
-            usuario.setRol("ADMIN_GENERAL");
+        // Cambiar el rol del usuario (CLIENTE <-> GERENTE)
+        if (RolUsuario.CLIENTE.equals(usuario.getRol())) {
+            usuario.setRol(RolUsuario.GERENTE);
             redirectAttributes.addFlashAttribute("success",
                     "Usuario " + usuario.getNombre() + " ahora es administrador general");
-        } else if ("ADMIN_GENERAL".equals(usuario.getRol())) {
-            usuario.setRol("CLIENTE");
+        } else if (RolUsuario.GERENTE.equals(usuario.getRol())) {
+            usuario.setRol(RolUsuario.CLIENTE);
             redirectAttributes.addFlashAttribute("success",
                     "Usuario " + usuario.getNombre() + " ahora es usuario regular");
         }
