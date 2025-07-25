@@ -9,25 +9,16 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.sena.barberspa.model.Usuario;
 import com.sena.barberspa.model.enums.RolUsuario;
-
-import jakarta.servlet.http.HttpSession;
 
 @Service
 public class UserDetailServiceImplement implements UserDetailsService {
 
 	@Autowired
 	private IUsuarioService usuarioService;
-
-	@Autowired
-	private BCryptPasswordEncoder bCrypt;
-
-	@Autowired
-	HttpSession session;
 
 	private Logger log = LoggerFactory.getLogger(UserDetailServiceImplement.class);
 
@@ -39,9 +30,6 @@ public class UserDetailServiceImplement implements UserDetailsService {
 			Usuario usuario = optionalUser.get();
 			log.info("Usuario encontrado: {} con ID: {}", usuario.getNombre(), usuario.getId());
 			log.info("Rol del usuario: {}", usuario.getRol());
-
-			// Establecer la sesión
-			session.setAttribute("idUsuario", usuario.getId());
 
 			String mappedRole = usuario.getRol().getCodigo();
 			log.info("Rol mapeado para Spring Security: {}", mappedRole);

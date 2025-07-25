@@ -2,6 +2,7 @@ package com.sena.barberspa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sena.barberspa.model.DetalleOrden;
 import com.sena.barberspa.repository.IDetalleOrdenRepository;
@@ -13,12 +14,9 @@ public class DetalleOrdenServiceImplement implements IDetalleOrdenService {
 	private IDetalleOrdenRepository detalleOrdenRepository;
 
 	@Override
+	@Transactional
 	public DetalleOrden save(DetalleOrden detalleOrden) {
-		// TODO Auto-generated method stub
 		return detalleOrdenRepository.save(detalleOrden);
 	}
 
 }
-
-
-

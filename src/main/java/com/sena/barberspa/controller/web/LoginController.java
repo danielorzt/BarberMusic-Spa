@@ -61,6 +61,8 @@ public class LoginController {
     @GetMapping("/login-success")
     public String loginSuccess(HttpSession session, RedirectAttributes flash) {
         try {
+            LOGGER.info("🔄 LOGIN-SUCCESS: Procesando login exitoso...");
+            
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String email = auth.getName();
             
@@ -223,13 +225,62 @@ public class LoginController {
                       .append(": ").append(count).append(" usuarios\n");
             }
             
+            // Test 3: Verificar usuarios con roles inválidos
+            result.append("\n🔍 Usuarios con roles problemáticos:\n");
+            usuarioService.findAll().stream()
+                .filter(u -> {
+                    try {
+                        u.getRol(); // Intentar acceder al rol
+                        return false;
+                    } catch (Exception e) {
+                        return true; // Si falla, es problemático
+                    }
+                })
+                .forEach(u -> result.append("   - ").append(u.getEmail()).append(" (rol en BD: ").append(u.getRolString()).append(")\n"));
+            
             result.append("\n🎉 Sistema de login funcionando correctamente!");
             
         } catch (Exception e) {
             result.append("❌ Error en test: ").append(e.getMessage());
+            e.printStackTrace();
         }
         
         return result.toString();
+    }
+    
+    /**
+     * Crear usuario de prueba con contraseña BCrypt correcta
+     */
+    @GetMapping("/create-test-user")
+    @ResponseBody
+    public String createTestUser() {
+        try {
+            // Verificar si ya existe
+            Optional<Usuario> existing = usuarioService.findByEmail("test@cliente.com");
+            if (existing.isPresent()) {
+                return "✅ Usuario de prueba ya existe: test@cliente.com / password: 123456";
+            }
+            
+            // Crear nuevo usuario de prueba
+            Usuario testUser = new Usuario();
+            testUser.setNombre("Usuario Prueba");
+            testUser.setEmail("test@cliente.com");
+            testUser.setPassword("$2a$10$N9qo8uLOickgx2ZMRZoMye1NrwFldKHrvqEHO4K0XJIBLAYgOhLMa"); // "123456"
+            testUser.setRol(RolUsuario.CLIENTE);
+            testUser.setActivo(true);
+            testUser.setTelefono("+52 999 123 4567");
+            
+            usuarioService.save(testUser);
+            
+            return "✅ Usuario de prueba creado exitosamente!\n" +
+                   "📧 Email: test@cliente.com\n" +
+                   "🔑 Password: 123456\n" +
+                   "👤 Rol: CLIENTE\n\n" +
+                   "Puedes usar estas credenciales para probar el login.";
+            
+        } catch (Exception e) {
+            return "❌ Error creando usuario de prueba: " + e.getMessage();
+        }
     }
     
     // Clases de respuesta para API

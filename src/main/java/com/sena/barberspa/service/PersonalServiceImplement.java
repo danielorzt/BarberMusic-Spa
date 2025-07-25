@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sena.barberspa.model.Personal;
 import com.sena.barberspa.model.enums.RolUsuario;
@@ -18,75 +19,85 @@ public class PersonalServiceImplement implements IPersonalService {
     private IPersonalRepository personalRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Personal> findAll() {
         return personalRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Personal> findById(Long id) {
         return personalRepository.findById(id);
     }
 
     @Override
+    @Transactional
     public Personal save(Personal personal) {
         return personalRepository.save(personal);
     }
 
     @Override
+    @Transactional
     public void delete(Personal personal) {
         personalRepository.delete(personal);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Personal> findByUsuario(Usuario usuario) {
         return personalRepository.findByUsuario(usuario);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Personal> findBySucursalId(Long sucursalId) {
         return personalRepository.findBySucursalIdAndEstadoActivo(sucursalId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isUsuarioEmpleado(Usuario usuario) {
         if (usuario == null) {
             return false;
         }
-        
+
         // Verificar si el rol es EMPLEADO, ADMIN_SUCURSAL o GERENTE
         RolUsuario rol = usuario.getRol();
-        if (RolUsuario.EMPLEADO.equals(rol) || RolUsuario.ADMIN_SUCURSAL.equals(rol) || RolUsuario.GERENTE.equals(rol)) {
+        if (RolUsuario.EMPLEADO.equals(rol) || RolUsuario.ADMIN_SUCURSAL.equals(rol)
+                || RolUsuario.GERENTE.equals(rol)) {
             // Para EMPLEADO, verificar que tenga registro en la tabla personal
             if (RolUsuario.EMPLEADO.equals(rol)) {
                 return personalRepository.findByUsuario(usuario).isPresent();
             }
             return true; // ADMIN_SUCURSAL y ADMIN_GENERAL no requieren registro en personal
         }
-        
+
         return false;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean validateEmployeeAccess(Usuario usuario, Long sucursalId) {
         if (usuario == null || sucursalId == null) {
             return false;
         }
-        
+
         RolUsuario rol = usuario.getRol();
-        
+
         // GERENTE tiene acceso a todas las sucursales
         if (RolUsuario.GERENTE.equals(rol)) {
             return true;
         }
-        
-        // ADMIN_SUCURSAL y EMPLEADO deben tener registro en personal para la sucursal específica
+
+        // ADMIN_SUCURSAL y EMPLEADO deben tener registro en personal para la sucursal
+        // específica
         if ("ADMIN_SUCURSAL".equals(rol) || "EMPLEADO".equals(rol)) {
             Optional<Personal> personal = personalRepository.findByUsuario(usuario);
-            return personal.isPresent() && 
-                   personal.get().getSucursalAsignada().getId().equals(sucursalId) &&
-                   personal.get().getActivoEnEmpresa();
+            return personal.isPresent() &&
+                    personal.get().getSucursalAsignada().getId().equals(sucursalId) &&
+                    personal.get().getActivoEnEmpresa();
         }
-        
+
         return false;
     }
 }

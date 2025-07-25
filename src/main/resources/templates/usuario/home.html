@@ -5,8 +5,9 @@
 
 <body class="index-page">
 
-<div th:insert="~{usuario/template_user.html::header}" th:if="${sesion == null}"></div>
-<div th:insert="~{usuario/template_user.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
+<!-- Debug: sesion=${sesion}, isAuthenticated=${isAuthenticated}, usuario=${usuario != null ? usuario.nombre : 'null'} -->
+<div th:insert="~{usuario/template_user.html::header}" th:if="${sesion == null and not isAuthenticated}"></div>
+<div th:insert="~{usuario/template_user.html::usuarioCabecera}" th:if="${sesion != null or isAuthenticated}"></div>
 
 <main class="main">
     <!-- Hero Section -->
@@ -380,7 +381,7 @@
                             ¡Agenda tu cita en nuestra barbería y spa! Relájate, renueva tu estilo y vive una
                             experiencia única. ✨💇‍♂️💆‍♀️
                         </p>
-                        <div th:if="${sesion == null}">
+                        <div th:if="${sesion == null and not isAuthenticated}">
                             <form enctype="multipart/form-data" class="php-email-form" data-aos="fade-up"
                                   data-aos-delay="200">
                                 <div class="row gy-4">
@@ -422,7 +423,7 @@
                             </form>
                         </div>
                         
-                        <div th:unless="${sesion == null}">
+                        <div th:if="${sesion != null or isAuthenticated}">
                             <form th:action="@{/home/save}" method="post" enctype="multipart/form-data"
                                   class="php-email-form" data-aos="fade-up" data-aos-delay="200">
                                 <div class="row gy-4">

@@ -11,31 +11,34 @@ import com.sena.barberspa.model.Servicio;
 import com.sena.barberspa.repository.IServiciosRepository;
 
 @Service
-@Transactional
 public class ServicioServiceImplement implements IServiciosService {
 
 	@Autowired
 	private IServiciosRepository servicioRepository;
 
 	@Override
+	@Transactional
 	public Servicio save(Servicio servicio) {
 		// TODO Auto-generated method stub
 		return servicioRepository.save(servicio);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Servicio> get(Long id) {
 		// TODO Auto-generated method stub
 		return servicioRepository.findById(id);
 	}
 
 	@Override
+	@Transactional
 	public void update(Servicio servicio) {
 		// TODO Auto-generated method stub
 		servicioRepository.save(servicio);
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		// TODO Auto-generated method stub
 		servicioRepository.deleteById(id);
@@ -43,8 +46,8 @@ public class ServicioServiceImplement implements IServiciosService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Servicio> findAll() {
-		// TODO Auto-generated method stub
 		return servicioRepository.findAll();
 	}
 

@@ -3,15 +3,22 @@ package com.sena.barberspa.controller.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sena.barberspa.model.Producto;
+import com.sena.barberspa.model.Usuario;
 import com.sena.barberspa.service.IProductoService;
+import com.sena.barberspa.service.IUsuarioService;
+
+import java.util.Optional;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -24,6 +31,51 @@ public class PublicProductoController {
 
     @Autowired
     private IProductoService productoService;
+    
+    @Autowired
+    private IUsuarioService usuarioService;
+    
+    @ModelAttribute
+    public void addCommonAttributes(Model model, HttpSession session) {
+        try {
+            // Intentar obtener usuario de la sesión HTTP primero
+            Object userIdObj = session.getAttribute("idUsuario");
+            if (userIdObj != null) {
+                Long userId = Long.parseLong(userIdObj.toString());
+                Optional<Usuario> usuarioOpt = usuarioService.findById(userId);
+                if (usuarioOpt.isPresent()) {
+                    Usuario usuario = usuarioOpt.get();
+                    model.addAttribute("usuario", usuario);
+                    model.addAttribute("sesion", userId);
+                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde sesión HTTP: {} (ID: {})", usuario.getNombre(), userId);
+                    return;
+                }
+            }
+            
+            // Fallback: intentar obtener usuario desde Spring Security
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+                Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
+                if (usuarioOpt.isPresent()) {
+                    Usuario usuario = usuarioOpt.get();
+                    // Sincronizar la sesión HTTP con Spring Security
+                    session.setAttribute("idUsuario", usuario.getId());
+                    session.setAttribute("usuario", usuario);
+                    
+                    model.addAttribute("usuario", usuario);
+                    model.addAttribute("sesion", usuario.getId());
+                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde Spring Security: {} (ID: {})", usuario.getNombre(), usuario.getId());
+                    return;
+                }
+            }
+            
+            // No hay usuario autenticado
+            LOGGER.debug("ℹ️ PublicProductoController: No hay usuario autenticado en la sesión");
+            
+        } catch (Exception e) {
+            LOGGER.warn("PublicProductoController: Error loading user session data: {}", e.getMessage());
+        }
+    }
 
     @GetMapping("/productosVista")
     public String productosVista(Model model) {

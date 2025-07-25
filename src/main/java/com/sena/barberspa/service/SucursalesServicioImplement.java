@@ -11,43 +11,48 @@ import com.sena.barberspa.model.Sucursal;
 import com.sena.barberspa.repository.ISucursalesRepository;
 
 @Service
-@Transactional
 public class SucursalesServicioImplement implements ISucursalesService {
 
 	@Autowired
 	private ISucursalesRepository sucursalRepository;
 
 	@Override
+	@Transactional
 	public Sucursal save(Sucursal sucursal) {
 		// TODO Auto-generated method stub
 		return sucursalRepository.save(sucursal);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Sucursal> get(Long id) {
 		// TODO Auto-generated method stub
 		return sucursalRepository.findById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Sucursal findById(Long id) {
 		// TODO Auto-generated method stub
 		return sucursalRepository.findById(id).orElse(null);
 	}
 
 	@Override
+	@Transactional
 	public void update(Sucursal sucursal) {
 		// TODO Auto-generated method stub
 		sucursalRepository.save(sucursal);
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		// TODO Auto-generated method stub
 		sucursalRepository.deleteById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Sucursal> findAll() {
 		// TODO Auto-generated method stub
 		return sucursalRepository.findAll();

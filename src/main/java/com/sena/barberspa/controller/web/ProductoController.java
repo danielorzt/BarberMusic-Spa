@@ -10,6 +10,8 @@ import com.sena.barberspa.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,19 +57,53 @@ public class ProductoController {
 
 	@ModelAttribute
 	public void addUsuarioToModel(Model model, HttpSession session) {
-		Object idUsuarioObj = session.getAttribute("idUsuario");
-		if (idUsuarioObj != null) {
-			Long idUsuario = Long.parseLong(idUsuarioObj.toString());
-			Usuario usuario = usuarioService.findById(idUsuario).orElse(null);
-			if (usuario != null) {
-				model.addAttribute("usuario", usuario);
-				// Procesar agendamientos próximos y convertirlos en recordatorios
-				recordatorioService.procesarAgendamientosProximos(usuario, 3);
-
-				// Obtener recordatorios para mostrar en la barra lateral
-				List<Recordatorio> recordatorios = recordatorioService.findByUsuario(usuario);
-				model.addAttribute("recordatorios", recordatorios);
+		try {
+			// Intentar obtener usuario de la sesión HTTP primero
+			Object idUsuarioObj = session.getAttribute("idUsuario");
+			if (idUsuarioObj != null) {
+				Long idUsuario = Long.parseLong(idUsuarioObj.toString());
+				Optional<Usuario> usuarioOpt = usuarioService.findById(idUsuario);
+				if (usuarioOpt.isPresent()) {
+					Usuario usuario = usuarioOpt.get();
+					model.addAttribute("usuario", usuario);
+					model.addAttribute("sesion", idUsuario);
+					// Procesar agendamientos próximos y convertirlos en recordatorios
+					recordatorioService.procesarAgendamientosProximos(usuario, 3);
+					// Obtener recordatorios para mostrar en la barra lateral
+					List<Recordatorio> recordatorios = recordatorioService.findByUsuario(usuario);
+					model.addAttribute("recordatorios", recordatorios);
+					LOGGER.debug("✅ ProductoController: Usuario cargado desde sesión HTTP: {} (ID: {})", usuario.getNombre(), idUsuario);
+					return;
+				}
 			}
+			
+			// Fallback: intentar obtener usuario desde Spring Security
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+				Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
+				if (usuarioOpt.isPresent()) {
+					Usuario usuario = usuarioOpt.get();
+					// Sincronizar la sesión HTTP con Spring Security
+					session.setAttribute("idUsuario", usuario.getId());
+					session.setAttribute("usuario", usuario);
+					
+					model.addAttribute("usuario", usuario);
+					model.addAttribute("sesion", usuario.getId());
+					// Procesar agendamientos próximos y convertirlos en recordatorios
+					recordatorioService.procesarAgendamientosProximos(usuario, 3);
+					// Obtener recordatorios para mostrar en la barra lateral
+					List<Recordatorio> recordatorios = recordatorioService.findByUsuario(usuario);
+					model.addAttribute("recordatorios", recordatorios);
+					LOGGER.debug("✅ ProductoController: Usuario cargado desde Spring Security: {} (ID: {})", usuario.getNombre(), usuario.getId());
+					return;
+				}
+			}
+			
+			// No hay usuario autenticado
+			LOGGER.debug("ℹ️ ProductoController: No hay usuario autenticado en la sesión");
+			
+		} catch (Exception e) {
+			LOGGER.warn("ProductoController: Error loading user session data: {}", e.getMessage());
 		}
 	}
 

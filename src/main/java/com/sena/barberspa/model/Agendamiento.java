@@ -3,6 +3,7 @@ package com.sena.barberspa.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +30,8 @@ public class Agendamiento {
     @Column(name = "precio_final")
     private Double precioFinal;
 
-    private String estado;
+    @Convert(converter = com.sena.barberspa.model.converter.EstadoAgendamientoConverter.class)
+    private com.sena.barberspa.model.enums.EstadoAgendamiento estado;
 
     @Column(name = "notas_cliente")
     private String notasCliente;
@@ -66,7 +68,7 @@ public class Agendamiento {
 
     // Constructor con parámetros
     public Agendamiento(Usuario clienteUsuario, Personal personal, Servicio servicio, Sucursal sucursal,
-            LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, Double precioFinal, String estado,
+            LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, Double precioFinal, com.sena.barberspa.model.enums.EstadoAgendamiento estado,
             String notasCliente, String notasInternas) {
         this.clienteUsuario = clienteUsuario;
         this.personal = personal;
@@ -148,11 +150,11 @@ public class Agendamiento {
         this.id = id;
     }
 
-    public String getEstado() {
+    public com.sena.barberspa.model.enums.EstadoAgendamiento getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(com.sena.barberspa.model.enums.EstadoAgendamiento estado) {
         this.estado = estado;
     }
 

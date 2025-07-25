@@ -7,11 +7,11 @@
 */
 
 /* Bootstrap Framework */
-@import "bootstrap/scss/bootstrap";
+@use "bootstrap/scss/bootstrap";
 
 /* Custom Partials */
-@import "admin";
-@import "login";
+@use "admin";
+@use "login";
 
 /*--------------------------------------------------------------
 # Font & Color Variables

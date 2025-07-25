@@ -31,8 +31,9 @@ public class Orden {
     @Column(name = "total_orden")
     private BigDecimal totalOrden; // Tipo de dato corregido a BigDecimal
 
+    @Convert(converter = com.sena.barberspa.model.converter.EstadoOrdenConverter.class)
     @Column(name = "estado_orden")
-    private String estadoOrden;
+    private com.sena.barberspa.model.enums.EstadoOrden estadoOrden;
 
     @Column(name = "notas_orden")
     private String notasOrden;
@@ -126,11 +127,11 @@ public class Orden {
         this.totalOrden = totalOrden;
     }
 
-    public String getEstadoOrden() {
+    public com.sena.barberspa.model.enums.EstadoOrden getEstadoOrden() {
         return estadoOrden;
     }
 
-    public void setEstadoOrden(String estadoOrden) {
+    public void setEstadoOrden(com.sena.barberspa.model.enums.EstadoOrden estadoOrden) {
         this.estadoOrden = estadoOrden;
     }
 
@@ -191,11 +192,11 @@ public class Orden {
         this.totalOrden = total;
     }
 
-    public String getEstado() {
+    public com.sena.barberspa.model.enums.EstadoOrden getEstado() {
         return this.estadoOrden;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(com.sena.barberspa.model.enums.EstadoOrden estado) {
         this.estadoOrden = estado;
     }
 }

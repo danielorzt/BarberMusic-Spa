@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sena.barberspa.model.Orden;
 import com.sena.barberspa.model.Usuario;
@@ -18,12 +19,14 @@ public class OrdenServiceImplement implements IOrdenService {
 	private IOrdenRepository ordenRepository;
 
 	@Override
+	@Transactional
 	public Orden save(Orden orden) {
 		// TODO Auto-generated method stub
 		return ordenRepository.save(orden);
 	}
 
 	@Override
+	@Transactional
 	public Orden update(Orden orden) {
 		// Verify if the orden exists
 		Optional<Orden> existingOrden = ordenRepository.findById(orden.getId());
@@ -34,12 +37,14 @@ public class OrdenServiceImplement implements IOrdenService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Orden> findAll() {
 		// TODO Auto-generated method stub
 		return ordenRepository.findAll();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String generarNumeroOrden() {
 
 		int numero = 0;
@@ -75,18 +80,21 @@ public class OrdenServiceImplement implements IOrdenService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Orden> findByUsuario(Usuario usuario) {
 		// TODO Auto-generated method stub
 		return ordenRepository.findByUsuario(usuario);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Orden> findById(Long id) {
 		// TODO Auto-generated method stub
 		return ordenRepository.findById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public long countAll() {
 		return ordenRepository.count();
 	}

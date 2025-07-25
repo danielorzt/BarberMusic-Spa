@@ -1,6 +1,7 @@
 package com.sena.barberspa.controller.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -23,8 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.model.Sucursal;
 import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.IUsuarioService;
+import com.sena.barberspa.service.ISucursalesService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -46,6 +49,9 @@ public class RegistroController {
     
     @Autowired
     private IUsuarioService usuarioService;
+    
+    @Autowired
+    private ISucursalesService sucursalesService;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -103,6 +109,24 @@ public class RegistroController {
             usuario.setRol(RolUsuario.CLIENTE); // ROL POR DEFECTO según manual
             usuario.setActivo(true);
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            
+            // 3.1. Asignar sucursal por defecto (primera sucursal activa)
+            try {
+                List<Sucursal> sucursalesActivas = sucursalesService.findAll().stream()
+                    .filter(s -> s.getActivo() != null && s.getActivo())
+                    .collect(java.util.stream.Collectors.toList());
+                
+                if (!sucursalesActivas.isEmpty()) {
+                    usuario.setSucursalPreferida(sucursalesActivas.get(0));
+                    LOGGER.info("✅ Asignada sucursal por defecto: {} para usuario: {}", 
+                               sucursalesActivas.get(0).getNombre(), usuario.getEmail());
+                } else {
+                    LOGGER.warn("⚠️ No hay sucursales activas disponibles para asignar por defecto");
+                }
+            } catch (Exception e) {
+                LOGGER.error("❌ Error asignando sucursal por defecto: {}", e.getMessage());
+                // Continuar sin sucursal - no es crítico para el registro
+            }
             
             // 4. Guardar usuario
             Usuario usuarioGuardado = usuarioService.save(usuario);

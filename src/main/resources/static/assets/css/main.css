@@ -7,13 +7,17 @@
 * License: https://bootstrapmade.com/license/
 */
 /* Bootstrap Framework */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+/*
+  Login page styles with theme awareness
+  Global styles for login page elements
+*/
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 /*!
  * Bootstrap  v5.3.7 (https://getbootstrap.com/)
  * Copyright 2011-2025 The Bootstrap Authors
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 :root,
 [data-bs-theme=light] {
   --bs-blue: #0d6efd;
@@ -11947,26 +11951,26 @@ textarea.form-control-lg {
   height: auto;
   object-fit: cover;
 }
-.admin-panel-scope h1, .admin-panel-scope .h1, .admin-panel-scope h2, .admin-panel-scope .h2, .admin-panel-scope h3, .admin-panel-scope .h3, .admin-panel-scope h4, .admin-panel-scope .h4, .admin-panel-scope h5, .admin-panel-scope .h5, .admin-panel-scope h6, .admin-panel-scope .h6 {
+.admin-panel-scope h1, .admin-panel-scope h2, .admin-panel-scope h3, .admin-panel-scope h4, .admin-panel-scope h5, .admin-panel-scope h6 {
   line-height: 1.3;
   color: var(--color-text);
 }
-.admin-panel-scope h1, .admin-panel-scope .h1 {
+.admin-panel-scope h1 {
   font-weight: 800;
   font-size: 1.8rem;
   margin-bottom: 1rem;
 }
-.admin-panel-scope h2, .admin-panel-scope .h2 {
+.admin-panel-scope h2 {
   font-weight: 600;
   font-size: 1.4rem;
   margin-bottom: 0.8rem;
 }
-.admin-panel-scope h3, .admin-panel-scope .h3 {
+.admin-panel-scope h3 {
   font-weight: 500;
   font-size: 0.87rem;
   margin-bottom: 0.6rem;
 }
-.admin-panel-scope small, .admin-panel-scope .small {
+.admin-panel-scope small {
   font-size: 0.76rem;
   color: var(--color-text-muted);
 }
@@ -12082,7 +12086,7 @@ textarea.form-control-lg {
   transition: all 0.3s ease;
   color: inherit;
 }
-.admin-panel-scope aside .sidebar a h3, .admin-panel-scope aside .sidebar a .h3 {
+.admin-panel-scope aside .sidebar a h3 {
   font-weight: 500;
   color: inherit;
 }
@@ -12142,7 +12146,7 @@ textarea.form-control-lg {
   justify-content: space-between;
   align-items: center;
 }
-.admin-panel-scope main .analyse h3, .admin-panel-scope main .analyse .h3 {
+.admin-panel-scope main .analyse h3 {
   margin-left: 0.6rem;
   font-size: 1rem;
 }
@@ -12224,7 +12228,7 @@ textarea.form-control-lg {
 .admin-panel-scope main .recent-orders {
   margin-top: 2rem;
 }
-.admin-panel-scope main .recent-orders h2, .admin-panel-scope main .recent-orders .h2 {
+.admin-panel-scope main .recent-orders h2 {
   margin-bottom: 0.8rem;
 }
 .admin-panel-scope main .recent-orders table {
@@ -12346,7 +12350,7 @@ textarea.form-control-lg {
   margin-bottom: 0.8rem;
   border-radius: 50%;
 }
-.admin-panel-scope .right-section .user-profile h2, .admin-panel-scope .right-section .user-profile .h2 {
+.admin-panel-scope .right-section .user-profile h2 {
   margin-bottom: 0.2rem;
 }
 .admin-panel-scope .right-section .reminders {
@@ -12421,7 +12425,7 @@ textarea.form-control-lg {
 .admin-panel-scope .recordatorios-group {
   margin-bottom: 2rem;
 }
-.admin-panel-scope .recordatorios-group h2, .admin-panel-scope .recordatorios-group .h2 {
+.admin-panel-scope .recordatorios-group h2 {
   font-size: 1.5rem;
   color: var(--color-text);
   margin-bottom: 1rem;
@@ -12464,7 +12468,7 @@ textarea.form-control-lg {
   font-size: 24px;
   color: var(--color-primary);
 }
-.admin-panel-scope .recordatorio-content h3, .admin-panel-scope .recordatorio-content .h3 {
+.admin-panel-scope .recordatorio-content h3 {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
@@ -12612,7 +12616,7 @@ textarea.form-control-lg {
   justify-content: space-between;
   align-items: center;
 }
-.admin-panel-scope .notification .content .info h3, .admin-panel-scope .notification .content .info .h3 {
+.admin-panel-scope .notification .content .info h3 {
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
@@ -12633,8 +12637,7 @@ textarea.form-control-lg {
   color: var(--color-text-muted);
 }
 .admin-panel-scope .notification.deactive .icon span,
-.admin-panel-scope .notification.deactive h3,
-.admin-panel-scope .notification.deactive .h3 {
+.admin-panel-scope .notification.deactive h3 {
   color: var(--color-text-muted);
 }
 .admin-panel-scope .notification .dropdown-toggle {
@@ -12668,7 +12671,7 @@ textarea.form-control-lg {
 .admin-panel-scope .notification.add-reminder span {
   font-size: 2rem;
 }
-.admin-panel-scope .notification.add-reminder h3, .admin-panel-scope .notification.add-reminder .h3 {
+.admin-panel-scope .notification.add-reminder h3 {
   font-weight: 500;
   color: var(--color-primary);
 }
@@ -12714,10 +12717,10 @@ textarea.form-control-lg {
   .admin-panel-scope aside .toggle .logo {
     display: none;
   }
-  .admin-panel-scope aside .logo h2, .admin-panel-scope aside .logo .h2 {
+  .admin-panel-scope aside .logo h2 {
     display: none;
   }
-  .admin-panel-scope aside .sidebar h3, .admin-panel-scope aside .sidebar .h3 {
+  .admin-panel-scope aside .sidebar h3 {
     display: none;
   }
   .admin-panel-scope aside .sidebar a {
@@ -12778,10 +12781,10 @@ textarea.form-control-lg {
   .admin-panel-scope aside .logo {
     margin-left: 1rem;
   }
-  .admin-panel-scope aside .logo h2, .admin-panel-scope aside .logo .h2 {
+  .admin-panel-scope aside .logo h2 {
     display: inline;
   }
-  .admin-panel-scope aside .sidebar h3, .admin-panel-scope aside .sidebar .h3 {
+  .admin-panel-scope aside .sidebar h3 {
     display: inline;
   }
   .admin-panel-scope aside .sidebar a {
@@ -12875,7 +12878,7 @@ textarea.form-control-lg {
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
-.admin-panel-scope .section-header h1, .admin-panel-scope .section-header .h1 {
+.admin-panel-scope .section-header h1 {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--color-text);
@@ -12924,7 +12927,7 @@ textarea.form-control-lg {
   display: flex;
   flex-direction: column;
 }
-.admin-panel-scope .card-info h5, .admin-panel-scope .card-info .h5 {
+.admin-panel-scope .card-info h5 {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -13022,7 +13025,7 @@ textarea.form-control-lg {
 .admin-panel-scope .page-header {
   margin-bottom: 2rem;
 }
-.admin-panel-scope .page-header h1, .admin-panel-scope .page-header .h1 {
+.admin-panel-scope .page-header h1 {
   font-size: 2rem;
   font-weight: 700;
 }
@@ -13054,7 +13057,7 @@ textarea.form-control-lg {
   justify-content: space-between;
   align-items: center;
 }
-.admin-panel-scope .card-header h2, .admin-panel-scope .card-header .h2 {
+.admin-panel-scope .card-header h2 {
   margin: 0;
   font-size: 1.2rem;
 }
@@ -13172,7 +13175,7 @@ textarea.form-control-lg {
 .admin-panel-scope .page-header {
   margin-bottom: 2rem;
 }
-.admin-panel-scope .page-header h1, .admin-panel-scope .page-header .h1 {
+.admin-panel-scope .page-header h1 {
   font-size: 2rem;
 }
 .admin-panel-scope .breadcrumbs {
@@ -13202,7 +13205,7 @@ textarea.form-control-lg {
   padding-bottom: 1rem;
   margin-bottom: 2rem;
 }
-.admin-panel-scope .card-header h2, .admin-panel-scope .card-header .h2 {
+.admin-panel-scope .card-header h2 {
   font-size: 1.5rem;
   margin: 0;
 }
@@ -13409,10 +13412,10 @@ textarea.form-control-lg {
 .admin-panel-scope .change-image-btn:hover {
   background: var(--color-primary-dark);
 }
-.admin-panel-scope .profile-info h2, .admin-panel-scope .profile-info .h2 {
+.admin-panel-scope .profile-info h2 {
   margin: 0;
 }
-.admin-panel-scope .profile-info h3, .admin-panel-scope .profile-info .h3 {
+.admin-panel-scope .profile-info h3 {
   color: #666;
   font-weight: 400;
 }
@@ -13544,7 +13547,7 @@ textarea.form-control-lg {
   margin: 0;
   font-weight: bold;
 }
-.admin-panel-scope .profile .info small, .admin-panel-scope .profile .info .small {
+.admin-panel-scope .profile .info small {
   color: #6c757d;
 }
 .admin-panel-scope .profile-photo {
@@ -13703,12 +13706,8 @@ textarea.form-control-lg {
   }
 }
 
-/*
-  Login page styles with theme awareness
-  Global styles for login page elements
-*/
 /* Global login page styles */
-.login-page-scope h1, .login-page-scope .h1 {
+.login-page-scope h1 {
   font-weight: 700 !important;
   margin-top: 0 !important;
 }
@@ -14080,17 +14079,12 @@ a:hover {
   text-decoration: none;
 }
 
-h1, .h1,
+h1,
 h2,
-.h2,
 h3,
-.h3,
 h4,
-.h4,
 h5,
-.h5,
-h6,
-.h6 {
+h6 {
   font-family: var(--heading-font);
 }
 
@@ -14177,7 +14171,7 @@ h6,
   margin-right: 8px;
 }
 
-.header .logo h1, .header .logo .h1 {
+.header .logo h1 {
   font-size: 24px;
   margin: 0;
   font-weight: 500;
@@ -14485,7 +14479,7 @@ h6,
   border-color: var(--accent-color);
 }
 
-.footer h4, .footer .h4 {
+.footer h4 {
   font-size: 16px;
   font-weight: bold;
   position: relative;
@@ -14603,7 +14597,7 @@ h6,
   position: relative;
 }
 
-.page-title h1, .page-title .h1 {
+.page-title h1 {
   font-size: 42px;
   font-weight: 700;
   margin-bottom: 10px;
@@ -14658,7 +14652,7 @@ section,
   position: relative;
 }
 
-.section-title h2, .section-title .h2 {
+.section-title h2 {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 20px;
@@ -14666,7 +14660,7 @@ section,
   position: relative;
 }
 
-.section-title h2:after, .section-title .h2:after {
+.section-title h2:after {
   content: "";
   position: absolute;
   display: block;
@@ -14708,14 +14702,14 @@ section,
   z-index: 1;
 }
 
-.hero .hero-content h1, .hero .hero-content .h1 {
+.hero .hero-content h1 {
   font-size: 3.5rem;
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1.5rem;
 }
 
-.hero .hero-content h1 .accent-text, .hero .hero-content .h1 .accent-text {
+.hero .hero-content h1 .accent-text {
   color: var(--accent-color);
 }
 
@@ -14724,7 +14718,7 @@ section,
     text-align: center;
     margin-bottom: 3rem;
   }
-  .hero .hero-content h1, .hero .hero-content .h1 {
+  .hero .hero-content h1 {
     font-size: 2.5rem;
   }
   .hero .hero-content .hero-buttons {
@@ -14732,7 +14726,7 @@ section,
   }
 }
 @media (max-width: 575px) {
-  .hero .hero-content h1, .hero .hero-content .h1 {
+  .hero .hero-content h1 {
     font-size: 2rem;
   }
 }
@@ -14891,7 +14885,7 @@ section,
   flex-grow: 1;
 }
 
-.hero .stat-item .stat-content h4, .hero .stat-item .stat-content .h4 {
+.hero .stat-item .stat-content h4 {
   font-size: 1.25rem;
   margin-bottom: 0.25rem;
   font-weight: 600;
@@ -15071,14 +15065,14 @@ section,
     margin: 0 auto;
   }
 }
-.about .image-wrapper .experience-badge h3, .about .image-wrapper .experience-badge .h3 {
+.about .image-wrapper .experience-badge h3 {
   color: var(--contrast-color);
   font-size: 2.5rem;
   margin: 0;
   line-height: 0.5;
 }
 
-.about .image-wrapper .experience-badge h3 span, .about .image-wrapper .experience-badge .h3 span {
+.about .image-wrapper .experience-badge h3 span {
   font-size: 1rem;
   display: inline-block;
   margin-left: 0.25rem;
@@ -15148,7 +15142,7 @@ section,
   font-size: 48px;
 }
 
-.features .nav-link h4, .features .nav-link .h4 {
+.features .nav-link h4 {
   font-size: 14px;
   font-weight: 500;
   margin: 0;
@@ -15158,7 +15152,7 @@ section,
   border-color: color-mix(in srgb, var(--default-color), transparent 80%);
 }
 
-.features .nav-link:hover h4, .features .nav-link:hover .h4 {
+.features .nav-link:hover h4 {
   color: var(--accent-color);
 }
 
@@ -15167,7 +15161,7 @@ section,
   border-color: var(--accent-color);
 }
 
-.features .nav-link.active h4, .features .nav-link.active .h4 {
+.features .nav-link.active h4 {
   color: var(--contrast-color);
 }
 
@@ -15175,7 +15169,7 @@ section,
   margin-top: 30px;
 }
 
-.features .tab-pane h3, .features .tab-pane .h3 {
+.features .tab-pane h3 {
   color: var(--heading-color);
   font-weight: 700;
   font-size: 32px;
@@ -15184,7 +15178,7 @@ section,
   padding-bottom: 20px;
 }
 
-.features .tab-pane h3:after, .features .tab-pane .h3:after {
+.features .tab-pane h3:after {
   content: "";
   position: absolute;
   display: block;
@@ -15236,7 +15230,7 @@ section,
   margin-bottom: 20px;
 }
 
-.features-cards .feature-box h4, .features-cards .feature-box .h4 {
+.features-cards .feature-box h4 {
   font-size: 20px;
   font-weight: 700;
   margin: 0 0 10px 0;
@@ -15297,7 +15291,7 @@ section,
   color: var(--accent-color);
 }
 
-.features-2 .feature-item .feature-content h3, .features-2 .feature-item .feature-content .h3 {
+.features-2 .feature-item .feature-content h3 {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 10px;
@@ -15346,7 +15340,7 @@ section,
   padding: 4rem 2rem;
 }
 
-.call-to-action h2, .call-to-action .h2,
+.call-to-action h2,
 .call-to-action p {
   color: var(--contrast-color);
   position: relative;
@@ -15534,13 +15528,13 @@ section,
   margin: 0 10px 0 0;
 }
 
-.testimonials .testimonial-item h3, .testimonials .testimonial-item .h3 {
+.testimonials .testimonial-item h3 {
   font-size: 18px;
   font-weight: bold;
   margin: 10px 0 5px 0;
 }
 
-.testimonials .testimonial-item h4, .testimonials .testimonial-item .h4 {
+.testimonials .testimonial-item h4 {
   font-size: 14px;
   color: color-mix(in srgb, var(--default-color), transparent 20%);
   margin: 0;
@@ -15660,7 +15654,7 @@ section,
   line-height: 1;
 }
 
-.services .service-card h3, .services .service-card .h3 {
+.services .service-card h3 {
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 15px;
@@ -15712,9 +15706,8 @@ section,
   color: var(--contrast-color);
 }
 
-.pricing .pricing-card.popular h3, .pricing .pricing-card.popular .h3,
-.pricing .pricing-card.popular h4,
-.pricing .pricing-card.popular .h4 {
+.pricing .pricing-card.popular h3,
+.pricing .pricing-card.popular h4 {
   color: var(--contrast-color);
 }
 
@@ -15755,7 +15748,7 @@ section,
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.08);
 }
 
-.pricing .pricing-card h3, .pricing .pricing-card .h3 {
+.pricing .pricing-card h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -15787,7 +15780,7 @@ section,
   font-size: 0.975rem;
 }
 
-.pricing .pricing-card h4, .pricing .pricing-card .h4 {
+.pricing .pricing-card h4 {
   font-size: 1.125rem;
   margin-bottom: 1rem;
 }
@@ -15864,7 +15857,7 @@ section,
   margin-bottom: 0;
 }
 
-.faq .faq-container .faq-item h3, .faq .faq-container .faq-item .h3 {
+.faq .faq-container .faq-item h3 {
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
@@ -15875,12 +15868,12 @@ section,
   align-items: center;
 }
 
-.faq .faq-container .faq-item h3 .num, .faq .faq-container .faq-item .h3 .num {
+.faq .faq-container .faq-item h3 .num {
   color: var(--accent-color);
   padding-right: 5px;
 }
 
-.faq .faq-container .faq-item h3:hover, .faq .faq-container .faq-item .h3:hover {
+.faq .faq-container .faq-item h3:hover {
   color: var(--accent-color);
 }
 
@@ -15911,7 +15904,7 @@ section,
   color: var(--accent-color);
 }
 
-.faq .faq-container .faq-active h3, .faq .faq-container .faq-active .h3 {
+.faq .faq-container .faq-active h3 {
   color: var(--accent-color);
 }
 
@@ -15939,7 +15932,7 @@ section,
   z-index: 3;
 }
 
-.call-to-action-2 h3, .call-to-action-2 .h3 {
+.call-to-action-2 h3 {
   font-size: 28px;
   font-weight: 700;
   color: var(--default-color);
@@ -15978,14 +15971,14 @@ section,
   height: 100%;
 }
 
-.contact .info-box h3, .contact .info-box .h3 {
+.contact .info-box h3 {
   color: var(--contrast-color);
   font-size: 2rem;
   margin-bottom: 1rem;
 }
 
 @media (max-width: 767.98px) {
-  .contact .info-box h3, .contact .info-box .h3 {
+  .contact .info-box h3 {
     font-size: 1.75rem;
   }
 }
@@ -16030,7 +16023,7 @@ section,
   background-color: color-mix(in srgb, var(--contrast-color), transparent 70%);
 }
 
-.contact .info-item .content h4, .contact .info-item .content .h4 {
+.contact .info-item .content h4 {
   color: var(--contrast-color);
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
@@ -16059,13 +16052,13 @@ section,
     padding: 1.5rem;
   }
 }
-.contact .contact-form h3, .contact .contact-form .h3 {
+.contact .contact-form h3 {
   font-size: 2rem;
   margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
-  .contact .contact-form h3, .contact .contact-form .h3 {
+  .contact .contact-form h3 {
     font-size: 1.75rem;
   }
 }
@@ -16126,7 +16119,7 @@ section,
   margin-top: 30px;
 }
 
-.service-details .service-box h4, .service-details .service-box .h4 {
+.service-details .service-box h4 {
   font-size: 20px;
   font-weight: 700;
   border-bottom: 2px solid color-mix(in srgb, var(--default-color), transparent 92%);
@@ -16211,7 +16204,7 @@ section,
   font-size: 48px;
 }
 
-.service-details .help-box h4, .service-details .help-box .h4,
+.service-details .help-box h4,
 .service-details .help-box a {
   color: var(--contrast-color);
 }
@@ -16220,7 +16213,7 @@ section,
   margin-bottom: 20px;
 }
 
-.service-details h3, .service-details .h3 {
+.service-details h3 {
   font-size: 26px;
   font-weight: 700;
 }
@@ -16326,7 +16319,7 @@ section,
   align-items: center;
 }
 
-.chatbot-header h3, .chatbot-header .h3 {
+.chatbot-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
@@ -16464,7 +16457,7 @@ section,
   margin-bottom: 50px;
 }
 
-.custom-slider .section-title h2, .custom-slider .section-title .h2 {
+.custom-slider .section-title h2 {
   color: var(--heading-color);
   font-size: 48px;
   font-weight: 700;
@@ -16530,7 +16523,7 @@ section,
   padding-left: 20px;
 }
 
-.slide-text h3, .slide-text .h3 {
+.slide-text h3 {
   color: var(--heading-color);
   font-size: 36px;
   font-weight: 700;
@@ -16647,10 +16640,10 @@ section,
   .slide-content {
     gap: 40px;
   }
-  .slide-text h3, .slide-text .h3 {
+  .slide-text h3 {
     font-size: 28px;
   }
-  .custom-slider .section-title h2, .custom-slider .section-title .h2 {
+  .custom-slider .section-title h2 {
     font-size: 36px;
   }
 }
@@ -16674,10 +16667,10 @@ section,
   .slide-image img {
     height: 250px;
   }
-  .slide-text h3, .slide-text .h3 {
+  .slide-text h3 {
     font-size: 24px;
   }
-  .custom-slider .section-title h2, .custom-slider .section-title .h2 {
+  .custom-slider .section-title h2 {
     font-size: 28px;
   }
   .custom-slider .section-title p {
@@ -16698,7 +16691,7 @@ section,
   .slide-image img {
     height: 200px;
   }
-  .slide-text h3, .slide-text .h3 {
+  .slide-text h3 {
     font-size: 20px;
   }
   .slide-text p {
@@ -16707,7 +16700,7 @@ section,
   .slide-features li {
     font-size: 14px;
   }
-  .custom-slider .section-title h2, .custom-slider .section-title .h2 {
+  .custom-slider .section-title h2 {
     font-size: 24px;
   }
 }
@@ -16768,7 +16761,7 @@ section,
   cursor: pointer;
 }
 
-.modal-contenido .contact-form h3, .modal-contenido .contact-form .h3 {
+.modal-contenido .contact-form h3 {
   text-align: center;
   margin-bottom: 1rem;
   color: var(--heading-color);

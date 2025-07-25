@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,41 +50,113 @@ public class HomeController {
     @ModelAttribute
     public void addCommonAttributes(Model model, HttpSession session) {
         try {
+            LOGGER.info("🔍 ModelAttribute: Evaluando sesión y autenticación...");
+            
+            // Intentar obtener usuario de la sesión HTTP primero
             Object userIdObj = session.getAttribute(SESSION_USER_ID);
+            LOGGER.info("🔍 HTTP Session userID: {}", userIdObj);
+            
             if (userIdObj != null) {
                 Long userId = Long.parseLong(userIdObj.toString());
-                usuarioService.findById(userId).ifPresent(usuario -> {
+                Optional<Usuario> usuarioOpt = usuarioService.findById(userId);
+                if (usuarioOpt.isPresent()) {
+                    Usuario usuario = usuarioOpt.get();
                     model.addAttribute("usuario", usuario);
                     model.addAttribute("sesion", userId);
-                });
+                    model.addAttribute("isAuthenticated", true);
+                    LOGGER.info("✅ Usuario cargado desde sesión HTTP: {} (ID: {})", usuario.getNombre(), userId);
+                    LOGGER.info("🎯 ModelAttribute: sesion={}, isAuthenticated=true", userId);
+                    return;
+                }
             }
+            
+            // Fallback: intentar obtener usuario desde Spring Security
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            LOGGER.info("🔍 Spring Security auth: {}, isAuthenticated: {}", 
+                       auth != null ? auth.getName() : "null", 
+                       auth != null ? auth.isAuthenticated() : false);
+            
+            if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+                Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
+                if (usuarioOpt.isPresent()) {
+                    Usuario usuario = usuarioOpt.get();
+                    // Sincronizar la sesión HTTP con Spring Security
+                    session.setAttribute(SESSION_USER_ID, usuario.getId());
+                    session.setAttribute("usuario", usuario);
+                    
+                    model.addAttribute("usuario", usuario);
+                    model.addAttribute("sesion", usuario.getId());
+                    model.addAttribute("isAuthenticated", true);
+                    LOGGER.info("✅ Usuario cargado desde Spring Security: {} (ID: {})", usuario.getNombre(), usuario.getId());
+                    LOGGER.info("🎯 ModelAttribute: sesion={}, isAuthenticated=true", usuario.getId());
+                    return;
+                }
+            }
+            
+            // No hay usuario autenticado - esto está bien para páginas públicas
+            model.addAttribute("sesion", null);
+            model.addAttribute("usuario", null);
+            model.addAttribute("isAuthenticated", false);
+            LOGGER.info("ℹ️ No hay usuario autenticado - modo público");
+            LOGGER.info("🎯 ModelAttribute: sesion=null, isAuthenticated=false");
+            
         } catch (Exception e) {
-            LOGGER.warn("Error loading user session data: {}", e.getMessage());
-            // Don't fail the whole request if session data fails
+            LOGGER.error("💥 Error loading user session data: {}", e.getMessage(), e);
+            // Set defaults for safe fallback
+            model.addAttribute("sesion", null);
+            model.addAttribute("usuario", null);
+            model.addAttribute("isAuthenticated", false);
+            LOGGER.error("🎯 ModelAttribute: FALLBACK - sesion=null, isAuthenticated=false");
         }
     }
 
-    // SOLUCION TEMPORAL: Método simplificado para debugging
+    // SOLUCION DEFINITIVA: Método con carga real de datos y @Transactional
     @GetMapping({ "", "/" })
-    public String home(Model model) {
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public String home(Model model, HttpSession session) {
         try {
-            LOGGER.info("🏠 HOME: Iniciando carga simplificada...");
+            LOGGER.info("🏠 HOME: Iniciando carga de datos con transacción...");
             
-            // Añadir datos mínimos requeridos por el template
-            model.addAttribute("productos", new ArrayList<>());
-            model.addAttribute("servicios", new ArrayList<>());
-            model.addAttribute("sucursales", new ArrayList<>());
+            // Debug: verificar atributos de sesión
+            Object sesionAttr = model.getAttribute("sesion");
+            Object usuarioAttr = model.getAttribute("usuario");
+            LOGGER.info("🏠 HOME: sesion = {}, usuario = {}", sesionAttr, usuarioAttr != null ? "presente" : "null");
             
-            // Añadir atributos que el template podría necesitar
-            model.addAttribute("sesion", null); // Simular usuario no logueado
+            // Cargar datos reales con protección transaccional
+            List<Producto> productos = productoService.findAll();
+            List<Servicio> servicios = servicioService.findAll();
+            List<Sucursal> sucursales = sucursalService.findAll();
             
-            LOGGER.info("✅ HOME: Modelo preparado, retornando template");
+            // Filtrar solo elementos activos
+            productos = productos != null ? productos.stream()
+                .filter(p -> p.getActivo() != null && p.getActivo())
+                .collect(java.util.stream.Collectors.toList()) : new ArrayList<>();
+                
+            servicios = servicios != null ? servicios.stream()
+                .filter(s -> s.getActivo() != null && s.getActivo())
+                .collect(java.util.stream.Collectors.toList()) : new ArrayList<>();
+                
+            sucursales = sucursales != null ? sucursales.stream()
+                .filter(s -> s.getActivo() != null && s.getActivo())
+                .collect(java.util.stream.Collectors.toList()) : new ArrayList<>();
+            
+            model.addAttribute("productos", productos);
+            model.addAttribute("servicios", servicios);
+            model.addAttribute("sucursales", sucursales);
+            
+            LOGGER.info("✅ HOME: Datos cargados - {} productos, {} servicios, {} sucursales", 
+                       productos.size(), servicios.size(), sucursales.size());
+            
             return "usuario/home";
             
         } catch (Exception e) {
             LOGGER.error("💥 HOME: Error crítico: {}", e.getMessage(), e);
-            // Fallback a página de error simple
-            return "error/500";
+            // Fallback con listas vacías en caso de error
+            model.addAttribute("productos", new ArrayList<>());
+            model.addAttribute("servicios", new ArrayList<>());
+            model.addAttribute("sucursales", new ArrayList<>());
+            model.addAttribute("error", "Error cargando datos. Usando modo seguro.");
+            return "usuario/home";
         }
     }
     
@@ -147,27 +221,46 @@ public class HomeController {
 
     @GetMapping("/test-home")
     @ResponseBody
-    public String testHome() {
+    public String testHome(HttpSession session, Model model) {
         StringBuilder result = new StringBuilder();
-        result.append("Testing HomeController...\n");
+        result.append("🧪 Testing HomeController & Session...\n\n");
 
         try {
-            result.append("Testing ProductoService...\n");
-            List<Producto> productos = productoService.findAll();
-            result.append("Productos count: ").append(productos != null ? productos.size() : 0).append("\n");
+            // Test session
+            Object sessionUserId = session.getAttribute(SESSION_USER_ID);
+            result.append("📋 Session Data:\n");
+            result.append("   - User ID in session: ").append(sessionUserId).append("\n");
+            
+            // Test Spring Security
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            result.append("   - Spring Security auth: ").append(auth != null ? auth.getName() : "null").append("\n");
+            result.append("   - Is authenticated: ").append(auth != null ? auth.isAuthenticated() : false).append("\n");
+            
+            // Test user loading
+            if (sessionUserId != null) {
+                Long userId = Long.parseLong(sessionUserId.toString());
+                Optional<Usuario> usuarioOpt = usuarioService.findById(userId);
+                result.append("   - User loaded from DB: ").append(usuarioOpt.isPresent() ? usuarioOpt.get().getNombre() : "Not found").append("\n");
+            } else if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+                Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
+                result.append("   - User loaded by email: ").append(usuarioOpt.isPresent() ? usuarioOpt.get().getNombre() : "Not found").append("\n");
+            }
 
-            result.append("Testing ServiciosService...\n");
-            List<Servicio> servicios = servicioService.findAll();
-            result.append("Servicios count: ").append(servicios != null ? servicios.size() : 0).append("\n");
+            // Test model attributes (these get set by @ModelAttribute)
+            result.append("\n🎨 Model Attributes:\n");
+            result.append("   - sesion: ").append(model.getAttribute("sesion")).append("\n");
+            result.append("   - usuario: ").append(model.getAttribute("usuario")).append("\n");
+            result.append("   - isAuthenticated: ").append(model.getAttribute("isAuthenticated")).append("\n");
 
-            result.append("Testing SucursalesService...\n");
-            List<Sucursal> sucursales = sucursalService.findAll();
-            result.append("Sucursales count: ").append(sucursales != null ? sucursales.size() : 0).append("\n");
+            result.append("\n📊 Services Test:\n");
+            result.append("   - Productos count: ").append(productoService.findAll().size()).append("\n");
+            result.append("   - Servicios count: ").append(servicioService.findAll().size()).append("\n");
+            result.append("   - Sucursales count: ").append(sucursalService.findAll().size()).append("\n");
 
-            result.append("All services working correctly!\n");
+            result.append("\n✅ All tests completed successfully!\n");
 
         } catch (Exception e) {
-            result.append("Error: ").append(e.getMessage()).append("\n");
+            result.append("\n❌ Error: ").append(e.getMessage()).append("\n");
             result.append("Stack trace: ").append(e.getStackTrace()[0]).append("\n");
         }
 
@@ -180,24 +273,34 @@ public class HomeController {
     }
 
     @GetMapping("/productosVista")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public String productosVista(Model model) {
         try {
             List<Producto> productos = productoService.findAll();
-            model.addAttribute("productos", productos != null ? productos : new ArrayList<>());
+            productos = productos != null ? productos.stream()
+                .filter(p -> p.getActivo() != null && p.getActivo())
+                .collect(java.util.stream.Collectors.toList()) : new ArrayList<>();
+            model.addAttribute("productos", productos);
+            LOGGER.info("✅ ProductosVista: {} productos activos cargados", productos.size());
         } catch (Exception e) {
-            LOGGER.error("Error loading products: {}", e.getMessage());
+            LOGGER.error("❌ Error loading products: {}", e.getMessage(), e);
             model.addAttribute("productos", new ArrayList<>());
         }
         return "usuario/productosVista";
     }
 
     @GetMapping("/serviciosVista")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public String serviciosVista(Model model) {
         try {
             List<Servicio> servicios = servicioService.findAll();
-            model.addAttribute("servicios", servicios != null ? servicios : new ArrayList<>());
+            servicios = servicios != null ? servicios.stream()
+                .filter(s -> s.getActivo() != null && s.getActivo())
+                .collect(java.util.stream.Collectors.toList()) : new ArrayList<>();
+            model.addAttribute("servicios", servicios);
+            LOGGER.info("✅ ServiciosVista: {} servicios activos cargados", servicios.size());
         } catch (Exception e) {
-            LOGGER.error("Error loading services: {}", e.getMessage());
+            LOGGER.error("❌ Error loading services: {}", e.getMessage(), e);
             model.addAttribute("servicios", new ArrayList<>());
         }
         return "usuario/serviciosVista";

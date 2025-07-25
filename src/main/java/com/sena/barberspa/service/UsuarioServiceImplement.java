@@ -25,45 +25,44 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	private IUsuarioRepository repository;
 
 	@Override
+	@Transactional
 	public Usuario save(Usuario usuario) {
-		// TODO Auto-generated method stub
 		return repository.save(usuario);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Usuario> get(Long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
-
-	@Override
-	public void update(Usuario usuario) {
-		// TODO Auto-generated method stub
-		repository.save(usuario);
-
-	}
-
-	@Override
-	public void delete(Long id) {
-		// TODO Auto-generated method stub
-		repository.deleteById(id);
-	}
-
-	@Override
-	public Optional<Usuario> findById(Long id) {
-		// TODO Auto-generated method stub
 		return repository.findById(id);
 	}
 
 	@Override
+	@Transactional
+	public void update(Usuario usuario) {
+		repository.save(usuario);
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long id) {
+		repository.deleteById(id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<Usuario> findById(Long id) {
+		return repository.findById(id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public Optional<Usuario> findByEmail(String email) {
-		// TODO Auto-generated method stub
 		return repository.findByEmail(email);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Usuario> findAll() {
-		// TODO Auto-generated method stub
 		return repository.findAll();
 	}
 
@@ -89,7 +88,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 		}
 		return rol.getCodigo();
 	}
-	
+
 	/**
 	 * Método de compatibilidad para roles string (deprecado)
 	 */
@@ -98,51 +97,55 @@ public class UsuarioServiceImplement implements IUsuarioService {
 		RolUsuario rolEnum = RolUsuario.fromCodigo(rol);
 		return mapRoleToSpringRole(rolEnum);
 	}
-	
+
 	// Métodos adicionales para gestión de roles según Manual BarberMusic&Spa
-	
+
 	/**
 	 * Buscar usuarios por rol
 	 */
+	@Transactional(readOnly = true)
 	public List<Usuario> findByRol(RolUsuario rol) {
 		return repository.findAll().stream()
-			.filter(u -> u.getRol() == rol)
-			.filter(u -> !u.isDeleted())
-			.toList();
+				.filter(u -> u.getRol() == rol)
+				.filter(u -> !u.isDeleted())
+				.toList();
 	}
-	
+
 	/**
 	 * Buscar usuarios activos únicamente
 	 */
+	@Transactional(readOnly = true)
 	public List<Usuario> findActiveUsers() {
 		return repository.findAll().stream()
-			.filter(u -> u.getActivo() && !u.isDeleted())
-			.toList();
+				.filter(u -> u.getActivo() && !u.isDeleted())
+				.toList();
 	}
-	
+
 	/**
 	 * Promover usuario al siguiente rol en la jerarquía
 	 */
+	@Transactional
 	public Usuario promoverUsuario(Long userId) {
 		Optional<Usuario> usuarioOpt = repository.findById(userId);
 		if (usuarioOpt.isEmpty()) {
 			throw new RuntimeException("Usuario no encontrado");
 		}
-		
+
 		Usuario usuario = usuarioOpt.get();
 		RolUsuario nuevoRol = usuario.getRol().getSiguienteRol();
-		
+
 		if (nuevoRol != usuario.getRol()) { // Si hay cambio
 			usuario.setRol(nuevoRol);
 			return repository.save(usuario);
 		}
-		
+
 		return usuario; // Ya está en el máximo rol
 	}
-	
+
 	/**
 	 * Verificar si un email ya existe (para validaciones)
 	 */
+	@Transactional(readOnly = true)
 	public boolean existsByEmail(String email) {
 		return findByEmail(email).isPresent();
 	}

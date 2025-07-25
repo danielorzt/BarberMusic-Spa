@@ -198,10 +198,43 @@ public class Sucursal {
 		this.activo = "ACTIVO".equalsIgnoreCase(estado);
 	}
 
+	// Métodos de utilidad para extraer información del nombre
+	/**
+	 * Extrae la ciudad del nombre de la sucursal
+	 * Ejemplos: "Villahermosa - Plaza Strada" -> "Villahermosa"
+	 *          "San Luis Potosí - Plaza San Luis" -> "San Luis Potosí"
+	 */
+	public String getCiudad() {
+		if (nombre == null || !nombre.contains(" - ")) {
+			return nombre; // Si no tiene el formato esperado, devolver el nombre completo
+		}
+		return nombre.split(" - ")[0].trim();
+	}
+	
+	/**
+	 * Extrae el nombre del centro comercial del nombre de la sucursal
+	 * Ejemplos: "Villahermosa - Plaza Strada" -> "Plaza Strada"
+	 */
+	public String getPlaza() {
+		if (nombre == null || !nombre.contains(" - ")) {
+			return ""; // Si no tiene el formato esperado
+		}
+		String[] parts = nombre.split(" - ");
+		return parts.length > 1 ? parts[1].trim() : "";
+	}
+	
+	/**
+	 * Método de compatibilidad para templates que esperan 'direccion'
+	 * Devuelve una representación de dirección basada en la información disponible
+	 */
+	public String getDireccion() {
+		return getPlaza(); // Por ahora, usar el nombre de la plaza como dirección
+	}
+
 	// Método toString para depuración
 	@Override
 	public String toString() {
-		return "Sucursal [id=" + id + ", nombre=" + nombre + ", imagenPath=" + imagenPath + ", telefonoContacto="
+		return "Sucursal [id=" + id + ", nombre=" + nombre + ", ciudad=" + getCiudad() + ", imagenPath=" + imagenPath + ", telefonoContacto="
 				+ telefonoContacto
 				+ ", emailContacto=" + emailContacto + ", linkMaps=" + linkMaps + ", activo=" + activo + "]";
 	}

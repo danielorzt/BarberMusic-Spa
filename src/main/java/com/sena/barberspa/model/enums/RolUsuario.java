@@ -81,6 +81,11 @@ public enum RolUsuario {
     public static RolUsuario fromCodigo(String codigo) {
         if (codigo == null) return CLIENTE;
         
+        // Manejar aliases de roles legacy en BD
+        if ("ADMIN_GENERAL".equalsIgnoreCase(codigo)) {
+            return GERENTE;
+        }
+        
         for (RolUsuario rol : values()) {
             if (rol.codigo.equalsIgnoreCase(codigo)) {
                 return rol;

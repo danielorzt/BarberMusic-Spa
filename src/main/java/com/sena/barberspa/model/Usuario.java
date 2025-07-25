@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sena.barberspa.model.enums.RolUsuario;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -62,7 +63,7 @@ public class Usuario implements UserDetails {
 	@Column(name = "telefono")
 	private String telefono;
 
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = com.sena.barberspa.model.converter.RolUsuarioConverter.class)
 	@Column(name = "rol", nullable = false, length = 50)
 	private RolUsuario rol = RolUsuario.CLIENTE; // Valor por defecto
 
@@ -79,13 +80,15 @@ public class Usuario implements UserDetails {
 	private LocalDateTime deletedAt;
 
 	// Relación con Sucursal preferida
-	@ManyToOne
+	@ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
 	@JoinColumn(name = "sucursal_preferida_id")
+	@JsonIgnore
 	private Sucursal sucursalPreferida;
 
 	// Relación con Música Preferencia
-	@ManyToOne
+	@ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
 	@JoinColumn(name = "musica_preferencia_navegacion_id")
+	@JsonIgnore
 	private MusicaPreferenciasNavegacion musicaPreferencia;
 
 	// Relación con Ordenes - @JsonIgnore para evitar recursión infinita

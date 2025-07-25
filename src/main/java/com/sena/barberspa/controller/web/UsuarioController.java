@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +21,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sena.barberspa.model.Agendamiento;
 import com.sena.barberspa.model.Orden;
+import com.sena.barberspa.model.Sucursal;
 import com.sena.barberspa.model.Usuario;
 import com.sena.barberspa.model.enums.RolUsuario;
 import com.sena.barberspa.service.EmailService;
 import com.sena.barberspa.service.IAgendamientosService;
 import com.sena.barberspa.service.IOrdenService;
+import com.sena.barberspa.service.ISucursalesService;
 import com.sena.barberspa.service.IUsuarioService;
 import com.sena.barberspa.service.UploadFileService;
 
@@ -45,7 +49,9 @@ public class UsuarioController {
 	private IAgendamientosService agendamientosService;
 
 	@Autowired
+	private ISucursalesService sucursalesService;
 
+	@Autowired
 	private EmailService emailService;
 
 	@Autowired
@@ -54,14 +60,131 @@ public class UsuarioController {
 	public static void storeResetToken(String token, String email) {
 		resetTokens.put(token, email);
 	}
+	
+	/**
+	 * Utility method to get authenticated user ID from session or Spring Security
+	 */
+	private Long obtenerIdUsuarioAutenticado(HttpSession session) {
+		LOGGER.info("🔍 obtenerIdUsuarioAutenticado: Iniciando verificación...");
+		
+		// 1. Intentar desde sesión HTTP
+		Object userIdObj = session.getAttribute("idUsuario");
+		LOGGER.info("🔍 HTTP Session idUsuario: {}", userIdObj);
+		if (userIdObj != null) {
+			Long userId = Long.parseLong(userIdObj.toString());
+			LOGGER.info("✅ Usuario ID desde sesión HTTP: {}", userId);
+			return userId;
+		}
+		
+		// 2. Sincronizar desde Spring Security
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		LOGGER.info("🔍 Spring Security auth: {}, isAuth: {}", 
+		           auth != null ? auth.getName() : "null", 
+		           auth != null ? auth.isAuthenticated() : false);
+		
+		if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+			Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
+			if (usuarioOpt.isPresent()) {
+				Usuario usuario = usuarioOpt.get();
+				
+				// Verificar y asignar sucursal por defecto si no tiene una
+				verificarYAsignarSucursalPorDefecto(usuario);
+				
+				// Sincronizar sesión HTTP
+				session.setAttribute("idUsuario", usuario.getId());
+				session.setAttribute("usuario", usuario);
+				LOGGER.info("✅ Sincronizando sesión para usuario: {} (ID: {})", usuario.getNombre(), usuario.getId());
+				return usuario.getId();
+			} else {
+				LOGGER.warn("❌ Usuario con email {} no encontrado en BD", auth.getName());
+			}
+		}
+		
+		LOGGER.warn("❌ No se pudo obtener ID de usuario autenticado");
+		return null;
+	}
+	
+	/**
+	 * Verifica si el usuario tiene sucursal asignada y asigna una por defecto si no tiene
+	 */
+	private void verificarYAsignarSucursalPorDefecto(Usuario usuario) {
+		try {
+			// Si el usuario ya tiene sucursal preferida, no hacer nada
+			if (usuario.getSucursalPreferida() != null) {
+				return;
+			}
+			
+			LOGGER.info("🏢 Usuario {} no tiene sucursal asignada, buscando sucursal por defecto...", usuario.getEmail());
+			
+			// Buscar primera sucursal activa
+			List<Sucursal> sucursalesActivas = sucursalesService.findAll().stream()
+				.filter(s -> s.getActivo() != null && s.getActivo())
+				.collect(java.util.stream.Collectors.toList());
+			
+			if (!sucursalesActivas.isEmpty()) {
+				Sucursal sucursalPorDefecto = sucursalesActivas.get(0);
+				usuario.setSucursalPreferida(sucursalPorDefecto);
+				usuarioService.save(usuario); // Guardar cambios
+				
+				LOGGER.info("✅ Asignada sucursal por defecto: {} para usuario: {}", 
+				           sucursalPorDefecto.getNombre(), usuario.getEmail());
+			} else {
+				LOGGER.warn("⚠️ No hay sucursales activas disponibles para asignar por defecto");
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error verificando/asignando sucursal por defecto: {}", e.getMessage());
+			// No lanzar excepción - esto no debe interrumpir el flujo de autenticación
+		}
+	}
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	// Almacén temporal de tokens de restablecimiento (en producción, usar base de
 	// datos)
 	private static final ConcurrentHashMap<String, String> resetTokens = new ConcurrentHashMap<>();
-
-
+	
+	@ModelAttribute
+	public void addCommonAttributes(Model model, HttpSession session) {
+		try {
+			// 1. Intentar obtener usuario de la sesión HTTP primero
+			Object userIdObj = session.getAttribute("idUsuario");
+			if (userIdObj != null) {
+				Long userId = Long.parseLong(userIdObj.toString());
+				Optional<Usuario> usuarioOpt = usuarioService.findById(userId);
+				if (usuarioOpt.isPresent()) {
+					Usuario usuario = usuarioOpt.get();
+					model.addAttribute("usuario", usuario);
+					model.addAttribute("sesion", userId);
+					LOGGER.debug("✅ UsuarioController: Usuario cargado desde sesión HTTP: {} (ID: {})", usuario.getNombre(), userId);
+					return;
+				}
+			}
+			
+			// 2. Fallback: Sincronizar desde Spring Security si está autenticado
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+				Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
+				if (usuarioOpt.isPresent()) {
+					Usuario usuario = usuarioOpt.get();
+					// Sincronizar sesión HTTP
+					session.setAttribute("idUsuario", usuario.getId());
+					session.setAttribute("usuario", usuario);
+					
+					model.addAttribute("usuario", usuario);
+					model.addAttribute("sesion", usuario.getId());
+					LOGGER.debug("✅ UsuarioController: Usuario sincronizado desde Spring Security: {} (ID: {})", usuario.getNombre(), usuario.getId());
+					return;
+				}
+			}
+			
+			// 3. No hay usuario autenticado - esto es normal para páginas públicas
+			LOGGER.debug("ℹ️ UsuarioController: No hay usuario autenticado en la sesión");
+			
+		} catch (Exception e) {
+			LOGGER.warn("UsuarioController: Error loading user session data: {}", e.getMessage());
+		}
+	}
 
 
 	@GetMapping("/acceder")
@@ -203,11 +326,12 @@ public class UsuarioController {
 
 	@GetMapping("/compras")
 	public String showUserOrders(HttpSession session, Model model) {
-		if (session.getAttribute("idUsuario") == null) {
+		Long idUsuario = obtenerIdUsuarioAutenticado(session);
+		if (idUsuario == null) {
 			return "redirect:/usuario/login";
 		}
 
-		Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idUsuario").toString()))
+		Usuario usuario = usuarioService.findById(idUsuario)
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 		List<Orden> ordenes = ordenService.findByUsuario(usuario);
@@ -219,14 +343,15 @@ public class UsuarioController {
 
 	@GetMapping("/compras/{id}")
 	public String showOrderDetails(@PathVariable Long id, HttpSession session, Model model) {
-		if (session.getAttribute("idUsuario") == null) {
+		Long idUsuario = obtenerIdUsuarioAutenticado(session);
+		if (idUsuario == null) {
 			return "redirect:/usuario/login";
 		}
 
 		Orden orden = ordenService.findById(id).orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
 		// Verificar que la orden pertenece al usuario
-		if (!orden.getClienteUsuario().getId().equals(Long.parseLong(session.getAttribute("idUsuario").toString()))) {
+		if (!orden.getClienteUsuario().getId().equals(idUsuario)) {
 			return "redirect:/usuario/compras";
 		}
 
@@ -239,11 +364,12 @@ public class UsuarioController {
 
 	@GetMapping("/perfil")
 	public String showProfile(HttpSession session, Model model) {
-		if (session.getAttribute("idUsuario") == null) {
+		// Intentar obtener usuario de la sesión o sincronizar desde Spring Security
+		Long idUsuario = obtenerIdUsuarioAutenticado(session);
+		if (idUsuario == null) {
 			return "redirect:/usuario/login";
 		}
 
-		Long idUsuario = Long.parseLong(session.getAttribute("idUsuario").toString());
 		Usuario usuario = usuarioService.findById(idUsuario)
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -282,13 +408,14 @@ public class UsuarioController {
 			@RequestParam(value = "img", required = false) MultipartFile file,
 			HttpSession session,
 			RedirectAttributes redirectAttributes) throws IOException {
-		if (session.getAttribute("idUsuario") == null) {
+		Long idUsuario = obtenerIdUsuarioAutenticado(session);
+		if (idUsuario == null) {
 			return "redirect:/usuario/login";
 		}
 
 		try {
 			Usuario existingUser = usuarioService
-					.findById(Long.parseLong(session.getAttribute("idUsuario").toString()))
+					.findById(idUsuario)
 					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 			// Actualizar solo los campos permitidos

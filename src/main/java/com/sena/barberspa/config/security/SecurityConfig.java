@@ -1,6 +1,5 @@
 package com.sena.barberspa.config.security;
 
-import com.sena.barberspa.config.security.jwt.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,88 +18,107 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+        @Autowired
+        private AuthenticationProvider authenticationProvider;
 
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar en entorno de
+                                                              // desarrollo
+                                .authorizeHttpRequests(auth -> auth
+                                                // Recursos públicos sin autenticación
+                                                .requestMatchers(
+                                                                "/",
+                                                                "/home",
+                                                                "/home/",
+                                                                "/home/productosVista",
+                                                                "/home/serviciosVista",
+                                                                "/usuario/login",
+                                                                "/usuario/login-success",
+                                                                "/usuario/registro",
+                                                                "/usuario/save",
+                                                                "/usuario/acceder",
+                                                                "/usuario/resetPassword",
+                                                                "/usuario/cambiarPassword",
+                                                                "/usuario/saveNewPassword",
+                                                                "/usuario/token-invalido",
+                                                                "/usuario/create-test-user",
+                                                                "/usuario/test-login",
+                                                                "/assets/**",
+                                                                "/img/**",
+                                                                "/css/**",
+                                                                "/js/**",
+                                                                "/vendor/**",
+                                                                "/swagger-ui/**",
+                                                                "/api-docs/**",
+                                                                "/debug/**",
+                                                                "/error",
+                                                                "/403")
+                                                .permitAll()
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // Deshabilitar CSRF para APIs, habilitarlo para formularios web
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**")
-                        .disable())
-                // Configurar las reglas de autorización de las peticiones HTTP
-                .authorizeHttpRequests(auth -> auth
-                        // Permitir acceso público (sin autenticación) a estas rutas
-                        // Rutas públicas (sin autenticación)
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/"),
-                                new AntPathRequestMatcher("/home/**"),
-                                new AntPathRequestMatcher("/debug/**"),
-                                new AntPathRequestMatcher("/usuario/login"),
-                                new AntPathRequestMatcher("/usuario/registro"),
-                                new AntPathRequestMatcher("/usuario/save"),
-                                new AntPathRequestMatcher("/usuario/validar-email"),
-                                new AntPathRequestMatcher("/usuario/test-registro"),
-                                new AntPathRequestMatcher("/usuario/test-login"),
-                                new AntPathRequestMatcher("/assets/**"),
-                                new AntPathRequestMatcher("/static/**"),
-                                new AntPathRequestMatcher("/images/**"),
-                                new AntPathRequestMatcher("/css/**"),
-                                new AntPathRequestMatcher("/js/**"),
-                                new AntPathRequestMatcher("/img/**"),
-                                new AntPathRequestMatcher("/favicon.ico"),
-                                new AntPathRequestMatcher("/node_modules/**"),
-                                new AntPathRequestMatcher("/api/v1/auth/**"),
-                                new AntPathRequestMatcher("/swagger-ui/**"),
-                                new AntPathRequestMatcher("/api-docs/**"),
-                                new AntPathRequestMatcher("/productosVista"),
-                                new AntPathRequestMatcher("/serviciosVista"))
-                        .permitAll()
-                        
-                        // Rutas por ROL según Manual de Roles BarberMusic&Spa
-                        
-                        // EMPLEADO - Panel de empleado y gestión de agendamientos
-                        .requestMatchers("/empleado/**")
-                        .hasAnyRole("EMPLEADO", "ADMIN_SUCURSAL", "GERENTE")
-                        
-                        // ADMIN_SUCURSAL - Gestión de sucursal específica
-                        .requestMatchers("/admin-sucursal/**")
-                        .hasAnyRole("ADMIN_SUCURSAL", "GERENTE")
-                        
-                        // GERENTE - Acceso total del sistema (Super Admin)
-                        .requestMatchers("/administrador/**", "/gerente/**")
-                        .hasRole("GERENTE")
-                        
-                        // CLIENTE - Rutas específicas de cliente (resto requiere autenticación)
-                        .anyRequest().authenticated())
-                // Configurar login form con redirección por rol
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/usuario/login")
-                        .loginProcessingUrl("/login") // URL que procesa el formulario
-                        .successHandler((request, response, authentication) -> {
-                            // Redirección personalizada según rol después del login
-                            response.sendRedirect("/usuario/login-success");
-                        })
-                        .failureUrl("/usuario/login?error=true")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/usuario/logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll())
-                // Configurar la gestión de sesiones - STATEFUL para web, STATELESS para APIs
-                .sessionManagement(sessionManager -> sessionManager
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                // Añadir el proveedor de autenticación
-                .authenticationProvider(authenticationProvider)
-                // Añadir nuestro filtro de JWT antes del filtro de usuario/contraseña
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                                // Rutas específicas de cliente autenticado
+                                                .requestMatchers("/usuario/perfil", "/usuario/compras/**",
+                                                                "/usuario/favoritos/**", "/cart/**", "/getCart",
+                                                                "/home/test-home", "/home/full", "/home/mantenimiento")
+                                                .hasAuthority("ROLE_CLIENTE")
 
-        return http.build();
-    }
+                                                // Rutas de empleado y superiores
+                                                .requestMatchers("/empleado/**")
+                                                .hasAnyAuthority("ROLE_EMPLEADO", "ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
+
+                                                // Rutas de admin sucursal y superiores
+                                                .requestMatchers("/admin-sucursal/**")
+                                                .hasAnyAuthority("ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
+
+                                                // Rutas exclusivas de gerente
+                                                .requestMatchers("/administrador/**").hasAuthority("ROLE_GERENTE")
+
+                                                // Todo lo demás requiere autenticación
+                                                .anyRequest().authenticated())
+                                .formLogin(formLogin -> formLogin
+                                                .loginPage("/usuario/login")
+                                                .loginProcessingUrl("/usuario/acceder")
+                                                .successHandler((request, response, authentication) -> {
+                                                    // Custom success handler para sincronizar sesión INMEDIATAMENTE
+                                                    try {
+                                                        String email = authentication.getName();
+                                                        
+                                                        // Obtener la sesión HTTP
+                                                        var session = request.getSession(true);
+                                                        
+                                                        // Obtener ApplicationContext para acceder a servicios
+                                                        var ctx = org.springframework.web.context.support.WebApplicationContextUtils
+                                                            .getRequiredWebApplicationContext(request.getServletContext());
+                                                        var usuarioService = ctx.getBean(com.sena.barberspa.service.IUsuarioService.class);
+                                                        
+                                                        // Buscar usuario y establecer sesión INMEDIATAMENTE
+                                                        var usuarioOpt = usuarioService.findByEmail(email);
+                                                        if (usuarioOpt.isPresent()) {
+                                                            var usuario = usuarioOpt.get();
+                                                            session.setAttribute("idUsuario", usuario.getId());
+                                                            session.setAttribute("usuario", usuario);
+                                                            System.out.println("✅ SUCCESS HANDLER: Sesión establecida para " + usuario.getNombre() + " (ID: " + usuario.getId() + ")");
+                                                        }
+                                                        
+                                                        response.sendRedirect("/usuario/login-success");
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                        response.sendRedirect("/usuario/login?error=true");
+                                                    }
+                                                })
+                                                .failureUrl("/usuario/login?error=true")
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .logoutRequestMatcher(new AntPathRequestMatcher("/usuario/cerrar"))
+                                                .logoutSuccessUrl("/usuario/login?logout")
+                                                .invalidateHttpSession(true)
+                                                .deleteCookies("JSESSIONID")
+                                                .permitAll())
+                                .sessionManagement(sessionManager -> sessionManager
+                                                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                                .authenticationProvider(authenticationProvider);
+
+                return http.build();
+        }
 }

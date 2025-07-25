@@ -40,8 +40,9 @@ public class Producto {
     @Column(name = "activo")
     private Boolean activo;
 
-    @ManyToOne
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = true)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Categoria categoria;
 
     @Column(name = "created_at")

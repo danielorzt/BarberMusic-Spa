@@ -19,8 +19,13 @@ import com.sena.barberspa.model.Servicio;
 import com.sena.barberspa.service.IServiciosService;
 import com.sena.barberspa.model.Sucursal;
 import com.sena.barberspa.service.ISucursalesService;
+import com.sena.barberspa.service.UserDetailServiceImplement;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class DebugController {
@@ -38,6 +43,15 @@ public class DebugController {
 
     @Autowired
     private ISucursalesService sucursalService;
+    
+    @Autowired
+    private UserDetailServiceImplement userDetailService;
+    
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/debug/security")
     @ResponseBody
@@ -192,6 +206,121 @@ public class DebugController {
             debug.append("Stack trace: ").append(e.getStackTrace()[0]).append("\n");
         }
 
+        return debug.toString();
+    }
+
+    @GetMapping("/debug/authentication")
+    @ResponseBody
+    public String debugAuthentication() {
+        StringBuilder debug = new StringBuilder();
+        
+        try {
+            debug.append("=== AUTHENTICATION DEBUG ===\n\n");
+            
+            // Test 1: Check AuthenticationProvider
+            debug.append("1. AuthenticationProvider Status:\n");
+            debug.append("   - Provider class: ").append(authenticationProvider.getClass().getName()).append("\n");
+            debug.append("   - Provider available: ").append(authenticationProvider != null).append("\n\n");
+            
+            // Test 2: Check UserDetailsService
+            debug.append("2. UserDetailsService Status:\n");
+            debug.append("   - Service class: ").append(userDetailService.getClass().getName()).append("\n");
+            debug.append("   - Service available: ").append(userDetailService != null).append("\n\n");
+            
+            // Test 3: Check PasswordEncoder
+            debug.append("3. PasswordEncoder Status:\n");
+            debug.append("   - Encoder class: ").append(passwordEncoder.getClass().getName()).append("\n");
+            debug.append("   - Encoder available: ").append(passwordEncoder != null).append("\n\n");
+            
+            // Test 4: Test loading a user (try with a common email)
+            debug.append("4. Testing UserDetailsService load:\n");
+            try {
+                // Try to load a test user - let's see if there are any users in the DB
+                List<Usuario> usuarios = usuarioService.findAll();
+                debug.append("   - Total users in DB: ").append(usuarios.size()).append("\n");
+                
+                if (!usuarios.isEmpty()) {
+                    Usuario testUser = usuarios.get(0);
+                    debug.append("   - Testing with user: ").append(testUser.getEmail()).append("\n");
+                    debug.append("   - User role: ").append(testUser.getRol()).append("\n");
+                    debug.append("   - User active: ").append(testUser.getActivo()).append("\n");
+                    
+                    try {
+                        UserDetails userDetails = userDetailService.loadUserByUsername(testUser.getEmail());
+                        debug.append("   ✓ UserDetails loaded successfully\n");
+                        debug.append("   - Username: ").append(userDetails.getUsername()).append("\n");
+                        debug.append("   - Authorities: ").append(userDetails.getAuthorities()).append("\n");
+                        debug.append("   - Account non-expired: ").append(userDetails.isAccountNonExpired()).append("\n");
+                        debug.append("   - Account non-locked: ").append(userDetails.isAccountNonLocked()).append("\n");
+                        debug.append("   - Credentials non-expired: ").append(userDetails.isCredentialsNonExpired()).append("\n");
+                        debug.append("   - Enabled: ").append(userDetails.isEnabled()).append("\n");
+                    } catch (Exception e) {
+                        debug.append("   ✗ Error loading UserDetails: ").append(e.getMessage()).append("\n");
+                    }
+                } else {
+                    debug.append("   - No users found in database\n");
+                }
+            } catch (Exception e) {
+                debug.append("   ✗ Error accessing users: ").append(e.getMessage()).append("\n");
+            }
+            
+            debug.append("\n=== END AUTHENTICATION DEBUG ===\n");
+            
+        } catch (Exception e) {
+            debug.append("General error: ").append(e.getMessage()).append("\n");
+            debug.append("Stack trace: ").append(e.getStackTrace()[0]).append("\n");
+        }
+        
+        return debug.toString();
+    }
+
+    @GetMapping("/debug/create-test-user")
+    @ResponseBody
+    public String createTestUser() {
+        StringBuilder debug = new StringBuilder();
+        
+        try {
+            debug.append("=== CREATING TEST USER ===\n\n");
+            
+            String testEmail = "test@barberspa.com";
+            String testPassword = "123456";
+            
+            // Check if user already exists
+            Optional<Usuario> existingUser = usuarioService.findByEmail(testEmail);
+            if (existingUser.isPresent()) {
+                debug.append("✓ Test user already exists: ").append(testEmail).append("\n");
+                Usuario user = existingUser.get();
+                debug.append("   - User ID: ").append(user.getId()).append("\n");
+                debug.append("   - User name: ").append(user.getNombre()).append("\n");
+                debug.append("   - User role: ").append(user.getRol()).append("\n");
+                debug.append("   - User active: ").append(user.getActivo()).append("\n");
+                return debug.toString();
+            }
+            
+            // Create new test user
+            Usuario testUser = new Usuario();
+            testUser.setNombre("Usuario Test");
+            testUser.setEmail(testEmail);
+            testUser.setPassword(passwordEncoder.encode(testPassword));
+            testUser.setRol(com.sena.barberspa.model.enums.RolUsuario.CLIENTE);
+            testUser.setActivo(true);
+            testUser.setTelefono("1234567890");
+            
+            Usuario savedUser = usuarioService.save(testUser);
+            
+            debug.append("✓ Test user created successfully!\n");
+            debug.append("   - Email: ").append(testEmail).append("\n");
+            debug.append("   - Password: ").append(testPassword).append("\n");
+            debug.append("   - User ID: ").append(savedUser.getId()).append("\n");
+            debug.append("   - Role: ").append(savedUser.getRol()).append("\n");
+            
+            debug.append("\n🔗 You can now test login at: /usuario/login\n");
+            
+        } catch (Exception e) {
+            debug.append("Error creating test user: ").append(e.getMessage()).append("\n");
+            debug.append("Stack trace: ").append(e.getStackTrace()[0]).append("\n");
+        }
+        
         return debug.toString();
     }
 }

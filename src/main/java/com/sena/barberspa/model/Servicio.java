@@ -43,12 +43,14 @@ public class Servicio {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = true)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Categoria categoria;
 
-    @ManyToOne
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
     @JoinColumn(name = "especialidad_requerida_id", nullable = true)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Especialidad especialidadRequerida;
 
     // Constructor vacío

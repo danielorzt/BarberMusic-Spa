@@ -1,6 +1,6 @@
 package com.sena.barberspa.config;
 
-import com.sena.barberspa.repository.IUsuarioRepository;
+import com.sena.barberspa.service.UserDetailServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     @Autowired
-    private IUsuarioRepository usuarioRepository;
+    private UserDetailServiceImplement userDetailService;
 
     // Bean para obtener el AuthenticationManager
     @Bean
@@ -25,11 +24,11 @@ public class ApplicationConfig {
         return config.getAuthenticationManager();
     }
 
-    // Bean del proveedor de autenticación (EL QUE FALTABA)
+    // Bean del proveedor de autenticación (CRÍTICO - UNIFICADO)
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setUserDetailsService(userDetailService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
@@ -40,11 +39,6 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Bean para el servicio que carga los detalles del usuario desde la base de
-    // datos
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> usuarioRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
+    // ELIMINADO: UserDetailsService lambda conflictivo 
+    // Ahora usamos directamente UserDetailServiceImplement inyectado
 }

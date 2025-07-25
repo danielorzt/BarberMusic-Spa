@@ -142,6 +142,17 @@
                   >
                 </li>
                 <li>
+                  <a th:href="@{/usuario/favoritos}"
+                    ><i class="bi bi-heart me-2"></i>Mis Favoritos</a
+                  >
+                </li>
+                <li>
+                  <a th:href="@{/usuario/compras}"
+                    ><i class="bi bi-bag me-2"></i>Mis Compras</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
                   <a th:href="@{/usuario/cerrar}"
                     ><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a
                   >
@@ -162,7 +173,7 @@
 
         <!-- Botón de acceso a Admin - Solo visible para usuarios con rol ADMIN -->
         <a
-          th:if="${usuario != null && (usuario.rol == 'ADMIN_GENERAL' || usuario.rol == 'ADMIN_SUCURSAL')}"
+          th:if="${usuario != null && (usuario.rol?.codigo == 'ADMIN_SUCURSAL' || usuario.rol?.codigo == 'GERENTE')}"
           class="btn-getstarted"
           th:href="@{/administrador}"
           >Admin <i class="bi bi-box-arrow-in-right"></i
