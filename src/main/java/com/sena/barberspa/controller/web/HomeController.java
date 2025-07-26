@@ -147,7 +147,7 @@ public class HomeController {
             LOGGER.info("✅ HOME: Datos cargados - {} productos, {} servicios, {} sucursales", 
                        productos.size(), servicios.size(), sucursales.size());
             
-            return "usuario/home";
+            return "publico/home";
             
         } catch (Exception e) {
             LOGGER.error("💥 HOME: Error crítico: {}", e.getMessage(), e);
@@ -156,7 +156,7 @@ public class HomeController {
             model.addAttribute("servicios", new ArrayList<>());
             model.addAttribute("sucursales", new ArrayList<>());
             model.addAttribute("error", "Error cargando datos. Usando modo seguro.");
-            return "usuario/home";
+            return "publico/home";
         }
     }
     
@@ -206,7 +206,7 @@ public class HomeController {
             
             long totalTime = System.currentTimeMillis() - startTime;
             LOGGER.info("🎉 Página home cargada exitosamente en {}ms", totalTime);
-            return "usuario/home";
+            return "publico/home";
         } catch (Exception e) {
             long totalTime = System.currentTimeMillis() - startTime;
             LOGGER.error("💥 Error crítico en home controller después de {}ms: {}", totalTime, e.getMessage(), e);
@@ -215,7 +215,7 @@ public class HomeController {
             model.addAttribute("servicios", new ArrayList<>());
             model.addAttribute("sucursales", new ArrayList<>());
             model.addAttribute("error", "Error cargando datos. Por favor, contacte al administrador.");
-            return "usuario/home";
+            return "publico/home";
         }
     }
 
@@ -269,7 +269,7 @@ public class HomeController {
 
     @GetMapping("/mantenimiento")
     public String mantenimiento() {
-        return "usuario/mantenimiento";
+        return "publico/mantenimiento";
     }
 
     @GetMapping("/productosVista")
@@ -286,7 +286,7 @@ public class HomeController {
             LOGGER.error("❌ Error loading products: {}", e.getMessage(), e);
             model.addAttribute("productos", new ArrayList<>());
         }
-        return "usuario/productosVista";
+        return "publico/productosVista";
     }
 
     @GetMapping("/serviciosVista")
@@ -303,7 +303,7 @@ public class HomeController {
             LOGGER.error("❌ Error loading services: {}", e.getMessage(), e);
             model.addAttribute("servicios", new ArrayList<>());
         }
-        return "usuario/serviciosVista";
+        return "publico/serviciosVista";
     }
 
     // Métodos utilitarios privados

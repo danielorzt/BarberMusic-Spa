@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="https://thymeleaf.org">
 
-<head th:replace="~{usuario/template_user.html::head}"></head>
+<head th:replace="~{publico/template_user.html::head}"></head>
 
 <body class="index-page">
 
 <!-- Debug: sesion=${sesion}, isAuthenticated=${isAuthenticated}, usuario=${usuario != null ? usuario.nombre : 'null'} -->
-<div th:insert="~{usuario/template_user.html::header}" th:if="${sesion == null and not isAuthenticated}"></div>
-<div th:insert="~{usuario/template_user.html::usuarioCabecera}" th:if="${sesion != null or isAuthenticated}"></div>
+<div th:insert="~{publico/template_user.html::header}" th:if="${sesion == null and not isAuthenticated}"></div>
+<div th:insert="~{publico/template_user.html::usuarioCabecera}" th:if="${sesion != null or isAuthenticated}"></div>
 
 <main class="main">
     <!-- Hero Section -->
@@ -474,7 +474,7 @@
     <!-- /Contact Section -->
 </main>
 
-<div th:insert="~{usuario/template_user.html::footer}"></div>
+<div th:insert="~{publico/template_user.html::footer}"></div>
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
     <i class="bi bi-arrow-up-short"></i>
@@ -483,7 +483,7 @@
 <!-- Preloader -->
 <div id="preloader"></div>
 
-<div th:insert="~{usuario/template_user.html::jsFiles}"></div>
+<div th:insert="~{publico/template_user.html::jsFiles}"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

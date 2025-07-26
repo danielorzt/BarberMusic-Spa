@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmins:th="https://thymeLeaf.org">
-  <head th:insert="~{usuario/template_user.html::head}"> </head>
+  <head th:insert="~{publico/template_user.html::head}"> </head>
 
   <body class="index-page">
     <div
-      th:insert="~{usuario/template_user.html::header}"
+      th:insert="~{publico/template_user.html::header}"
       th:if="${sesion == null}"
     ></div>
     <div
-      th:insert="~{usuario/template_user.html::usuarioCabecera}"
+      th:insert="~{publico/template_user.html::usuarioCabecera}"
       th:unless="${sesion == null}"
     ></div>
 
@@ -27,7 +27,7 @@
         <section>
           <div
             class="container"
-            th:insert="~{usuario/template_user.html::search}"
+            th:insert="~{publico/template_user.html::search}"
           ></div>
         </section>
       </div>
@@ -95,7 +95,7 @@
                 style="height: 200px; overflow: hidden"
               >
                 <img
-                  th:src="@{/images/{img} (img=${producto.imagen})}"
+                  th:src="@{/assets/img/productos/{img} (img=${producto.imagen != null ? producto.imagen : 'default-product.jpg'})}"
                   th:alt="${producto.nombreproducto}"
                   class="card-img-top rounded-top product-img"
                   style="
@@ -167,7 +167,7 @@
       </div>
     </main>
 
-    <div th:insert="~{usuario/template_user.html::footer}"></div>
+    <div th:insert="~{publico/template_user.html::footer}"></div>
     <!-- Scroll Top -->
     <a
       href="#"
@@ -179,6 +179,6 @@
     <!-- Preloader -->
     <div id="preloader"></div>
 
-    <div th:insert="~{usuario/template_user.html::jsFiles}"></div>
+    <div th:insert="~{publico/template_user.html::jsFiles}"></div>
   </body>
 </html>

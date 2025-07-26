@@ -3,6 +3,7 @@ package com.sena.barberspa.controller.payment;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import com.sena.barberspa.model.enums.EstadoOrden;
 import com.sena.barberspa.service.IOrdenService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +63,14 @@ public class PayPalController {
 
             Payment createdPayment = payment.create(apiContext);
 
-            Long idUsuario = ((Number) session.getAttribute("idUsuario")).longValue();
-            if (idUsuario != null) {
-                Long ordenId = ((Number) session.getAttribute("ordenId")).longValue();
-                if (ordenId != null) {
+            Object idUsuarioObj = session.getAttribute("idUsuario");
+            if (idUsuarioObj != null) {
+                Long idUsuario = ((Number) idUsuarioObj).longValue();
+                Object ordenIdObj = session.getAttribute("ordenId");
+                if (ordenIdObj != null) {
+                    Long ordenId = ((Number) ordenIdObj).longValue();
                     ordenService.findById(ordenId).ifPresent(orden -> {
-                        orden.setEstado("PROCESANDO");
+orden.setEstado(EstadoOrden.EN_PROCESO);
                         ordenService.update(orden);
                     });
                 }
@@ -116,10 +119,11 @@ public class PayPalController {
             Payment executedPayment = payment.execute(apiContext, paymentExecution);
 
             if (executedPayment.getState().equals("approved")) {
-                Long idOrden = ((Number) session.getAttribute("ordenId")).longValue();
-                if (idOrden != null) {
+                Object ordenIdObj = session.getAttribute("ordenId");
+                if (ordenIdObj != null) {
+                    Long idOrden = ((Number) ordenIdObj).longValue();
                     ordenService.findById(idOrden).ifPresent(orden -> {
-                        orden.setEstado("PAGADO");
+orden.setEstado(EstadoOrden.PAGADA);
                         ordenService.update(orden);
                     });
                 }

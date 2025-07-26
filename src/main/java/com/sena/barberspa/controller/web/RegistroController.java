@@ -69,7 +69,7 @@ public class RegistroController {
         // Crear un usuario vacío para el formulario
         model.addAttribute("usuario", new Usuario());
         
-        return "usuario/registro";
+        return "publico/registro";
     }
     
     /**
@@ -94,7 +94,7 @@ public class RegistroController {
                 LOGGER.warn("❌ Errores de validación en registro: {}", result.getAllErrors());
                 model.addAttribute("usuario", usuario);
                 model.addAttribute("error", "Por favor corrige los errores en el formulario");
-                return "usuario/registro";
+                return "publico/registro";
             }
             
             // 2. Validar que el email no exista
@@ -102,7 +102,7 @@ public class RegistroController {
                 LOGGER.warn("❌ Intento de registro con email duplicado: {}", usuario.getEmail());
                 model.addAttribute("usuario", usuario);
                 model.addAttribute("error", "Este email ya está registrado. Intenta con otro email o inicia sesión.");
-                return "usuario/registro";
+                return "publico/registro";
             }
             
             // 3. Configurar usuario según manual de roles
@@ -154,7 +154,7 @@ public class RegistroController {
                 // Redirigir al login con mensaje
                 flash.addFlashAttribute("success", 
                     "¡Registro exitoso! Por favor inicia sesión con tus credenciales.");
-                return "redirect:/usuario/login";
+                return "redirect:/publico/login";
             }
             
             // 6. Mensaje de éxito
@@ -169,7 +169,7 @@ public class RegistroController {
             
             model.addAttribute("usuario", usuario);
             model.addAttribute("error", "Error interno del servidor. Por favor, intenta nuevamente.");
-            return "usuario/registro";
+            return "publico/registro";
         }
     }
     

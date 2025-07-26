@@ -34,6 +34,12 @@ public class SecurityConfig {
                                                                 "/home/",
                                                                 "/home/productosVista",
                                                                 "/home/serviciosVista",
+                                                                "/productosVista",
+                                                                "/serviciosVista", 
+                                                                "/productoHome/**",
+                                                                "/servicioHome/**",
+                                                                "/searchProductos",
+                                                                "/searchServicios",
                                                                 "/usuario/login",
                                                                 "/usuario/login-success",
                                                                 "/usuario/registro",
@@ -45,21 +51,28 @@ public class SecurityConfig {
                                                                 "/usuario/token-invalido",
                                                                 "/usuario/create-test-user",
                                                                 "/usuario/test-login",
+                                                                "/usuario/validar-email",
+                                                                "/usuario/test-registro",
                                                                 "/assets/**",
                                                                 "/img/**",
+                                                                "/images/**",
                                                                 "/css/**",
                                                                 "/js/**",
                                                                 "/vendor/**",
+                                                                "/node_modules/**",
+                                                                "/bootstrap/**",
+                                                                "/webjars/**",
+                                                                "/static/**",
                                                                 "/swagger-ui/**",
                                                                 "/api-docs/**",
                                                                 "/debug/**",
                                                                 "/error",
-                                                                "/403")
+                                                                "/403",
+                                                                "/favicon.ico")
                                                 .permitAll()
 
                                                 // Rutas específicas de cliente autenticado
-                                                .requestMatchers("/usuario/perfil", "/usuario/compras/**",
-                                                                "/usuario/favoritos/**", "/cart/**", "/getCart",
+                                                .requestMatchers("/cliente/**", "/cart/**", "/getCart",
                                                                 "/home/test-home", "/home/full", "/home/mantenimiento")
                                                 .hasAuthority("ROLE_CLIENTE")
 
@@ -72,7 +85,7 @@ public class SecurityConfig {
                                                 .hasAnyAuthority("ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
 
                                                 // Rutas exclusivas de gerente
-                                                .requestMatchers("/administrador/**").hasAuthority("ROLE_GERENTE")
+                                                .requestMatchers("/gerente/**").hasAuthority("ROLE_GERENTE")
 
                                                 // Todo lo demás requiere autenticación
                                                 .anyRequest().authenticated())

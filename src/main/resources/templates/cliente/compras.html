@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-<head th:insert="~{usuario/template_user.html::head}">
+<head th:insert="~{cliente/template_cliente.html::head}">
 	<title>Carrito de Compras | BarberMusicSpa</title>
 
 </head>
@@ -18,8 +18,8 @@
 
 <body class="index-page">
 
-	<div th:insert="~{usuario/template_user.html::header}" th:if="${sesion == null}"></div>
-	<div th:insert="~{usuario/template_user.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
+	<div th:insert="~{cliente/template_cliente.html::header}" th:if="${sesion == null}"></div>
+	<div th:insert="~{cliente/template_cliente.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
 
 	<main id="main">
 		<!-- ======= Breadcrumbs ======= -->
@@ -116,7 +116,7 @@
 		</div><!-- End Shopping Cart Section -->
 	</main>
 
-	<div th:insert="~{usuario/template_user.html::footer}"></div>
+	<div th:insert="~{cliente/template_cliente.html::footer}"></div>
 
 	<!-- Scroll Top -->
 	<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
@@ -126,7 +126,7 @@
 	<!-- Preloader -->
 	<div id="preloader"></div>
 
-	<div th:insert="~{usuario/template_user.html::jsFiles}"></div>
+	<div th:insert="~{cliente/template_cliente.html::jsFiles}"></div>
 
 </body>
 

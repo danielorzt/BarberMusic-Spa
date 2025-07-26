@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.sena.barberspa.model.*;
+import com.sena.barberspa.model.enums.EstadoAgendamiento;
 import com.sena.barberspa.service.*;
 
 import jakarta.servlet.http.HttpSession;
@@ -91,7 +92,7 @@ public class EmpleadoController {
         try {
             Agendamiento agendamiento = agendamientosService.findById(agendamientoId);
             if (agendamiento != null) {
-                agendamiento.setEstado(nuevoEstado);
+agendamiento.setEstado(EstadoAgendamiento.fromCodigo(nuevoEstado));
                 agendamientosService.save(agendamiento);
             }
         } catch (Exception e) {

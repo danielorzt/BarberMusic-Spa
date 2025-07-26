@@ -51,7 +51,7 @@ public class LoginController {
             model.addAttribute("error", "Email o contraseña incorrectos");
         }
         
-        return "usuario/login";
+        return "publico/login";
     }
     
     /**
@@ -72,7 +72,7 @@ public class LoginController {
             if (usuarioOpt.isEmpty()) {
                 LOGGER.error("❌ Usuario autenticado pero no encontrado en BD: {}", email);
                 flash.addFlashAttribute("error", "Error interno. Contacte al administrador.");
-                return "redirect:/usuario/login";
+                return "redirect:/publico/login";
             }
             
             Usuario usuario = usuarioOpt.get();
@@ -82,7 +82,7 @@ public class LoginController {
                 LOGGER.warn("❌ Intento de login con usuario inactivo: {}", email);
                 SecurityContextHolder.clearContext();
                 flash.addFlashAttribute("error", "Tu cuenta está desactivada. Contacta al administrador.");
-                return "redirect:/usuario/login";
+                return "redirect:/publico/login";
             }
             
             // Establecer sesión

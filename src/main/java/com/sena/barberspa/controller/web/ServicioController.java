@@ -239,7 +239,7 @@ public class ServicioController {
 		model.addAttribute("sucursales", sucursales); // Esto es crucial
 		model.addAttribute("servicios", servicioService.findAll());
 
-		return "usuario/servicioHome";
+		return "publico/servicioHome";
 	}
 	//
 	// @GetMapping("/sucursales/json")

@@ -84,11 +84,11 @@ public class PublicProductoController {
             List<Producto> productos = productoService.findAll();
             model.addAttribute("productos", productos);
             LOGGER.info("Productos vista loaded successfully with {} products", productos.size());
-            return "usuario/productosVista";
+            return "publico/productosVista";
         } catch (Exception e) {
             LOGGER.error("Error loading productos vista: {}", e.getMessage(), e);
             model.addAttribute("error", "Error cargando productos: " + e.getMessage());
-            return "usuario/productosVista";
+            return "publico/productosVista";
         }
     }
 
@@ -100,16 +100,16 @@ public class PublicProductoController {
             if (producto != null) {
                 model.addAttribute("producto", producto);
                 LOGGER.info("Producto home loaded successfully for: {}", producto.getNombreproducto());
-                return "usuario/productoHome";
+                return "publico/productoHome";
             } else {
                 LOGGER.warn("Producto not found with ID: {}", id);
                 model.addAttribute("error", "Producto no encontrado");
-                return "usuario/productosVista";
+                return "publico/productosVista";
             }
         } catch (Exception e) {
             LOGGER.error("Error loading producto home: {}", e.getMessage(), e);
             model.addAttribute("error", "Error cargando producto: " + e.getMessage());
-            return "usuario/productosVista";
+            return "publico/productosVista";
         }
     }
 
@@ -123,11 +123,11 @@ public class PublicProductoController {
             model.addAttribute("productos", productos);
             model.addAttribute("searchTerm", nombreproducto);
             LOGGER.info("Search completed, found {} productos", productos.size());
-            return "usuario/productosVista";
+            return "publico/productosVista";
         } catch (Exception e) {
             LOGGER.error("Error searching productos: {}", e.getMessage(), e);
             model.addAttribute("error", "Error en la búsqueda: " + e.getMessage());
-            return "usuario/productosVista";
+            return "publico/productosVista";
         }
     }
 }

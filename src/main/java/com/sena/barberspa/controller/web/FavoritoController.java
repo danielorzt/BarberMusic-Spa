@@ -38,7 +38,7 @@ import jakarta.servlet.http.HttpSession;
  * según el Manual de Roles BarberMusic&Spa
  */
 @Controller
-@RequestMapping("/usuario/favoritos")
+@RequestMapping("/cliente/favoritos")
 public class FavoritoController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(FavoritoController.class);
@@ -105,7 +105,7 @@ public class FavoritoController {
         try {
             Usuario usuario = obtenerUsuarioActual(session);
             if (usuario == null) {
-                return "redirect:/usuario/login";
+                return "redirect:/publico/login";
             }
             
             // Obtener favoritos del usuario
@@ -131,7 +131,7 @@ public class FavoritoController {
             LOGGER.info("📋 Mostrando favoritos para usuario: {} - Total: {}", 
                        usuario.getNombre(), totalFavoritos);
             
-            return "usuario/favoritos";
+            return "cliente/favoritos";
             
         } catch (Exception e) {
             LOGGER.error("Error mostrando favoritos: {}", e.getMessage(), e);

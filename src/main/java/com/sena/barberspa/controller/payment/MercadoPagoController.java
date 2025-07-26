@@ -6,6 +6,7 @@ import com.mercadopago.resources.payment.Payment;
 import com.sena.barberspa.model.PaymentRequest;
 import com.sena.barberspa.service.IOrdenService;
 import com.sena.barberspa.service.MercadoPagoService;
+import com.sena.barberspa.model.enums.EstadoOrden;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class MercadoPagoController {
             // Se convierte Long a Integer para la búsqueda, asumiendo que el ID de orden
             // cabe en un Integer
             ordenService.findById(ordenId).ifPresent(orden -> {
-                orden.setEstado(payment.getStatus());
+orden.setEstado(EstadoOrden.fromCodigo(payment.getStatus()));
                 ordenService.update(orden);
             });
 

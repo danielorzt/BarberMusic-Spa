@@ -276,7 +276,7 @@ public class UsuarioController {
 		// Verificar si el token es válido
 		if (resetTokens.containsKey(token)) {
 			model.addAttribute("token", token);
-			return "usuario/cambiar-password";
+			return "publico/cambiar-password";
 		} else {
 			return "redirect:/usuario/token-invalido";
 		}
@@ -321,7 +321,7 @@ public class UsuarioController {
 
 	@GetMapping("/token-invalido")
 	public String tokenInvalido() {
-		return "usuario/token-invalido";
+		return "publico/token-invalido";
 	}
 
 	@GetMapping("/compras")
@@ -338,7 +338,7 @@ public class UsuarioController {
 		model.addAttribute("ordenes", ordenes);
 		model.addAttribute("sesion", session.getAttribute("idUsuario"));
 
-		return "usuario/compras";
+		return "cliente/compras";
 	}
 
 	@GetMapping("/compras/{id}")
@@ -359,7 +359,7 @@ public class UsuarioController {
 		model.addAttribute("orden", orden);
 		model.addAttribute("sesion", session.getAttribute("idUsuario"));
 
-		return "usuario/detallecompra";
+		return "cliente/detallecompra";
 	}
 
 	@GetMapping("/perfil")
@@ -387,7 +387,7 @@ public class UsuarioController {
 		model.addAttribute("citasCount", agendamientos.size());
 		model.addAttribute("sesion", session.getAttribute("idUsuario"));
 
-		return "usuario/perfil";
+		return "cliente/perfil";
 	}
 
 	@GetMapping("/editar")

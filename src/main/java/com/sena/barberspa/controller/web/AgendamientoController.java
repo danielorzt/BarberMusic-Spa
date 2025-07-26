@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import com.sena.barberspa.model.Usuario;
 import com.sena.barberspa.service.IAgendamientosService;
 import com.sena.barberspa.service.IUsuarioService;
+import com.sena.barberspa.model.enums.EstadoAgendamiento;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -135,7 +136,7 @@ public class AgendamientoController {
 			agendamiento.setMensaje(mensaje);
 			agendamiento.setServicio(servicioService.get(idServicio).orElseThrow());
 			agendamiento.setSucursal(sucursalService.get(idSucursal).orElseThrow());
-			agendamiento.setEstado("SOLICITADA");
+agendamiento.setEstado(EstadoAgendamiento.PROGRAMADA);
 			agendamiento.setUsuario(usuario);
 
 			agendamientosService.save(agendamiento);
