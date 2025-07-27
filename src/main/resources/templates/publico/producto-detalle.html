@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head th:insert="~{publico/template_user.html::head}">
+    <title th:text="'Producto: ' + ${producto.nombre} + ' | BarberMusic&Spa'">
+      Producto | BarberMusic&Spa
+    </title>
+  </head>
+
+  <body class="index-page">
+    <div
+      th:insert="~{publico/template_user.html::header}"
+      th:if="${sesion == null and not isAuthenticated}"
+    ></div>
+    <div
+      th:insert="~{publico/template_user.html::usuarioCabecera}"
+      th:if="${sesion != null or isAuthenticated}"
+    ></div>
+
+    <main class="main">
+      <!-- Page Title -->
+      <div class="page-title theme-background">
+        <div class="container">
+          <h1 th:text="${producto.nombre}">Producto</h1>
+          <nav class="breadcrumbs">
+            <ol>
+              <li><a th:href="@{/home}">Inicio</a></li>
+              <li><a th:href="@{/home/productosVista}">Productos</a></li>
+              <li class="current" th:text="${producto.nombre}">Producto</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <div class="container py-5">
+        <div class="row">
+          <!-- Imagen del producto -->
+          <div class="col-lg-6 mb-4">
+            <div class="product-image-container">
+              <img
+                th:src="@{${producto.imagen != null ? producto.imagen : '/assets/img/productos/default-product.jpg'}}"
+                class="img-fluid rounded shadow-sm product-main-image"
+                th:alt="${producto.nombre}"
+              />
+            </div>
+          </div>
+
+          <!-- Información del producto -->
+          <div class="col-lg-6">
+            <div class="product-info">
+              <h1 class="product-title mb-3" th:text="${producto.nombre}">
+                Nombre del Producto
+              </h1>
+
+              <div class="product-price mb-4">
+                <span
+                  class="current-price h2 text-primary"
+                  th:text="'$' + ${#numbers.formatDecimal(producto.precio, 0, 'POINT', 2, 'POINT')}"
+                  >$0.00</span
+                >
+              </div>
+
+              <div class="product-description mb-4">
+                <h5>Descripción</h5>
+                <p
+                  th:text="${producto.descripcion ?: 'Descripción no disponible'}"
+                >
+                  Descripción del producto
+                </p>
+              </div>
+
+              <div class="product-details mb-4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <p>
+                      <strong>SKU:</strong>
+                      <span th:text="${producto.sku ?: 'N/A'}">SKU-001</span>
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <p>
+                      <strong>Stock:</strong>
+                      <span
+                        th:if="${producto.stock > 0}"
+                        class="text-success"
+                        th:text="${producto.stock} + ' disponibles'"
+                        >10 disponibles</span
+                      >
+                      <span th:if="${producto.stock <= 0}" class="text-danger"
+                        >Agotado</span
+                      >
+                    </p>
+                  </div>
+                </div>
+                <div class="row" th:if="${producto.categoria}">
+                  <div class="col-12">
+                    <p>
+                      <strong>Categoría:</strong>
+                      <span th:text="${producto.categoria.nombre}"
+                        >Categoría</span
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Acciones para usuario público -->
+              <div class="product-actions">
+                <div th:if="${!isAuthenticated}" class="alert alert-info">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <strong>¿Te gusta este producto?</strong>
+                  <a
+                    th:href="@{/publico/login}"
+                    class="btn btn-sm btn-primary ms-2"
+                  >
+                    Iniciar Sesión para Comprar
+                  </a>
+                </div>
+
+                <div th:if="${isAuthenticated}" class="authenticated-actions">
+                  <div class="quantity-selector mb-3">
+                    <label for="cantidad" class="form-label">Cantidad:</label>
+                    <div class="input-group" style="width: 150px">
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        onclick="decreaseQuantity()"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        class="form-control text-center"
+                        id="cantidad"
+                        value="1"
+                        min="1"
+                        th:max="${producto.stock}"
+                      />
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        onclick="increaseQuantity()"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="d-grid gap-2 d-md-flex">
+                    <form
+                      th:action="@{/cliente/agregar-carrito}"
+                      method="post"
+                      class="me-md-2"
+                    >
+                      <input
+                        type="hidden"
+                        name="productoId"
+                        th:value="${producto.id}"
+                      />
+                      <input
+                        type="hidden"
+                        name="cantidad"
+                        id="cantidadCarrito"
+                        value="1"
+                      />
+                      <button
+                        type="submit"
+                        class="btn btn-outline-primary btn-lg"
+                        th:disabled="${producto.stock <= 0}"
+                      >
+                        <i class="bi bi-cart-plus me-2"></i>
+                        Agregar al Carrito
+                      </button>
+                    </form>
+
+                    <form
+                      th:action="@{/cliente/comprar-producto}"
+                      method="post"
+                    >
+                      <input
+                        type="hidden"
+                        name="productoId"
+                        th:value="${producto.id}"
+                      />
+                      <input
+                        type="hidden"
+                        name="cantidad"
+                        id="cantidadCompra"
+                        value="1"
+                      />
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-lg"
+                        th:disabled="${producto.stock <= 0}"
+                      >
+                        <i class="bi bi-credit-card me-2"></i>
+                        Comprar Ahora
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-5">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link active"
+                      data-bs-toggle="tab"
+                      href="#description"
+                      role="tab"
+                    >
+                      Descripción Detallada
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      data-bs-toggle="tab"
+                      href="#reviews"
+                      role="tab"
+                    >
+                      Reseñas
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+                  <div
+                    class="tab-pane fade show active"
+                    id="description"
+                    role="tabpanel"
+                  >
+                    <p
+                      th:text="${producto.descripcion ?: 'Este producto no tiene descripción detallada disponible.'}"
+                    >
+                      Descripción detallada del producto...
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <div class="text-center py-5">
+                      <i
+                        class="bi bi-star text-muted"
+                        style="font-size: 3rem"
+                      ></i>
+                      <p class="text-muted mt-3">
+                        Las reseñas estarán disponibles próximamente
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:insert="~{publico/template_user.html::footer}"></div>
+
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+    >
+      <i class="bi bi-arrow-up-short"></i>
+    </a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <div th:insert="~{publico/template_user.html::jsFiles}"></div>
+
+    <style>
+      .page-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        margin-bottom: 0;
+      }
+
+      .breadcrumbs ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .breadcrumbs li:not(:last-child)::after {
+        content: " / ";
+        margin-left: 10px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .breadcrumbs a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+      }
+
+      .product-main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .product-main-image:hover {
+        transform: scale(1.05);
+      }
+
+      .product-title {
+        color: #333;
+        font-weight: 600;
+      }
+
+      .current-price {
+        color: #28a745 !important;
+        font-weight: bold;
+      }
+
+      .quantity-selector .input-group {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        transform: translateY(-2px);
+      }
+    </style>
+
+    <script>
+      function increaseQuantity() {
+        const input = document.getElementById("cantidad");
+        const max = parseInt(input.max);
+        if (parseInt(input.value) < max) {
+          input.value = parseInt(input.value) + 1;
+          updateHiddenQuantities();
+        }
+      }
+
+      function decreaseQuantity() {
+        const input = document.getElementById("cantidad");
+        if (parseInt(input.value) > 1) {
+          input.value = parseInt(input.value) - 1;
+          updateHiddenQuantities();
+        }
+      }
+
+      function updateHiddenQuantities() {
+        const cantidad = document.getElementById("cantidad").value;
+        document.getElementById("cantidadCarrito").value = cantidad;
+        document.getElementById("cantidadCompra").value = cantidad;
+      }
+
+      // Actualizar cantidades cuando cambie el input
+      document
+        .getElementById("cantidad")
+        ?.addEventListener("change", updateHiddenQuantities);
+    </script>
+  </body>
+</html>

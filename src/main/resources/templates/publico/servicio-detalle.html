@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head th:insert="~{publico/template_user.html::head}">
+    <title th:text="'Servicio: ' + ${servicio.nombre} + ' | BarberMusic&Spa'">
+      Servicio | BarberMusic&Spa
+    </title>
+  </head>
+
+  <body class="index-page">
+    <div
+      th:insert="~{publico/template_user.html::header}"
+      th:if="${sesion == null and not isAuthenticated}"
+    ></div>
+    <div
+      th:insert="~{publico/template_user.html::usuarioCabecera}"
+      th:if="${sesion != null or isAuthenticated}"
+    ></div>
+
+    <main class="main">
+      <!-- Page Title -->
+      <div class="page-title theme-background">
+        <div class="container">
+          <h1 th:text="${servicio.nombre}">Servicio</h1>
+          <nav class="breadcrumbs">
+            <ol>
+              <li><a th:href="@{/home}">Inicio</a></li>
+              <li><a th:href="@{/home/serviciosVista}">Servicios</a></li>
+              <li class="current" th:text="${servicio.nombre}">Servicio</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <div class="container py-5">
+        <div class="row">
+          <!-- Imagen del servicio -->
+          <div class="col-lg-6 mb-4">
+            <div class="service-image-container">
+              <img
+                th:src="@{${servicio.imagen != null ? servicio.imagen : '/assets/img/default-service.jpg'}}"
+                class="img-fluid rounded shadow-sm service-main-image"
+                th:alt="${servicio.nombre}"
+              />
+            </div>
+          </div>
+
+          <!-- Información del servicio -->
+          <div class="col-lg-6">
+            <div class="service-info">
+              <h1 class="service-title mb-3" th:text="${servicio.nombre}">
+                Nombre del Servicio
+              </h1>
+
+              <div class="service-price mb-4">
+                <span
+                  class="current-price h2 text-primary"
+                  th:text="'$' + ${#numbers.formatDecimal(servicio.precioBase, 0, 'POINT', 2, 'POINT')}"
+                  >$0.00</span
+                >
+                <small class="text-muted">precio base</small>
+              </div>
+
+              <div class="service-description mb-4">
+                <h5>Descripción</h5>
+                <p
+                  th:text="${servicio.descripcion ?: 'Descripción no disponible'}"
+                >
+                  Descripción del servicio
+                </p>
+              </div>
+
+              <div class="service-details mb-4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <i class="bi bi-clock text-primary me-2"></i>
+                      <strong>Duración:</strong>
+                      <span th:text="${servicio.duracionMinutos} + ' minutos'"
+                        >60 minutos</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-6" th:if="${servicio.categoria}">
+                    <div class="detail-item">
+                      <i class="bi bi-tag text-primary me-2"></i>
+                      <strong>Categoría:</strong>
+                      <span th:text="${servicio.categoria.nombre}"
+                        >Categoría</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="row" th:if="${servicio.especialidadRequerida}">
+                  <div class="col-12">
+                    <div class="detail-item">
+                      <i class="bi bi-award text-primary me-2"></i>
+                      <strong>Especialista:</strong>
+                      <span th:text="${servicio.especialidadRequerida.nombre}"
+                        >Especialidad</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Acciones para usuario público -->
+              <div class="service-actions">
+                <div th:if="${!isAuthenticated}" class="alert alert-info">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <strong>¿Te interesa este servicio?</strong>
+                  <a
+                    th:href="@{/publico/login}"
+                    class="btn btn-sm btn-primary ms-2"
+                  >
+                    Iniciar Sesión para Agendar
+                  </a>
+                </div>
+
+                <div th:if="${isAuthenticated}" class="authenticated-actions">
+                  <div class="d-grid">
+                    <a
+                      th:href="@{/cliente/agendar/{id}(id=${servicio.id})}"
+                      class="btn btn-primary btn-lg"
+                    >
+                      <i class="bi bi-calendar-plus me-2"></i>
+                      Agendar Cita
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-5">
+          <!-- Beneficios del servicio -->
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link active"
+                      data-bs-toggle="tab"
+                      href="#description"
+                      role="tab"
+                    >
+                      Descripción Detallada
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      data-bs-toggle="tab"
+                      href="#benefits"
+                      role="tab"
+                    >
+                      Beneficios
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      data-bs-toggle="tab"
+                      href="#reviews"
+                      role="tab"
+                    >
+                      Reseñas
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+                  <div
+                    class="tab-pane fade show active"
+                    id="description"
+                    role="tabpanel"
+                  >
+                    <p
+                      th:text="${servicio.descripcion ?: 'Este servicio no tiene descripción detallada disponible.'}"
+                    >
+                      Descripción detallada del servicio...
+                    </p>
+                  </div>
+                  <div class="tab-pane fade" id="benefits" role="tabpanel">
+                    <div class="benefits-list">
+                      <div class="benefit-item mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <span
+                          >Atención personalizada con profesionales
+                          especializados</span
+                        >
+                      </div>
+                      <div class="benefit-item mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <span
+                          >Ambiente relajante con música de tu preferencia</span
+                        >
+                      </div>
+                      <div class="benefit-item mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <span>Productos premium incluidos en el servicio</span>
+                      </div>
+                      <div class="benefit-item mb-3">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <span>Garantía de satisfacción del 100%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <div class="text-center py-5">
+                      <i
+                        class="bi bi-star text-muted"
+                        style="font-size: 3rem"
+                      ></i>
+                      <p class="text-muted mt-3">
+                        Las reseñas estarán disponibles próximamente
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sucursales disponibles -->
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">
+                  <i class="bi bi-geo-alt me-2"></i>
+                  Sucursales Disponibles
+                </h5>
+              </div>
+              <div class="card-body">
+                <div
+                  th:if="${sucursales}"
+                  th:each="sucursal : ${sucursales}"
+                  class="sucursal-item mb-3 p-3 border rounded"
+                >
+                  <h6 class="mb-2" th:text="${sucursal.nombre}">Sucursal</h6>
+                  <p
+                    class="small text-muted mb-2"
+                    th:if="${sucursal.telefonoContacto}"
+                  >
+                    <i class="bi bi-telephone me-1"></i>
+                    <span th:text="${sucursal.telefonoContacto}">Teléfono</span>
+                  </p>
+                  <p
+                    class="small text-muted mb-0"
+                    th:if="${sucursal.emailContacto}"
+                  >
+                    <i class="bi bi-envelope me-1"></i>
+                    <span th:text="${sucursal.emailContacto}">Email</span>
+                  </p>
+                </div>
+
+                <div
+                  th:if="${!sucursales or sucursales.empty}"
+                  class="text-center py-3"
+                >
+                  <i
+                    class="bi bi-building text-muted"
+                    style="font-size: 2rem"
+                  ></i>
+                  <p class="text-muted mt-2">No hay sucursales disponibles</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:insert="~{publico/template_user.html::footer}"></div>
+
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+    >
+      <i class="bi bi-arrow-up-short"></i>
+    </a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <div th:insert="~{publico/template_user.html::jsFiles}"></div>
+
+    <style>
+      .page-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        margin-bottom: 0;
+      }
+
+      .breadcrumbs ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .breadcrumbs li:not(:last-child)::after {
+        content: " / ";
+        margin-left: 10px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .breadcrumbs a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+      }
+
+      .service-main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .service-main-image:hover {
+        transform: scale(1.05);
+      }
+
+      .service-title {
+        color: #333;
+        font-weight: 600;
+      }
+
+      .current-price {
+        color: #28a745 !important;
+        font-weight: bold;
+      }
+
+      .detail-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .benefit-item {
+        padding: 8px 0;
+      }
+
+      .sucursal-item {
+        transition: box-shadow 0.2s ease;
+      }
+
+      .sucursal-item:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        transform: translateY(-2px);
+      }
+    </style>
+  </body>
+</html>

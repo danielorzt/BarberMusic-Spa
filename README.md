@@ -72,6 +72,7 @@ src/main/resources/templates/
 La aplicación implementa un sistema de 4 roles jerárquicos según el Manual de Roles:
 
 #### 1. **CLIENTE** (Rol por defecto)
+
 - **Rutas**: `/home`, `/cliente/**`, `/cart/**`
 - **Funcionalidades**:
   - Explorar catálogo de servicios y productos
@@ -82,6 +83,7 @@ La aplicación implementa un sistema de 4 roles jerárquicos según el Manual de
   - Gestionar favoritos
 
 #### 2. **EMPLEADO** (Personal operativo)
+
 - **Rutas**: `/empleado/**`
 - **Funcionalidades**:
   - Panel de control específico
@@ -90,6 +92,7 @@ La aplicación implementa un sistema de 4 roles jerárquicos según el Manual de
   - Gestión de recordatorios
 
 #### 3. **ADMIN_SUCURSAL** (Administrador de sucursal)
+
 - **Rutas**: `/admin-sucursal/**`
 - **Funcionalidades**:
   - Gestión de catálogo de su sucursal
@@ -99,6 +102,7 @@ La aplicación implementa un sistema de 4 roles jerárquicos según el Manual de
   - Promoción de clientes a empleados
 
 #### 4. **GERENTE** (Súper administrador)
+
 - **Rutas**: `/administrador/**`, `/productos/**`, `/servicios/**`, `/sucursales/**`
 - **Funcionalidades**:
   - Acceso total al sistema
@@ -121,6 +125,7 @@ La aplicación implementa un sistema de 4 roles jerárquicos según el Manual de
 ## ✨ Características Principales
 
 ### 🧔 Portal del Cliente
+
 - **Reserva de Servicios**: Programa citas para tratamientos de spa y servicios de barbería
 - **Tienda de Productos**: Navega y compra productos premium para el cuidado personal
 - **Sistema de Favoritos**: Marca productos y servicios como favoritos
@@ -129,6 +134,7 @@ La aplicación implementa un sistema de 4 roles jerárquicos según el Manual de
 - **Integración con PayPal y MercadoPago**: Procesamiento seguro de pagos
 
 ### 👨‍💼 Panel de Administración
+
 - **Gestión de Citas**: Visualiza y administra todas las citas en todas las ubicaciones
 - **Control de Inventario**: Seguimiento de niveles de stock y ventas de productos
 - **Programación de Personal**: Gestiona horarios de empleados y asignación de servicios
@@ -154,11 +160,13 @@ BarberMusic&Spa está construido con un stack tecnológico robusto:
 La aplicación utiliza un esquema de base de datos completo con las siguientes entidades principales:
 
 ### Entidades de Usuario y Roles
+
 - **usuarios**: Cuentas con sistema de roles jerárquico
 - **personal**: Información adicional para empleados
 - **direcciones**: Tabla polimórfica para direcciones de usuarios/sucursales
 
 ### Entidades de Negocio
+
 - **sucursales**: 7 sucursales en México con información completa
 - **servicios**: 16 servicios desde tratamientos láser hasta masajes
 - **productos**: Catálogo de productos para cuidado personal
@@ -166,6 +174,7 @@ La aplicación utiliza un esquema de base de datos completo con las siguientes e
 - **especialidades**: Especialidades del personal (láser, masajes, etc.)
 
 ### Entidades Operacionales
+
 - **agendamientos**: Sistema de citas con estados y seguimiento
 - **ordenes** y **detalle_ordenes**: Gestión completa de pedidos
 - **favoritos**: Sistema de favoritos para productos/servicios
@@ -174,6 +183,7 @@ La aplicación utiliza un esquema de base de datos completo con las siguientes e
 - **reseñas**: Tabla polimórfica para reseñas de servicios/productos/sucursales
 
 ### Tablas de Configuración
+
 - **horarios_sucursal**: Horarios regulares por sucursal
 - **excepciones_horario_sucursal**: Días especiales/feriados
 - **promociones**: Sistema de códigos de descuento
@@ -182,6 +192,7 @@ La aplicación utiliza un esquema de base de datos completo con las siguientes e
 ## 🚀 Instalación y Configuración
 
 ### Requisitos del Sistema
+
 - Java 17 o superior
 - MySQL 8.0 o superior
 - Maven 3.6 o superior
@@ -190,31 +201,35 @@ La aplicación utiliza un esquema de base de datos completo con las siguientes e
 ### Pasos de Instalación
 
 1. **Clona el repositorio**:
+
    ```bash
    git clone https://github.com/tuusuario/barberspa.git
    cd barberspa
    ```
 
 2. **Configura la base de datos**:
+
    ```sql
    CREATE DATABASE bmspa CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
 3. **Ejecuta el script SQL completo**:
+
    ```bash
    mysql -u tu_usuario -p bmspa < database_schema.sql
    ```
 
 4. **Configura application.properties**:
+
    ```properties
    # Base de datos
    spring.datasource.url=jdbc:mysql://localhost:3306/bmspa?useSSL=false&serverTimezone=UTC
    spring.datasource.username=tu_usuario
    spring.datasource.password=tu_contraseña
-   
+
    # Configuración de servidor
    server.port=8080
-   
+
    # Configuración de Thymeleaf
    spring.thymeleaf.cache=false
    spring.thymeleaf.prefix=classpath:/templates/
@@ -222,6 +237,7 @@ La aplicación utiliza un esquema de base de datos completo con las siguientes e
    ```
 
 5. **Compila y ejecuta**:
+
    ```bash
    mvn clean install
    mvn spring-boot:run
@@ -255,23 +271,27 @@ Email: roberto.silva@gmail.com
 ## 🔄 Cambios Recientes Implementados
 
 ### ✅ Reorganización de Templates por Roles
+
 - Migración completa de templates a estructura por roles
 - Actualización de todos los controladores para nuevas rutas
 - Configuración de Spring Security para nueva estructura
 
 ### ✅ Correcciones de Controladores
+
 - **HomeController**: Todas las rutas ahora retornan templates `publico/`
 - **UsuarioController**: Rutas actualizadas a `cliente/` y `publico/`
 - **FavoritoController**: Migrado de `/usuario/favoritos` a `/cliente/favoritos`
 - **LoginController y RegistroController**: Redirects actualizados a `/publico/login`
 
 ### ✅ Nuevos Templates Creados
+
 - `publico/serviciosVista.html`: Catálogo completo de servicios
 - `cliente/detallecompra.html`: Detalle de órdenes para clientes
 - `publico/mantenimiento.html`: Página de mantenimiento
 - Templates organizados por roles con navegación específica
 
 ### ✅ Spring Security Actualizado
+
 - Configuración de rutas por roles
 - Protección de endpoints según jerarquía de permisos
 - Manejo de sesiones HTTP + Spring Security context
@@ -279,10 +299,11 @@ Email: roberto.silva@gmail.com
 ## 🔴 Problemas Conocidos Pendientes
 
 ### 1. **Recursos de Imágenes Faltantes**
+
 ```
 # Imágenes que faltan en /assets/img/
 - proxim500x500.jpg
-- musicspavillahermosa-500x500.jpg  
+- musicspavillahermosa-500x500.jpg
 - musisss-500x500.jpg
 - barbermusicspa-500x500.jpg
 - bspa500x500.jpg
@@ -290,15 +311,18 @@ Email: roberto.silva@gmail.com
 ```
 
 ### 2. **Spring Security Firewall**
+
 - Bloqueo de URLs con doble slash (`//`)
 - Necesario revisar generación de rutas en templates
 
 ### 3. **Organización de Assets**
+
 Los assets necesitan reorganización según nueva estructura:
+
 ```
 src/main/resources/static/assets/img/
 ├── servicios/          # Imágenes de servicios
-├── productos/          # Imágenes de productos  
+├── productos/          # Imágenes de productos
 ├── sucursales/         # Imágenes de sucursales
 └── usuarios/           # Avatares y fotos de perfil
 ```

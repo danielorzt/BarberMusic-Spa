@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{publico/template_user.html::head}">
+	<title>Finalizar Compra | BarberMusicSpa</title>
+</head>
+<style>
+	#main {
+		margin-top: 3em;
+	}
+
+	section {
+		padding: 60px 0 0 0;
+	}
+
+	.checkout-form {
+		background: #fff;
+		border-radius: 10px;
+		box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+		padding: 2rem;
+	}
+
+	.form-section {
+		margin-bottom: 2rem;
+		padding: 1.5rem;
+		border: 1px solid #e9ecef;
+		border-radius: 8px;
+	}
+
+	.section-title {
+		color: #2c3e50;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 2px solid #f39c12;
+	}
+
+	.payment-method {
+		border: 2px solid #e9ecef;
+		border-radius: 8px;
+		padding: 1rem;
+		margin-bottom: 1rem;
+		cursor: pointer;
+		transition: all 0.3s ease;
+	}
+
+	.payment-method:hover,
+	.payment-method.selected {
+		border-color: #f39c12;
+		background-color: #fdf2e6;
+	}
+
+	.order-summary {
+		background: #f8f9fa;
+		border-radius: 8px;
+		padding: 1.5rem;
+		position: sticky;
+		top: 100px;
+	}
+
+	.summary-item {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
+		padding: 0.5rem 0;
+	}
+
+	.summary-total {
+		border-top: 2px solid #f39c12;
+		padding-top: 1rem;
+		margin-top: 1rem;
+		font-weight: 600;
+		font-size: 1.2rem;
+	}
+
+	.btn-primary {
+		background: linear-gradient(45deg, #f39c12, #e67e22);
+		border: none;
+		padding: 12px 30px;
+		font-weight: 600;
+		border-radius: 25px;
+		transition: all 0.3s ease;
+	}
+
+	.btn-primary:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+	}
+</style>
+
+<body class="index-page">
+
+	<!-- Header para usuarios no autenticados -->
+	<div th:insert="~{publico/template_user.html::header}" th:if="${sesion == null}"></div>
+	<!-- Header para usuarios autenticados -->
+	<div th:insert="~{publico/template_user.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
+
+	<main id="main">
+		<!-- ======= Breadcrumbs Section ======= -->
+		<section class="breadcrumbs">
+			<div class="container">
+				<h2>Finalizar Compra</h2>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/cliente/carrito}">Carrito</a></li>
+					<li class="breadcrumb-item active">Checkout</li>
+				</ol>
+			</div>
+		</section><!-- End Breadcrumbs -->
+
+		<!-- ======= Checkout Section ======= -->
+		<section class="inner-page">
+			<div class="container">
+				<div class="row">
+					<!-- Formulario de Checkout -->
+					<div class="col-lg-8">
+						<form id="checkout-form" class="checkout-form" method="post" th:action="@{/cliente/procesar-orden}">
+							
+							<!-- Información Personal -->
+							<div class="form-section">
+								<h4 class="section-title">
+									<i class="bi bi-person me-2"></i>Información Personal
+								</h4>
+								<div class="row">
+									<div class="col-md-6 mb-3">
+										<label for="nombre" class="form-label">Nombre completo</label>
+										<input type="text" class="form-control" id="nombre" name="nombre" 
+											   th:value="${usuario != null ? usuario.nombre : ''}" required>
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="email" class="form-label">Correo electrónico</label>
+										<input type="email" class="form-control" id="email" name="email" 
+											   th:value="${usuario != null ? usuario.email : ''}" required>
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="telefono" class="form-label">Teléfono</label>
+										<input type="tel" class="form-control" id="telefono" name="telefono" 
+											   th:value="${usuario != null ? usuario.telefono : ''}" required>
+									</div>
+								</div>
+							</div>
+
+							<!-- Dirección de Entrega -->
+							<div class="form-section">
+								<h4 class="section-title">
+									<i class="bi bi-geo-alt me-2"></i>Dirección de Entrega
+								</h4>
+								<div class="row">
+									<div class="col-12 mb-3">
+										<label for="direccion" class="form-label">Dirección completa</label>
+										<input type="text" class="form-control" id="direccion" name="direccion" 
+											   placeholder="Calle, número, colonia" required>
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="ciudad" class="form-label">Ciudad</label>
+										<input type="text" class="form-control" id="ciudad" name="ciudad" required>
+									</div>
+									<div class="col-md-3 mb-3">
+										<label for="estado" class="form-label">Estado</label>
+										<select class="form-select" id="estado" name="estado" required>
+											<option value="">Seleccionar...</option>
+											<option value="Tabasco">Tabasco</option>
+											<option value="San Luis Potosí">San Luis Potosí</option>
+											<option value="Veracruz">Veracruz</option>
+											<option value="Campeche">Campeche</option>
+											<option value="Yucatán">Yucatán</option>
+										</select>
+									</div>
+									<div class="col-md-3 mb-3">
+										<label for="codigoPostal" class="form-label">Código Postal</label>
+										<input type="text" class="form-control" id="codigoPostal" name="codigoPostal" required>
+									</div>
+									<div class="col-12 mb-3">
+										<label for="referencias" class="form-label">Referencias (opcional)</label>
+										<textarea class="form-control" id="referencias" name="referencias" rows="2" 
+												  placeholder="Referencias para la entrega..."></textarea>
+									</div>
+								</div>
+							</div>
+
+							<!-- Método de Pago -->
+							<div class="form-section">
+								<h4 class="section-title">
+									<i class="bi bi-credit-card me-2"></i>Método de Pago
+								</h4>
+								
+								<div class="payment-method" data-method="tarjeta">
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="metodoPago" id="tarjeta" value="tarjeta" checked>
+										<label class="form-check-label" for="tarjeta">
+											<i class="bi bi-credit-card me-2"></i>
+											<strong>Tarjeta de Crédito/Débito</strong>
+											<br><small class="text-muted">Visa, Mastercard, American Express</small>
+										</label>
+									</div>
+								</div>
+
+								<div class="payment-method" data-method="paypal">
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="metodoPago" id="paypal" value="paypal">
+										<label class="form-check-label" for="paypal">
+											<i class="bi bi-paypal me-2"></i>
+											<strong>PayPal</strong>
+											<br><small class="text-muted">Paga con tu cuenta PayPal</small>
+										</label>
+									</div>
+								</div>
+
+								<div class="payment-method" data-method="mercadopago">
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="metodoPago" id="mercadopago" value="mercadopago">
+										<label class="form-check-label" for="mercadopago">
+											<i class="bi bi-wallet2 me-2"></i>
+											<strong>MercadoPago</strong>
+											<br><small class="text-muted">Transferencia o tarjeta</small>
+										</label>
+									</div>
+								</div>
+
+								<div class="payment-method" data-method="transferencia">
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="metodoPago" id="transferencia" value="transferencia">
+										<label class="form-check-label" for="transferencia">
+											<i class="bi bi-bank me-2"></i>
+											<strong>Transferencia Bancaria</strong>
+											<br><small class="text-muted">Pago directo a cuenta bancaria</small>
+										</label>
+									</div>
+								</div>
+							</div>
+
+							<!-- Información Adicional -->
+							<div class="form-section">
+								<h4 class="section-title">
+									<i class="bi bi-chat-text me-2"></i>Información Adicional
+								</h4>
+								<div class="mb-3">
+									<label for="notas" class="form-label">Notas del pedido (opcional)</label>
+									<textarea class="form-control" id="notas" name="notas" rows="3" 
+											  placeholder="Comentarios especiales sobre tu pedido..."></textarea>
+								</div>
+								
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="checkbox" id="terminos" name="terminos" required>
+									<label class="form-check-label" for="terminos">
+										He leído y acepto los <a href="#" class="text-primary">términos y condiciones</a>
+									</label>
+								</div>
+								
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+									<label class="form-check-label" for="newsletter">
+										Quiero recibir ofertas y promociones por correo electrónico
+									</label>
+								</div>
+							</div>
+
+							<div class="d-flex justify-content-between">
+								<a th:href="@{/cliente/carrito}" class="btn btn-outline-secondary">
+									<i class="bi bi-arrow-left me-2"></i>Volver al carrito
+								</a>
+							</div>
+						</form>
+					</div>
+
+					<!-- Resumen del Pedido -->
+					<div class="col-lg-4">
+						<div class="order-summary">
+							<h4 class="section-title">
+								<i class="bi bi-clipboard-check me-2"></i>Resumen del Pedido
+							</h4>
+
+							<!-- Productos en el carrito -->
+							<div class="cart-items mb-3">
+								<div class="alert alert-info" th:if="${cart == null or cart.isEmpty()}">
+									<i class="bi bi-info-circle me-2"></i>
+									Tu carrito está vacío
+								</div>
+								
+								<div th:each="item : ${cart}" th:if="${cart != null and !cart.isEmpty()}" class="cart-item mb-2 p-2 border-bottom">
+									<div class="d-flex justify-content-between">
+										<div>
+											<strong th:text="${item.nombre ?: 'Producto'}">Producto</strong>
+											<br><small class="text-muted">Cantidad: <span th:text="${item.cantidad ?: 1}">1</span></small>
+										</div>
+										<span th:text="${item.total != null ? '$' + item.total : '$0'}">$0</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Totales -->
+							<div class="summary-item">
+								<span>Subtotal:</span>
+								<span th:text="${orden != null and orden.total != null ? '$' + orden.total : '$0'}">$0</span>
+							</div>
+							<div class="summary-item">
+								<span>Envío:</span>
+								<span class="text-success">Gratis</span>
+							</div>
+							<div class="summary-item">
+								<span>Impuestos:</span>
+								<span>$0</span>
+							</div>
+							<div class="summary-item">
+								<span>Descuento:</span>
+								<span class="text-danger">-$0</span>
+							</div>
+
+							<div class="summary-total">
+								<div class="d-flex justify-content-between">
+									<strong>Total a Pagar:</strong>
+									<strong class="text-primary" th:text="${orden != null and orden.total != null ? '$' + orden.total : '$0'}">$0</strong>
+								</div>
+							</div>
+
+							<button type="submit" form="checkout-form" class="btn btn-primary w-100 mt-3 py-3">
+								<i class="bi bi-lock me-2"></i>Realizar Pedido
+							</button>
+
+							<div class="alert alert-light border mt-3">
+								<div class="d-flex align-items-center">
+									<i class="bi bi-shield-check fs-4 me-3 text-success"></i>
+									<div>
+										<small><strong>Compra 100% Segura</strong></small>
+										<br><small class="text-muted">Tus datos están protegidos con encriptación SSL de 256 bits</small>
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-3 text-center">
+								<small class="text-muted">
+									<i class="bi bi-telephone me-1"></i>¿Necesitas ayuda? 
+									<br>Llámanos al <strong>+52 938 160 4378</strong>
+								</small>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section><!-- End Checkout Section -->
+	</main>
+
+	<div th:insert="~{publico/template_user.html::footer}"></div>
+
+	<!-- Scroll Top -->
+	<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+		<i class="bi bi-arrow-up-short"></i>
+	</a>
+
+	<!-- Preloader -->
+	<div id="preloader"></div>
+
+	<div th:insert="~{publico/template_user.html::jsFiles}"></div>
+
+	<script>
+		// Script para manejar selección de método de pago
+		document.addEventListener('DOMContentLoaded', function() {
+			const paymentMethods = document.querySelectorAll('.payment-method');
+			const paymentInputs = document.querySelectorAll('input[name="metodoPago"]');
+
+			paymentMethods.forEach(method => {
+				method.addEventListener('click', function() {
+					// Remover selección anterior
+					paymentMethods.forEach(m => m.classList.remove('selected'));
+					// Agregar selección actual
+					this.classList.add('selected');
+					// Marcar radio button
+					const radio = this.querySelector('input[type="radio"]');
+					if (radio) radio.checked = true;
+				});
+			});
+
+			// Marcar el método seleccionado por defecto
+			const defaultSelected = document.querySelector('input[name="metodoPago"]:checked');
+			if (defaultSelected) {
+				defaultSelected.closest('.payment-method').classList.add('selected');
+			}
+		});
+	</script>
+
+</body>
+
+</html>

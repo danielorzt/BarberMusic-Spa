@@ -18,120 +18,108 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-        @Autowired
-        private AuthenticationProvider authenticationProvider;
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                http
-                                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar en entorno de
-                                                              // desarrollo
-                                .authorizeHttpRequests(auth -> auth
-                                                // Recursos públicos sin autenticación
-                                                .requestMatchers(
-                                                                "/",
-                                                                "/home",
-                                                                "/home/",
-                                                                "/home/productosVista",
-                                                                "/home/serviciosVista",
-                                                                "/productosVista",
-                                                                "/serviciosVista", 
-                                                                "/productoHome/**",
-                                                                "/servicioHome/**",
-                                                                "/searchProductos",
-                                                                "/searchServicios",
-                                                                "/usuario/login",
-                                                                "/usuario/login-success",
-                                                                "/usuario/registro",
-                                                                "/usuario/save",
-                                                                "/usuario/acceder",
-                                                                "/usuario/resetPassword",
-                                                                "/usuario/cambiarPassword",
-                                                                "/usuario/saveNewPassword",
-                                                                "/usuario/token-invalido",
-                                                                "/usuario/create-test-user",
-                                                                "/usuario/test-login",
-                                                                "/usuario/validar-email",
-                                                                "/usuario/test-registro",
-                                                                "/assets/**",
-                                                                "/img/**",
-                                                                "/images/**",
-                                                                "/css/**",
-                                                                "/js/**",
-                                                                "/vendor/**",
-                                                                "/node_modules/**",
-                                                                "/bootstrap/**",
-                                                                "/webjars/**",
-                                                                "/static/**",
-                                                                "/swagger-ui/**",
-                                                                "/api-docs/**",
-                                                                "/debug/**",
-                                                                "/error",
-                                                                "/403",
-                                                                "/favicon.ico")
-                                                .permitAll()
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar en entorno de
+                                              // desarrollo
+                .authorizeHttpRequests(auth -> auth
+                        // Recursos públicos sin autenticación
+                        .requestMatchers(
+                                // Rutas públicas principales
+                                "/",
+                                "/home",
+                                "/home/**",
+                                "/publico/**",
 
-                                                // Rutas específicas de cliente autenticado
-                                                .requestMatchers("/cliente/**", "/cart/**", "/getCart",
-                                                                "/home/test-home", "/home/full", "/home/mantenimiento")
-                                                .hasAuthority("ROLE_CLIENTE")
+                                // Rutas de productos y servicios públicos
+                                "/productosVista",
+                                "/serviciosVista",
+                                "/productoHome/**",
+                                "/servicioHome/**",
+                                "/searchProductos",
+                                "/searchServicios",
 
-                                                // Rutas de empleado y superiores
-                                                .requestMatchers("/empleado/**")
-                                                .hasAnyAuthority("ROLE_EMPLEADO", "ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
+                                // Rutas de autenticación y registro (NUEVAS RUTAS)
+                                "/publico/login",
+                                "/publico/registro",
+                                "/publico/cambiar-password",
+                                "/publico/token-invalido",
+                                "/publico/acceder",
+                                "/usuario/login", // Mantener compatibilidad
+                                "/usuario/login-success",
+                                "/usuario/registro", // Mantener compatibilidad
+                                "/usuario/save",
+                                "/usuario/acceder",
+                                "/usuario/resetPassword",
+                                "/usuario/cambiarPassword",
+                                "/usuario/saveNewPassword",
+                                "/usuario/token-invalido",
+                                "/usuario/create-test-user",
+                                "/usuario/test-login",
+                                "/usuario/validar-email",
+                                "/usuario/test-registro",
+                                "/usuario/create-admin",
 
-                                                // Rutas de admin sucursal y superiores
-                                                .requestMatchers("/admin-sucursal/**")
-                                                .hasAnyAuthority("ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
+                                // Recursos estáticos
+                                "/assets/**",
+                                "/img/**",
+                                "/images/**",
+                                "/css/**",
+                                "/js/**",
+                                "/vendor/**",
+                                "/node_modules/**",
+                                "/bootstrap/**",
+                                "/webjars/**",
+                                "/static/**",
+                                "/swagger-ui/**",
+                                "/api-docs/**",
+                                "/debug/**",
+                                "/error",
+                                "/403",
+                                "/favicon.ico")
+                        .permitAll()
 
-                                                // Rutas exclusivas de gerente
-                                                .requestMatchers("/gerente/**").hasAuthority("ROLE_GERENTE")
+                        // Rutas específicas de cliente autenticado
+                        .requestMatchers("/cliente/**", "/cart/**", "/getCart",
+                                "/home/test-home", "/home/full", "/home/mantenimiento")
+                        .hasAuthority("ROLE_CLIENTE")
 
-                                                // Todo lo demás requiere autenticación
-                                                .anyRequest().authenticated())
-                                .formLogin(formLogin -> formLogin
-                                                .loginPage("/usuario/login")
-                                                .loginProcessingUrl("/usuario/acceder")
-                                                .successHandler((request, response, authentication) -> {
-                                                    // Custom success handler para sincronizar sesión INMEDIATAMENTE
-                                                    try {
-                                                        String email = authentication.getName();
-                                                        
-                                                        // Obtener la sesión HTTP
-                                                        var session = request.getSession(true);
-                                                        
-                                                        // Obtener ApplicationContext para acceder a servicios
-                                                        var ctx = org.springframework.web.context.support.WebApplicationContextUtils
-                                                            .getRequiredWebApplicationContext(request.getServletContext());
-                                                        var usuarioService = ctx.getBean(com.sena.barberspa.service.IUsuarioService.class);
-                                                        
-                                                        // Buscar usuario y establecer sesión INMEDIATAMENTE
-                                                        var usuarioOpt = usuarioService.findByEmail(email);
-                                                        if (usuarioOpt.isPresent()) {
-                                                            var usuario = usuarioOpt.get();
-                                                            session.setAttribute("idUsuario", usuario.getId());
-                                                            session.setAttribute("usuario", usuario);
-                                                            System.out.println("✅ SUCCESS HANDLER: Sesión establecida para " + usuario.getNombre() + " (ID: " + usuario.getId() + ")");
-                                                        }
-                                                        
-                                                        response.sendRedirect("/usuario/login-success");
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                        response.sendRedirect("/usuario/login?error=true");
-                                                    }
-                                                })
-                                                .failureUrl("/usuario/login?error=true")
-                                                .permitAll())
-                                .logout(logout -> logout
-                                                .logoutRequestMatcher(new AntPathRequestMatcher("/usuario/cerrar"))
-                                                .logoutSuccessUrl("/usuario/login?logout")
-                                                .invalidateHttpSession(true)
-                                                .deleteCookies("JSESSIONID")
-                                                .permitAll())
-                                .sessionManagement(sessionManager -> sessionManager
-                                                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-                                .authenticationProvider(authenticationProvider);
+                        // Rutas de empleado y superiores
+                        .requestMatchers("/empleado/**")
+                        .hasAnyAuthority("ROLE_EMPLEADO", "ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
 
-                return http.build();
-        }
+                        // Rutas de admin sucursal y superiores
+                        .requestMatchers("/admin-sucursal/**")
+                        .hasAnyAuthority("ROLE_ADMIN_SUCURSAL", "ROLE_GERENTE")
+
+                        // Rutas exclusivas de gerente (Super Admin)
+                        .requestMatchers("/gerente/**", "/administrador/**",
+                                "/productos/**", "/servicios/**", "/sucursales/**",
+                                "/agendamientos/**", "/recordatorios/**")
+                        .hasAuthority("ROLE_GERENTE")
+
+                        // Todo lo demás requiere autenticación
+                        .anyRequest().authenticated())
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/publico/login")
+                        .loginProcessingUrl("/publico/acceder")
+                        .defaultSuccessUrl("/usuario/login-success", true)
+                        .failureUrl("/publico/login?error=true")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/cliente/cerrar"))
+                        .logoutSuccessUrl("/publico/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll())
+                .sessionManagement(sessionManager -> sessionManager
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .authenticationProvider(authenticationProvider);
+
+        return http.build();
+    }
 }

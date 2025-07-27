@@ -19,10 +19,40 @@
 
     <section><!--Buscador--></section>
     <main>
+      <!-- Error/Success Messages -->
+      <div class="container mt-3" th:if="${error != null or success != null}">
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+          th:if="${error != null}"
+        >
+          <i class="bi bi-exclamation-circle me-2"></i>
+          <span th:text="${error}"></span>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+        </div>
+        <div
+          class="alert alert-success alert-dismissible fade show"
+          role="alert"
+          th:if="${success != null}"
+        >
+          <i class="bi bi-check-circle me-2"></i>
+          <span th:text="${success}"></span>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+        </div>
+      </div>
+
       <div class="containerL" id="containerL">
         <!-- Formulario de Registro -->
         <div class="form-containerL sign-up">
-          <form th:action="@{/usuario/save}" method="post">
+          <form th:action="@{/publico/registro}" method="post">
             <h1>Crear Cuenta</h1>
             <div class="social-icons">
               <a href="/oauth2/authorization/google" class="icon"
@@ -73,7 +103,7 @@
 
         <!-- Formulario de Inicio de Sesión -->
         <div class="form-containerL sign-in">
-          <form th:action="@{/usuario/acceder}" method="post">
+          <form th:action="@{/publico/acceder}" method="post">
             <h1>Iniciar Sesión</h1>
             <div class="social-icons">
               <a href="/oauth2/authorization/google" class="icon"

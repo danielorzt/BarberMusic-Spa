@@ -34,7 +34,7 @@ import com.sena.barberspa.service.UploadFileService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/usuario")
+@RequestMapping("/cliente")
 public class UsuarioController {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(UsuarioController.class);
@@ -60,13 +60,13 @@ public class UsuarioController {
 	public static void storeResetToken(String token, String email) {
 		resetTokens.put(token, email);
 	}
-	
+
 	/**
 	 * Utility method to get authenticated user ID from session or Spring Security
 	 */
 	private Long obtenerIdUsuarioAutenticado(HttpSession session) {
 		LOGGER.info("🔍 obtenerIdUsuarioAutenticado: Iniciando verificación...");
-		
+
 		// 1. Intentar desde sesión HTTP
 		Object userIdObj = session.getAttribute("idUsuario");
 		LOGGER.info("🔍 HTTP Session idUsuario: {}", userIdObj);
@@ -75,21 +75,21 @@ public class UsuarioController {
 			LOGGER.info("✅ Usuario ID desde sesión HTTP: {}", userId);
 			return userId;
 		}
-		
+
 		// 2. Sincronizar desde Spring Security
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		LOGGER.info("🔍 Spring Security auth: {}, isAuth: {}", 
-		           auth != null ? auth.getName() : "null", 
-		           auth != null ? auth.isAuthenticated() : false);
-		
+		LOGGER.info("🔍 Spring Security auth: {}, isAuth: {}",
+				auth != null ? auth.getName() : "null",
+				auth != null ? auth.isAuthenticated() : false);
+
 		if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
 			Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
 			if (usuarioOpt.isPresent()) {
 				Usuario usuario = usuarioOpt.get();
-				
+
 				// Verificar y asignar sucursal por defecto si no tiene una
 				verificarYAsignarSucursalPorDefecto(usuario);
-				
+
 				// Sincronizar sesión HTTP
 				session.setAttribute("idUsuario", usuario.getId());
 				session.setAttribute("usuario", usuario);
@@ -99,13 +99,14 @@ public class UsuarioController {
 				LOGGER.warn("❌ Usuario con email {} no encontrado en BD", auth.getName());
 			}
 		}
-		
+
 		LOGGER.warn("❌ No se pudo obtener ID de usuario autenticado");
 		return null;
 	}
-	
+
 	/**
-	 * Verifica si el usuario tiene sucursal asignada y asigna una por defecto si no tiene
+	 * Verifica si el usuario tiene sucursal asignada y asigna una por defecto si no
+	 * tiene
 	 */
 	private void verificarYAsignarSucursalPorDefecto(Usuario usuario) {
 		try {
@@ -113,25 +114,26 @@ public class UsuarioController {
 			if (usuario.getSucursalPreferida() != null) {
 				return;
 			}
-			
-			LOGGER.info("🏢 Usuario {} no tiene sucursal asignada, buscando sucursal por defecto...", usuario.getEmail());
-			
+
+			LOGGER.info("🏢 Usuario {} no tiene sucursal asignada, buscando sucursal por defecto...",
+					usuario.getEmail());
+
 			// Buscar primera sucursal activa
 			List<Sucursal> sucursalesActivas = sucursalesService.findAll().stream()
-				.filter(s -> s.getActivo() != null && s.getActivo())
-				.collect(java.util.stream.Collectors.toList());
-			
+					.filter(s -> s.getActivo() != null && s.getActivo())
+					.collect(java.util.stream.Collectors.toList());
+
 			if (!sucursalesActivas.isEmpty()) {
 				Sucursal sucursalPorDefecto = sucursalesActivas.get(0);
 				usuario.setSucursalPreferida(sucursalPorDefecto);
 				usuarioService.save(usuario); // Guardar cambios
-				
-				LOGGER.info("✅ Asignada sucursal por defecto: {} para usuario: {}", 
-				           sucursalPorDefecto.getNombre(), usuario.getEmail());
+
+				LOGGER.info("✅ Asignada sucursal por defecto: {} para usuario: {}",
+						sucursalPorDefecto.getNombre(), usuario.getEmail());
 			} else {
 				LOGGER.warn("⚠️ No hay sucursales activas disponibles para asignar por defecto");
 			}
-			
+
 		} catch (Exception e) {
 			LOGGER.error("❌ Error verificando/asignando sucursal por defecto: {}", e.getMessage());
 			// No lanzar excepción - esto no debe interrumpir el flujo de autenticación
@@ -143,7 +145,7 @@ public class UsuarioController {
 	// Almacén temporal de tokens de restablecimiento (en producción, usar base de
 	// datos)
 	private static final ConcurrentHashMap<String, String> resetTokens = new ConcurrentHashMap<>();
-	
+
 	@ModelAttribute
 	public void addCommonAttributes(Model model, HttpSession session) {
 		try {
@@ -156,11 +158,12 @@ public class UsuarioController {
 					Usuario usuario = usuarioOpt.get();
 					model.addAttribute("usuario", usuario);
 					model.addAttribute("sesion", userId);
-					LOGGER.debug("✅ UsuarioController: Usuario cargado desde sesión HTTP: {} (ID: {})", usuario.getNombre(), userId);
+					LOGGER.debug("✅ UsuarioController: Usuario cargado desde sesión HTTP: {} (ID: {})",
+							usuario.getNombre(), userId);
 					return;
 				}
 			}
-			
+
 			// 2. Fallback: Sincronizar desde Spring Security si está autenticado
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
@@ -170,24 +173,24 @@ public class UsuarioController {
 					// Sincronizar sesión HTTP
 					session.setAttribute("idUsuario", usuario.getId());
 					session.setAttribute("usuario", usuario);
-					
+
 					model.addAttribute("usuario", usuario);
 					model.addAttribute("sesion", usuario.getId());
-					LOGGER.debug("✅ UsuarioController: Usuario sincronizado desde Spring Security: {} (ID: {})", usuario.getNombre(), usuario.getId());
+					LOGGER.debug("✅ UsuarioController: Usuario sincronizado desde Spring Security: {} (ID: {})",
+							usuario.getNombre(), usuario.getId());
 					return;
 				}
 			}
-			
+
 			// 3. No hay usuario autenticado - esto es normal para páginas públicas
 			LOGGER.debug("ℹ️ UsuarioController: No hay usuario autenticado en la sesión");
-			
+
 		} catch (Exception e) {
 			LOGGER.warn("UsuarioController: Error loading user session data: {}", e.getMessage());
 		}
 	}
 
-
-	@GetMapping("/acceder")
+	@GetMapping("/dashboard")
 	public String acceder(HttpSession session) {
 		try {
 			LOGGER.info("Accediendo con sesión: {}", session.getAttribute("idUsuario"));
@@ -223,19 +226,25 @@ public class UsuarioController {
 			} else {
 				LOGGER.warn("Usuario no encontrado en la base de datos");
 				session.invalidate();
-				return "redirect:/usuario/login";
+				return "redirect:/publico/login";
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error en método acceder: {}", e.getMessage(), e);
 			session.invalidate();
-			return "redirect:/usuario/login";
+			return "redirect:/publico/login";
 		}
 	}
 
 	@GetMapping("/cerrar")
-	public String logout(HttpSession session) {
-		session.invalidate();
-		return "redirect:/";
+	public String logout(HttpSession session, RedirectAttributes flash) {
+		try {
+			LOGGER.info("🚪 Cerrando sesión para usuario ID: {}", session.getAttribute("idUsuario"));
+			session.invalidate();
+			flash.addFlashAttribute("success", "Sesión cerrada exitosamente");
+		} catch (Exception e) {
+			LOGGER.error("Error durante logout: {}", e.getMessage());
+		}
+		return "redirect:/publico/login?logout";
 	}
 
 	/**
@@ -278,7 +287,7 @@ public class UsuarioController {
 			model.addAttribute("token", token);
 			return "publico/cambiar-password";
 		} else {
-			return "redirect:/usuario/token-invalido";
+			return "redirect:/publico/token-invalido";
 		}
 	}
 
@@ -307,7 +316,7 @@ public class UsuarioController {
 
 					redirectAttributes.addFlashAttribute("success",
 							"¡Tu contraseña ha sido actualizada correctamente! Ahora puedes iniciar sesión con tu nueva contraseña.");
-					return "redirect:/usuario/login";
+					return "redirect:/publico/login";
 				}
 			} catch (Exception e) {
 				LOGGER.error("Error al cambiar contraseña: {}", e.getMessage());
@@ -316,7 +325,7 @@ public class UsuarioController {
 
 		redirectAttributes.addFlashAttribute("error",
 				"No se pudo cambiar la contraseña. El enlace ha expirado o es inválido.");
-		return "redirect:/usuario/login";
+		return "redirect:/publico/login";
 	}
 
 	@GetMapping("/token-invalido")
@@ -328,7 +337,7 @@ public class UsuarioController {
 	public String showUserOrders(HttpSession session, Model model) {
 		Long idUsuario = obtenerIdUsuarioAutenticado(session);
 		if (idUsuario == null) {
-			return "redirect:/usuario/login";
+			return "redirect:/publico/login";
 		}
 
 		Usuario usuario = usuarioService.findById(idUsuario)
@@ -345,14 +354,14 @@ public class UsuarioController {
 	public String showOrderDetails(@PathVariable Long id, HttpSession session, Model model) {
 		Long idUsuario = obtenerIdUsuarioAutenticado(session);
 		if (idUsuario == null) {
-			return "redirect:/usuario/login";
+			return "redirect:/publico/login";
 		}
 
 		Orden orden = ordenService.findById(id).orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
 		// Verificar que la orden pertenece al usuario
 		if (!orden.getClienteUsuario().getId().equals(idUsuario)) {
-			return "redirect:/usuario/compras";
+			return "redirect:/cliente/compras";
 		}
 
 		model.addAttribute("detalles", orden.getDetalles());
@@ -367,7 +376,7 @@ public class UsuarioController {
 		// Intentar obtener usuario de la sesión o sincronizar desde Spring Security
 		Long idUsuario = obtenerIdUsuarioAutenticado(session);
 		if (idUsuario == null) {
-			return "redirect:/usuario/login";
+			return "redirect:/publico/login";
 		}
 
 		Usuario usuario = usuarioService.findById(idUsuario)
@@ -393,14 +402,14 @@ public class UsuarioController {
 	@GetMapping("/editar")
 	public String showEditForm(HttpSession session, Model model) {
 		if (session.getAttribute("idUsuario") == null) {
-			return "redirect:/usuario/login";
+			return "redirect:/publico/login";
 		}
 
 		Usuario usuario = usuarioService.findById(Long.parseLong(session.getAttribute("idUsuario").toString()))
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 		model.addAttribute("usuario", usuario);
-		return "usuario/editar";
+		return "cliente/editar";
 	}
 
 	@PostMapping("/actualizar")
@@ -410,7 +419,7 @@ public class UsuarioController {
 			RedirectAttributes redirectAttributes) throws IOException {
 		Long idUsuario = obtenerIdUsuarioAutenticado(session);
 		if (idUsuario == null) {
-			return "redirect:/usuario/login";
+			return "redirect:/publico/login";
 		}
 
 		try {
@@ -435,12 +444,12 @@ public class UsuarioController {
 
 			usuarioService.save(existingUser);
 			redirectAttributes.addFlashAttribute("success", "Perfil actualizado correctamente");
-			return "redirect:/usuario/perfil";
+			return "redirect:/cliente/perfil";
 
 		} catch (Exception e) {
 			LOGGER.error("Error al actualizar perfil: {}", e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Error al actualizar perfil");
-			return "redirect:/usuario/editar";
+			return "redirect:/cliente/editar";
 		}
 	}
 
@@ -453,7 +462,7 @@ public class UsuarioController {
 			if (existingAdmin.isPresent()) {
 				return "✅ Usuario admin ya existe: admin@barberspa.com<br>" +
 						"Rol actual: " + existingAdmin.get().getRol() + "<br>" +
-						"<a href='/usuario/login'>🔗 Ir al login</a>";
+						"<a href='/publico/login'>🔗 Ir al login</a>";
 			}
 
 			// Crear nuevo usuario admin
@@ -471,10 +480,77 @@ public class UsuarioController {
 					"Email: admin@barberspa.com<br>" +
 					"Password: admin123<br>" +
 					"Rol: GERENTE<br>" +
-					"<a href='/usuario/login'>🔗 Ir al login</a>";
+					"<a href='/publico/login'>🔗 Ir al login</a>";
 
 		} catch (Exception e) {
 			return "❌ Error creando admin: " + e.getMessage();
 		}
+	}
+
+	// ============ RUTAS DE CARRITO Y CHECKOUT ============
+
+	@GetMapping("/carrito")
+	public String carrito(HttpSession session, Model model) {
+		LOGGER.info("🛒 Acceso a /cliente/carrito");
+		Long idUsuario = obtenerIdUsuarioAutenticado(session);
+		if (idUsuario == null) {
+			return "redirect:/publico/login";
+		}
+		
+		try {
+			// Crear carrito temporal (simulado) mientras se implementa la lógica completa
+			java.util.List<Object> cartItems = new java.util.ArrayList<>();
+			
+			// Crear orden temporal
+			Orden orden = new Orden();
+			orden.setTotal(java.math.BigDecimal.ZERO);
+			
+			model.addAttribute("cart", cartItems);
+			model.addAttribute("orden", orden);
+			
+			LOGGER.info("🛒 Carrito cargado con {} items", cartItems.size());
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error cargando carrito: {}", e.getMessage());
+			model.addAttribute("cart", new java.util.ArrayList<>());
+			model.addAttribute("orden", new Orden());
+		}
+		
+		return "cliente/carrito";
+	}
+
+
+	@GetMapping("/checkout")
+	public String checkout(HttpSession session, Model model) {
+		LOGGER.info("💳 Acceso a /cliente/checkout");
+		Long idUsuario = obtenerIdUsuarioAutenticado(session);
+		if (idUsuario == null) {
+			return "redirect:/publico/login";
+		}
+		
+		try {
+			// Obtener usuario
+			Usuario usuario = usuarioService.findById(idUsuario)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+			
+			// Crear carrito temporal (simulado)
+			java.util.List<Object> cartItems = new java.util.ArrayList<>();
+			
+			// Crear orden temporal
+			Orden orden = new Orden();
+			orden.setTotal(java.math.BigDecimal.ZERO);
+			
+			model.addAttribute("usuario", usuario);
+			model.addAttribute("cart", cartItems);
+			model.addAttribute("orden", orden);
+			
+			LOGGER.info("💳 Checkout cargado para usuario: {}", usuario.getNombre());
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error cargando checkout: {}", e.getMessage());
+			return "redirect:/cliente/carrito";
+		}
+		
+		return "cliente/checkout";
 	}
 }

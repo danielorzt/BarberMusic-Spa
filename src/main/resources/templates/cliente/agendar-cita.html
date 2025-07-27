@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{cliente/template_cliente.html::head}">
+    <title th:text="'Agendar: ' + ${servicio.nombre} + ' | BarberMusic&Spa'">Agendar Cita | BarberMusic&Spa</title>
+</head>
+
+<body class="index-page">
+
+<!-- Header para clientes autenticados -->
+<div th:insert="~{cliente/template_cliente.html::clienteHeader}"></div>
+
+<main class="main">
+    <!-- Page Title -->
+    <div class="page-title theme-background">
+        <div class="container">
+            <h1>Agendar Cita</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a th:href="@{/home}">Inicio</a></li>
+                    <li><a th:href="@{/home/serviciosVista}">Servicios</a></li>
+                    <li><a th:href="@{/servicioHome/{id}(id=${servicio.id})}" th:text="${servicio.nombre}">Servicio</a></li>
+                    <li class="current">Agendar Cita</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <!-- Resumen del servicio -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm sticky-top" style="top: 2rem;">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Resumen del Servicio
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="service-summary">
+                            <div class="text-center mb-3">
+                                <img th:src="@{/assets/img/servicios/{img}(img=${servicio.imagen != null ? servicio.imagen : 'default-service.jpg'})}" 
+                                     class="img-fluid rounded service-thumb" 
+                                     th:alt="${servicio.nombre}"
+                                     style="width: 100%; height: 150px; object-fit: cover;">
+                            </div>
+                            
+                            <h6 class="service-name mb-3" th:text="${servicio.nombre}">Servicio</h6>
+                            
+                            <div class="service-details">
+                                <div class="detail-row mb-2">
+                                    <i class="bi bi-currency-dollar text-primary me-2"></i>
+                                    <strong>Precio:</strong>
+                                    <span th:text="'$' + ${#numbers.formatDecimal(servicio.precioBase, 0, 'POINT', 2, 'POINT')}">$0.00</span>
+                                </div>
+                                
+                                <div class="detail-row mb-2">
+                                    <i class="bi bi-clock text-primary me-2"></i>
+                                    <strong>Duración:</strong>
+                                    <span th:text="${servicio.duracionMinutos} + ' min'">60 min</span>
+                                </div>
+                                
+                                <div class="detail-row mb-2" th:if="${servicio.categoria}">
+                                    <i class="bi bi-tag text-primary me-2"></i>
+                                    <strong>Categoría:</strong>
+                                    <span th:text="${servicio.categoria.nombre}">Categoría</span>
+                                </div>
+                                
+                                <div class="detail-row mb-2" th:if="${servicio.especialidadRequerida}">
+                                    <i class="bi bi-award text-primary me-2"></i>
+                                    <strong>Especialista:</strong>
+                                    <span th:text="${servicio.especialidadRequerida.nombre}">Especialidad</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="user-info">
+                            <h6 class="mb-2">
+                                <i class="bi bi-person me-2"></i>
+                                Información del Cliente
+                            </h6>
+                            <p class="mb-1" th:text="${usuario.nombre}">Nombre Cliente</p>
+                            <p class="mb-0 text-muted small" th:text="${usuario.email}">email@cliente.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de agendamiento -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="bi bi-calendar-plus me-2"></i>
+                            Formulario de Agendamiento
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/cliente/agendar-servicio}" method="post" id="agendamientoForm" novalidate>
+                            <input type="hidden" name="servicioId" th:value="${servicio.id}">
+                            
+                            <!-- Selección de sucursal -->
+                            <div class="mb-4">
+                                <label for="sucursalId" class="form-label fw-bold required">
+                                    <i class="bi bi-geo-alt me-2"></i>
+                                    Seleccionar Sucursal
+                                </label>
+                                <select class="form-select form-select-lg" id="sucursalId" name="sucursalId" required>
+                                    <option value="">Elige la sucursal de tu preferencia</option>
+                                    <option th:each="sucursal : ${sucursales}" 
+                                            th:value="${sucursal.id}" 
+                                            th:text="${sucursal.nombre} + ' - ' + (${sucursal.telefonoContacto} ?: 'Sin teléfono')">
+                                        Sucursal
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">Por favor selecciona una sucursal.</div>
+                            </div>
+
+                            <!-- Selección de fecha y hora -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="fechaCita" class="form-label fw-bold required">
+                                        <i class="bi bi-calendar me-2"></i>
+                                        Fecha de la Cita
+                                    </label>
+                                    <input type="date" class="form-control form-control-lg" id="fechaCita" name="fechaCita" required>
+                                    <div class="invalid-feedback">Por favor selecciona una fecha válida.</div>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Las citas se pueden agendar con mínimo 24 horas de anticipación
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="horaCita" class="form-label fw-bold required">
+                                        <i class="bi bi-clock me-2"></i>
+                                        Hora de la Cita
+                                    </label>
+                                    <select class="form-select form-select-lg" id="horaCita" name="horaCita" required>
+                                        <option value="">Selecciona una hora</option>
+                                        <optgroup label="Mañana">
+                                            <option value="09:00">09:00 AM</option>
+                                            <option value="09:30">09:30 AM</option>
+                                            <option value="10:00">10:00 AM</option>
+                                            <option value="10:30">10:30 AM</option>
+                                            <option value="11:00">11:00 AM</option>
+                                            <option value="11:30">11:30 AM</option>
+                                        </optgroup>
+                                        <optgroup label="Tarde">
+                                            <option value="12:00">12:00 PM</option>
+                                            <option value="12:30">12:30 PM</option>
+                                            <option value="14:00">02:00 PM</option>
+                                            <option value="14:30">02:30 PM</option>
+                                            <option value="15:00">03:00 PM</option>
+                                            <option value="15:30">03:30 PM</option>
+                                            <option value="16:00">04:00 PM</option>
+                                            <option value="16:30">04:30 PM</option>
+                                            <option value="17:00">05:00 PM</option>
+                                            <option value="17:30">05:30 PM</option>
+                                        </optgroup>
+                                    </select>
+                                    <div class="invalid-feedback">Por favor selecciona una hora.</div>
+                                </div>
+                            </div>
+
+                            <!-- Preferencias y notas -->
+                            <div class="mb-4">
+                                <label for="notas" class="form-label fw-bold">
+                                    <i class="bi bi-chat-text me-2"></i>
+                                    Notas y Preferencias Especiales
+                                </label>
+                                <textarea class="form-control" id="notas" name="notas" rows="4" 
+                                          placeholder="Comparte cualquier preferencia especial, alergia, o solicitud específica que tengas para tu cita..."></textarea>
+                                <div class="form-text">
+                                    <i class="bi bi-lightbulb me-1"></i>
+                                    Opcional: Ayúdanos a personalizar tu experiencia
+                                </div>
+                            </div>
+
+                            <!-- Términos y condiciones -->
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terminosCondiciones" required>
+                                    <label class="form-check-label" for="terminosCondiciones">
+                                        Acepto los <a href="#" class="text-primary">términos y condiciones</a> y la 
+                                        <a href="#" class="text-primary">política de cancelación</a>
+                                    </label>
+                                    <div class="invalid-feedback">Debes aceptar los términos y condiciones.</div>
+                                </div>
+                            </div>
+
+                            <!-- Políticas de cancelación -->
+                            <div class="alert alert-info mb-4">
+                                <h6 class="alert-heading">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Política de Cancelación
+                                </h6>
+                                <ul class="mb-0 small">
+                                    <li>Las citas pueden cancelarse sin costo hasta 24 horas antes</li>
+                                    <li>Cancelaciones con menos de 24 horas tienen un cargo del 50%</li>
+                                    <li>No presentarse a la cita resulta en el cobro completo del servicio</li>
+                                    <li>Reprogramaciones sin costo hasta 12 horas antes de la cita</li>
+                                </ul>
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a th:href="@{/servicioHome/{id}(id=${servicio.id})}" class="btn btn-outline-secondary btn-lg me-md-2">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Volver al Servicio
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-calendar-check me-2"></i>
+                                    Confirmar Agendamiento
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:insert="~{cliente/template_cliente.html::footer}"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<div th:insert="~{cliente/template_cliente.html::jsFiles}"></div>
+
+<style>
+.page-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 0;
+}
+
+.breadcrumbs ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumbs li:not(:last-child)::after {
+    content: " / ";
+    margin-left: 10px;
+    color: rgba(255,255,255,0.7);
+}
+
+.breadcrumbs a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+}
+
+.service-thumb {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.service-thumb:hover {
+    transform: scale(1.05);
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.required::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-control.is-invalid:focus, .form-select.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-secondary {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    transform: translateY(-2px);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.alert-info {
+    background-color: rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.2);
+    color: #495057;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.was-validated .form-control:valid, .was-validated .form-select:valid {
+    border-color: #28a745;
+}
+
+.was-validated .form-control:valid:focus, .was-validated .form-select:valid:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('agendamientoForm');
+    const fechaCita = document.getElementById('fechaCita');
+    
+    // Establecer fecha mínima (mañana)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    fechaCita.min = tomorrow.toISOString().split('T')[0];
+    
+    // Establecer fecha por defecto a mañana
+    fechaCita.value = tomorrow.toISOString().split('T')[0];
+    
+    // Validación del formulario
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        let isValid = true;
+        
+        // Validar sucursal
+        const sucursal = document.getElementById('sucursalId');
+        if (!sucursal.value) {
+            sucursal.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            sucursal.classList.remove('is-invalid');
+            sucursal.classList.add('is-valid');
+        }
+        
+        // Validar fecha
+        const fecha = document.getElementById('fechaCita');
+        const fechaSeleccionada = new Date(fecha.value);
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        
+        if (!fecha.value || fechaSeleccionada <= hoy) {
+            fecha.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            fecha.classList.remove('is-invalid');
+            fecha.classList.add('is-valid');
+        }
+        
+        // Validar hora
+        const hora = document.getElementById('horaCita');
+        if (!hora.value) {
+            hora.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            hora.classList.remove('is-invalid');
+            hora.classList.add('is-valid');
+        }
+        
+        // Validar términos y condiciones
+        const terminos = document.getElementById('terminosCondiciones');
+        if (!terminos.checked) {
+            terminos.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            terminos.classList.remove('is-invalid');
+            terminos.classList.add('is-valid');
+        }
+        
+        form.classList.add('was-validated');
+        
+        if (isValid) {
+            // Mostrar confirmación antes de enviar
+            if (confirm('¿Estás seguro de que deseas agendar esta cita?')) {
+                form.submit();
+            }
+        } else {
+            // Scroll al primer campo con error
+            const primerError = form.querySelector('.is-invalid');
+            if (primerError) {
+                primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                primerError.focus();
+            }
+        }
+    });
+    
+    // Remover clase de error cuando el usuario selecciona/escribe
+    const campos = ['sucursalId', 'fechaCita', 'horaCita'];
+    campos.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.addEventListener('change', function() {
+                if (this.value) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            });
+        }
+    });
+    
+    document.getElementById('terminosCondiciones').addEventListener('change', function() {
+        if (this.checked) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

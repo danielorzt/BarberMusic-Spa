@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{cliente/template_cliente.html::head}">
+    <title>Editar Perfil | BarberMusic&Spa</title>
+</head>
+
+<body class="index-page">
+
+<!-- Header para clientes autenticados -->
+<div th:insert="~{cliente/template_cliente.html::clienteHeader}"></div>
+
+<main class="main">
+    <!-- Page Title -->
+    <div class="page-title theme-background">
+        <div class="container">
+            <h1>Editar Perfil</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a th:href="@{/home}">Inicio</a></li>
+                    <li><a th:href="@{/cliente/perfil}">Mi Perfil</a></li>
+                    <li class="current">Editar</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Success/Error Messages -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-person-gear me-2"></i>
+                            Actualizar Información Personal
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/cliente/actualizar}" method="post" enctype="multipart/form-data" th:object="${usuario}">
+                            <div class="row">
+                                <!-- Foto de perfil -->
+                                <div class="col-md-4 text-center mb-4">
+                                    <div class="profile-photo-container">
+                                        <img th:src="@{/assets/img/{img}(img=${usuario.imagenPath != null ? usuario.imagenPath : 'default-avatar.jpg'})}" 
+                                             class="img-thumbnail rounded-circle profile-photo" 
+                                             alt="Foto de perfil"
+                                             style="width: 150px; height: 150px; object-fit: cover;">
+                                        <div class="mt-3">
+                                            <label for="img" class="btn btn-outline-primary">
+                                                <i class="bi bi-camera me-2"></i>
+                                                Cambiar Foto
+                                            </label>
+                                            <input type="file" class="form-control d-none" id="img" name="img" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Información personal -->
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <label for="nombre" class="form-label">
+                                                <i class="bi bi-person me-1"></i>
+                                                Nombre Completo *
+                                            </label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                                   th:value="${usuario.nombre}" required>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label for="email" class="form-label">
+                                                <i class="bi bi-envelope me-1"></i>
+                                                Correo Electrónico *
+                                            </label>
+                                            <input type="email" class="form-control" id="email" name="email" 
+                                                   th:value="${usuario.email}" required>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label for="telefono" class="form-label">
+                                                <i class="bi bi-telephone me-1"></i>
+                                                Teléfono
+                                            </label>
+                                            <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                                   th:value="${usuario.telefono}">
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label for="password" class="form-label">
+                                                <i class="bi bi-lock me-1"></i>
+                                                Nueva Contraseña
+                                            </label>
+                                            <input type="password" class="form-control" id="password" name="password" 
+                                                   placeholder="Dejar en blanco para mantener la actual">
+                                            <div class="form-text">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                Solo completa si deseas cambiar tu contraseña actual
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información adicional -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h5 class="border-bottom pb-2 mb-3">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Información de la Cuenta
+                                    </h5>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Estado de la Cuenta</label>
+                                    <div class="form-control-plaintext">
+                                        <span th:if="${usuario.activo}" class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i> Activa
+                                        </span>
+                                        <span th:unless="${usuario.activo}" class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i> Inactiva
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Tipo de Usuario</label>
+                                    <div class="form-control-plaintext">
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            <span th:text="${usuario.rol.descripcion}">Cliente</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a th:href="@{/cliente/perfil}" class="btn btn-outline-secondary me-md-2">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            Cancelar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-lg me-2"></i>
+                                            Guardar Cambios
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:insert="~{cliente/template_cliente.html::footer}"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<div th:insert="~{cliente/template_cliente.html::jsFiles}"></div>
+
+<style>
+.page-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 0;
+}
+
+.breadcrumbs ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumbs li {
+    margin-right: 10px;
+}
+
+.breadcrumbs li:not(:last-child)::after {
+    content: " / ";
+    margin-left: 10px;
+    color: rgba(255,255,255,0.7);
+}
+
+.breadcrumbs a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+}
+
+.breadcrumbs .current {
+    color: white;
+    font-weight: 500;
+}
+
+.profile-photo {
+    transition: transform 0.2s;
+}
+
+.profile-photo:hover {
+    transform: scale(1.05);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+</style>
+
+<script>
+// Preview de imagen al seleccionar archivo
+document.getElementById('img').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.querySelector('.profile-photo').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
+</body>
+</html>

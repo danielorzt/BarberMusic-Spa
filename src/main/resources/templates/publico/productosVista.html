@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmins:th="https://thymeLeaf.org">
-  <head th:insert="~{publico/template_user.html::head}"> </head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{publico/template_user.html::head}"> </head>
 
   <body class="index-page">
+    <!-- Header para usuarios no autenticados -->
     <div
       th:insert="~{publico/template_user.html::header}"
       th:if="${sesion == null}"
     ></div>
+    <!-- Header para usuarios autenticados -->
     <div
       th:insert="~{publico/template_user.html::usuarioCabecera}"
       th:unless="${sesion == null}"
@@ -95,7 +97,7 @@
                 style="height: 200px; overflow: hidden"
               >
                 <img
-                  th:src="@{/assets/img/productos/{img} (img=${producto.imagen != null ? producto.imagen : 'default-product.jpg'})}"
+                  th:src="@{${producto.imagen != null ? producto.imagen : '/assets/img/productos/default-product.jpg'}}"
                   th:alt="${producto.nombreproducto}"
                   class="card-img-top rounded-top product-img"
                   style="

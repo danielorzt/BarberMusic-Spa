@@ -3,16 +3,16 @@
   <head th:replace="~{publico/template_user.html::head}"></head>
 
   <body class="index-page">
-    <!-- Header for unauthenticated users -->
+    <!-- Header para usuarios no autenticados -->
     <div
       th:insert="~{publico/template_user.html::header}"
-      th:if="${sesion == null and not isAuthenticated}"
+      th:if="${sesion == null}"
     ></div>
-    
-    <!-- Header for authenticated users -->
+
+    <!-- Header para usuarios autenticados -->
     <div
       th:insert="~{publico/template_user.html::usuarioCabecera}"
-      th:if="${sesion != null or isAuthenticated}"
+      th:unless="${sesion == null}"
     ></div>
 
     <main class="main">
@@ -93,7 +93,7 @@
                 style="height: 220px; overflow: hidden"
               >
                 <img
-                  th:src="@{/assets/img/servicios/{img} (img=${servicio.imagen != null ? servicio.imagen : '../default-service.jpg'})}"
+                  th:src="@{${servicio.imagen != null ? servicio.imagen : '/assets/img/default-service.jpg'}}}"
                   th:alt="${servicio.nombre}"
                   class="card-img-top rounded-top service-img"
                   style="
@@ -127,10 +127,10 @@
                     overflow: hidden;
                   "
                 ></h5>
-                
+
                 <!-- Service Description -->
-                <p 
-                  class="card-text text-muted mb-3" 
+                <p
+                  class="card-text text-muted mb-3"
                   th:text="${servicio.descripcion}"
                   style="
                     font-size: 0.9rem;
@@ -163,17 +163,18 @@
                     >
                       <i class="bi bi-calendar-plus me-2"></i> Agendar Servicio
                     </a>
-                    
+
                     <!-- Login prompt for unauthenticated users -->
                     <a
                       th:if="${sesion == null and not isAuthenticated}"
-                      th:href="@{/usuario/login}"
+                      th:href="@{/publico/login}"
                       class="btn btn-outline-success"
                       style="transition: all 0.3s"
                     >
-                      <i class="bi bi-box-arrow-in-right me-2"></i> Inicia sesión para agendar
+                      <i class="bi bi-box-arrow-in-right me-2"></i> Inicia
+                      sesión para agendar
                     </a>
-                    
+
                     <!-- View Details Button -->
                     <a
                       th:href="@{/servicioHome/{id} (id=${servicio.id})}"
@@ -195,7 +196,8 @@
             <div class="alert alert-info">
               <i class="bi bi-info-circle"></i>
               <span th:if="${searchTerm != null}"
-                >No se encontraron servicios que coincidan con tu búsqueda.</span
+                >No se encontraron servicios que coincidan con tu
+                búsqueda.</span
               >
               <span th:unless="${searchTerm != null}"
                 >No hay servicios disponibles en este momento.</span
@@ -203,7 +205,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Back to Home Button -->
         <div class="row mt-4">
           <div class="col-12 text-center">
@@ -216,7 +218,7 @@
     </main>
 
     <div th:insert="~{publico/template_user.html::footer}"></div>
-    
+
     <!-- Scroll Top -->
     <a
       href="#"
@@ -229,33 +231,33 @@
     <div id="preloader"></div>
 
     <div th:insert="~{publico/template_user.html::jsFiles}"></div>
-    
+
     <!-- Custom CSS for Service Cards -->
     <style>
       .service-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
-      
+
       .service-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
       }
-      
+
       .service-img {
         transition: transform 0.3s ease;
       }
-      
+
       .service-card:hover .service-img {
         transform: scale(1.05);
       }
-      
+
       .page-title {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 60px 0;
         margin-bottom: 0;
       }
-      
+
       .breadcrumbs ol {
         margin: 0;
         padding: 0;
@@ -263,22 +265,22 @@
         display: flex;
         align-items: center;
       }
-      
+
       .breadcrumbs li {
         margin-right: 10px;
       }
-      
+
       .breadcrumbs li:not(:last-child)::after {
         content: " / ";
         margin-left: 10px;
-        color: rgba(255,255,255,0.7);
+        color: rgba(255, 255, 255, 0.7);
       }
-      
+
       .breadcrumbs a {
-        color: rgba(255,255,255,0.8);
+        color: rgba(255, 255, 255, 0.8);
         text-decoration: none;
       }
-      
+
       .breadcrumbs .current {
         color: white;
         font-weight: 500;

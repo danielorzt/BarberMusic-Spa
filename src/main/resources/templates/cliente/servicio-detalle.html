@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{cliente/template_cliente.html::head}">
+    <title th:text="'Servicio: ' + ${servicio.nombre} + ' | BarberMusic&Spa'">Servicio | BarberMusic&Spa</title>
+</head>
+
+<body class="index-page">
+
+<!-- Header para clientes autenticados -->
+<div th:insert="~{cliente/template_cliente.html::clienteHeader}"></div>
+
+<main class="main">
+    <!-- Page Title -->
+    <div class="page-title theme-background">
+        <div class="container">
+            <h1 th:text="${servicio.nombre}">Servicio</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a th:href="@{/home}">Inicio</a></li>
+                    <li><a th:href="@{/home/serviciosVista}">Servicios</a></li>
+                    <li class="current" th:text="${servicio.nombre}">Servicio</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div class="container pt-3">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <!-- Imagen del servicio -->
+            <div class="col-lg-6 mb-4">
+                <div class="service-image-container">
+                    <img th:src="@{/assets/img/servicios/{img}(img=${servicio.imagen != null ? servicio.imagen : 'default-service.jpg'})}" 
+                         class="img-fluid rounded shadow-sm service-main-image" 
+                         th:alt="${servicio.nombre}">
+                    
+                    <!-- Badge de precio -->
+                    <div class="price-badge">
+                        <span class="badge bg-primary fs-6" th:text="'$' + ${#numbers.formatDecimal(servicio.precioBase, 0, 'POINT', 2, 'POINT')}">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del servicio -->
+            <div class="col-lg-6">
+                <div class="service-info">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="service-title" th:text="${servicio.nombre}">Nombre del Servicio</h1>
+                        <button class="btn btn-outline-danger btn-sm favorite-btn" type="button" onclick="toggleFavorite()">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="service-price mb-4">
+                        <span class="current-price h2 text-primary" th:text="'$' + ${#numbers.formatDecimal(servicio.precioBase, 0, 'POINT', 2, 'POINT')}">$0.00</span>
+                        <div class="price-note text-muted small">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Precio base - puede variar según sucursal
+                        </div>
+                    </div>
+
+                    <div class="service-description mb-4">
+                        <h5>Descripción</h5>
+                        <p th:text="${servicio.descripcion ?: 'Descripción no disponible'}">Descripción del servicio</p>
+                    </div>
+
+                    <div class="service-details mb-4">
+                        <div class="detail-card p-3 bg-light rounded">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="detail-item">
+                                        <i class="bi bi-clock text-primary me-2"></i>
+                                        <strong>Duración:</strong> 
+                                        <span th:text="${servicio.duracionMinutos} + ' minutos'">60 minutos</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" th:if="${servicio.categoria}">
+                                    <div class="detail-item">
+                                        <i class="bi bi-tag text-primary me-2"></i>
+                                        <strong>Categoría:</strong> 
+                                        <span th:text="${servicio.categoria.nombre}">Categoría</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3" th:if="${servicio.especialidadRequerida}">
+                                    <div class="detail-item">
+                                        <i class="bi bi-award text-primary me-2"></i>
+                                        <strong>Especialista:</strong> 
+                                        <span th:text="${servicio.especialidadRequerida.nombre}">Especialidad</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="detail-item">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <strong>Estado:</strong> 
+                                        <span th:if="${servicio.activo}" class="text-success">Disponible</span>
+                                        <span th:unless="${servicio.activo}" class="text-warning">No disponible</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de agendamiento rápido -->
+                    <div class="quick-booking-section" th:if="${servicio.activo}">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-calendar-plus me-2"></i>
+                                    Agendar Cita Rápida
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/cliente/agendar-servicio}" method="post" id="quickBookingForm">
+                                    <input type="hidden" name="servicioId" th:value="${servicio.id}">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="sucursalId" class="form-label fw-bold">
+                                                <i class="bi bi-geo-alt me-1"></i>Sucursal
+                                            </label>
+                                            <select class="form-select" id="sucursalId" name="sucursalId" required>
+                                                <option value="">Selecciona una sucursal</option>
+                                                <option th:each="sucursal : ${sucursales}" 
+                                                        th:value="${sucursal.id}" 
+                                                        th:text="${sucursal.nombre}">
+                                                    Sucursal
+                                                </option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="fechaCita" class="form-label fw-bold">
+                                                <i class="bi bi-calendar me-1"></i>Fecha
+                                            </label>
+                                            <input type="date" class="form-control" id="fechaCita" name="fechaCita" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="horaCita" class="form-label fw-bold">
+                                                <i class="bi bi-clock me-1"></i>Hora
+                                            </label>
+                                            <select class="form-select" id="horaCita" name="horaCita" required>
+                                                <option value="">Selecciona una hora</option>
+                                                <option value="09:00">09:00 AM</option>
+                                                <option value="10:00">10:00 AM</option>
+                                                <option value="11:00">11:00 AM</option>
+                                                <option value="12:00">12:00 PM</option>
+                                                <option value="14:00">02:00 PM</option>
+                                                <option value="15:00">03:00 PM</option>
+                                                <option value="16:00">04:00 PM</option>
+                                                <option value="17:00">05:00 PM</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="notas" class="form-label fw-bold">
+                                                <i class="bi bi-chat-text me-1"></i>Notas (Opcional)
+                                            </label>
+                                            <textarea class="form-control" id="notas" name="notas" rows="2" 
+                                                      placeholder="Preferencias especiales..."></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2 d-md-flex">
+                                        <button type="submit" class="btn btn-primary btn-lg me-md-2">
+                                            <i class="bi bi-calendar-check me-2"></i>
+                                            Agendar Cita
+                                        </button>
+                                        <a th:href="@{/cliente/agendar/{id}(id=${servicio.id})}" class="btn btn-outline-primary btn-lg">
+                                            <i class="bi bi-gear me-2"></i>
+                                            Opciones Avanzadas
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicio no disponible -->
+                    <div th:if="${!servicio.activo}" class="unavailable-section">
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Servicio no disponible</strong>
+                            <p class="mb-0 mt-2">
+                                Este servicio no está disponible en este momento. Por favor, contacta con nosotros para más información.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-5">
+            <!-- Detalles del servicio -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#description" role="tab">
+                                    <i class="bi bi-file-text me-2"></i>Descripción Detallada
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#benefits" role="tab">
+                                    <i class="bi bi-check-circle me-2"></i>Beneficios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#reviews" role="tab">
+                                    <i class="bi bi-star me-2"></i>Reseñas
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="description" role="tabpanel">
+                                <p th:text="${servicio.descripcion ?: 'Este servicio no tiene descripción detallada disponible.'}">
+                                    Descripción detallada del servicio...
+                                </p>
+                            </div>
+                            <div class="tab-pane fade" id="benefits" role="tabpanel">
+                                <div class="benefits-list">
+                                    <div class="benefit-item mb-3 d-flex align-items-center">
+                                        <i class="bi bi-check-circle text-success me-3" style="font-size: 1.2rem;"></i>
+                                        <span>Atención personalizada con profesionales especializados</span>
+                                    </div>
+                                    <div class="benefit-item mb-3 d-flex align-items-center">
+                                        <i class="bi bi-check-circle text-success me-3" style="font-size: 1.2rem;"></i>
+                                        <span>Ambiente relajante con música de tu preferencia</span>
+                                    </div>
+                                    <div class="benefit-item mb-3 d-flex align-items-center">
+                                        <i class="bi bi-check-circle text-success me-3" style="font-size: 1.2rem;"></i>
+                                        <span>Productos premium incluidos en el servicio</span>
+                                    </div>
+                                    <div class="benefit-item mb-3 d-flex align-items-center">
+                                        <i class="bi bi-check-circle text-success me-3" style="font-size: 1.2rem;"></i>
+                                        <span>Garantía de satisfacción del 100%</span>
+                                    </div>
+                                    <div class="benefit-item mb-3 d-flex align-items-center">
+                                        <i class="bi bi-check-circle text-success me-3" style="font-size: 1.2rem;"></i>
+                                        <span>Flexibilidad para reprogramar citas</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="text-center py-5">
+                                    <i class="bi bi-star text-muted" style="font-size: 3rem;"></i>
+                                    <h5 class="text-muted mt-3">Sin reseñas aún</h5>
+                                    <p class="text-muted">Sé el primero en dejar una reseña de este servicio</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sucursales disponibles -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            Sucursales Disponibles
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${sucursales}" th:each="sucursal : ${sucursales}" class="sucursal-item mb-3">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title mb-2" th:text="${sucursal.nombre}">Sucursal</h6>
+                                    <p class="card-text small text-muted mb-1" th:if="${sucursal.telefonoContacto}">
+                                        <i class="bi bi-telephone me-1"></i>
+                                        <span th:text="${sucursal.telefonoContacto}">Teléfono</span>
+                                    </p>
+                                    <p class="card-text small text-muted mb-0" th:if="${sucursal.emailContacto}">
+                                        <i class="bi bi-envelope me-1"></i>
+                                        <span th:text="${sucursal.emailContacto}">Email</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${!sucursales or sucursales.empty}" class="text-center py-3">
+                            <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2">No hay sucursales disponibles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:insert="~{cliente/template_cliente.html::footer}"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<div th:insert="~{cliente/template_cliente.html::jsFiles}"></div>
+
+<style>
+.page-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 0;
+}
+
+.service-image-container {
+    position: relative;
+}
+
+.price-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.service-main-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 15px;
+}
+
+.service-main-image:hover {
+    transform: scale(1.02);
+}
+
+.service-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.current-price {
+    color: #28a745 !important;
+    font-weight: bold;
+}
+
+.favorite-btn {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite-btn.active {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.detail-item {
+    padding: 8px 0;
+}
+
+.quick-booking-section .card {
+    border: 2px solid #667eea;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: #667eea;
+    color: #667eea;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.sucursal-item .card {
+    transition: all 0.2s ease;
+}
+
+.sucursal-item .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+</style>
+
+<script>
+function toggleFavorite() {
+    const btn = document.querySelector('.favorite-btn');
+    const icon = btn.querySelector('i');
+    
+    if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        icon.classList.remove('bi-heart-fill');
+        icon.classList.add('bi-heart');
+    } else {
+        btn.classList.add('active');
+        icon.classList.remove('bi-heart');
+        icon.classList.add('bi-heart-fill');
+    }
+    
+    // TODO: Implementar llamada AJAX para agregar/quitar de favoritos
+}
+
+// Establecer fecha mínima (hoy)
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaCita = document.getElementById('fechaCita');
+    if (fechaCita) {
+        const today = new Date().toISOString().split('T')[0];
+        fechaCita.min = today;
+        
+        // Establecer fecha por defecto a mañana
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        fechaCita.value = tomorrow.toISOString().split('T')[0];
+    }
+});
+
+// Validar formulario antes de enviar
+document.getElementById('quickBookingForm')?.addEventListener('submit', function(e) {
+    const sucursal = document.getElementById('sucursalId').value;
+    const fecha = document.getElementById('fechaCita').value;
+    const hora = document.getElementById('horaCita').value;
+    
+    if (!sucursal || !fecha || !hora) {
+        e.preventDefault();
+        alert('Por favor, completa todos los campos obligatorios.');
+        return false;
+    }
+    
+    // Validar que la fecha no sea anterior a hoy
+    const fechaSeleccionada = new Date(fecha);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    if (fechaSeleccionada < hoy) {
+        e.preventDefault();
+        alert('No puedes agendar una cita para una fecha pasada.');
+        return false;
+    }
+});
+</script>
+
+</body>
+</html>

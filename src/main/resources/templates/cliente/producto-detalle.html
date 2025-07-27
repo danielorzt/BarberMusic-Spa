@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{cliente/template_cliente.html::head}">
+    <title th:text="'Producto: ' + ${producto.nombre} + ' | BarberMusic&Spa'">Producto | BarberMusic&Spa</title>
+</head>
+
+<body class="index-page">
+
+<!-- Header para clientes autenticados -->
+<div th:insert="~{cliente/template_cliente.html::clienteHeader}"></div>
+
+<main class="main">
+    <!-- Page Title -->
+    <div class="page-title theme-background">
+        <div class="container">
+            <h1 th:text="${producto.nombre}">Producto</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a th:href="@{/home}">Inicio</a></li>
+                    <li><a th:href="@{/home/productosVista}">Productos</a></li>
+                    <li class="current" th:text="${producto.nombre}">Producto</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div class="container pt-3">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <!-- Imagen del producto -->
+            <div class="col-lg-6 mb-4">
+                <div class="product-image-container">
+                    <img th:src="@{/assets/img/productos/{img}(img=${producto.imagen != null ? producto.imagen : 'default-product.jpg'})}" 
+                         class="img-fluid rounded shadow-sm product-main-image" 
+                         th:alt="${producto.nombre}">
+                    
+                    <!-- Badge de stock -->
+                    <div class="stock-badge">
+                        <span th:if="${producto.stock > 10}" class="badge bg-success">En Stock</span>
+                        <span th:if="${producto.stock <= 10 and producto.stock > 0}" class="badge bg-warning">Pocas Unidades</span>
+                        <span th:if="${producto.stock <= 0}" class="badge bg-danger">Agotado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del producto -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="product-title" th:text="${producto.nombre}">Nombre del Producto</h1>
+                        <button class="btn btn-outline-danger btn-sm favorite-btn" type="button" onclick="toggleFavorite()">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="product-price mb-4">
+                        <span class="current-price h2 text-primary" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 0, 'POINT', 2, 'POINT')}">$0.00</span>
+                        <div class="price-note text-muted small">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Precio incluye IVA
+                        </div>
+                    </div>
+
+                    <div class="product-description mb-4">
+                        <h5>Descripción</h5>
+                        <p th:text="${producto.descripcion ?: 'Descripción no disponible'}">Descripción del producto</p>
+                    </div>
+
+                    <div class="product-details mb-4">
+                        <div class="detail-card p-3 bg-light rounded">
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <strong>SKU:</strong> <span th:text="${producto.sku ?: 'N/A'}">SKU-001</span>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Stock:</strong> 
+                                    <span th:if="${producto.stock > 0}" class="text-success" th:text="${producto.stock} + ' disponibles'">10 disponibles</span>
+                                    <span th:if="${producto.stock <= 0}" class="text-danger">Agotado</span>
+                                </div>
+                                <div class="col-md-6 mb-2" th:if="${producto.categoria}">
+                                    <strong>Categoría:</strong> <span th:text="${producto.categoria.nombre}">Categoría</span>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Estado:</strong> 
+                                    <span th:if="${producto.activo}" class="text-success">Disponible</span>
+                                    <span th:unless="${producto.activo}" class="text-warning">No disponible</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selector de cantidad y acciones -->
+                    <div class="purchase-section" th:if="${producto.stock > 0 and producto.activo}">
+                        <div class="quantity-selector mb-4">
+                            <label for="cantidad" class="form-label fw-bold">Cantidad:</label>
+                            <div class="input-group quantity-input" style="width: 180px;">
+                                <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input type="number" class="form-control text-center fw-bold" id="cantidad" value="1" min="1" th:max="${producto.stock}">
+                                <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <div class="quantity-info text-muted small mt-1">
+                                Máximo <span th:text="${producto.stock}">10</span> unidades
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <form th:action="@{/cliente/agregar-carrito}" method="post" class="w-100">
+                                        <input type="hidden" name="productoId" th:value="${producto.id}">
+                                        <input type="hidden" name="cantidad" id="cantidadCarrito" value="1">
+                                        <button type="submit" class="btn btn-outline-primary btn-lg w-100">
+                                            <i class="bi bi-cart-plus me-2"></i>
+                                            Agregar al Carrito
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form th:action="@{/cliente/comprar-producto}" method="post" class="w-100">
+                                        <input type="hidden" name="productoId" th:value="${producto.id}">
+                                        <input type="hidden" name="cantidad" id="cantidadCompra" value="1">
+                                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                                            <i class="bi bi-credit-card me-2"></i>
+                                            Comprar Ahora
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Total calculator -->
+                        <div class="total-calculator mt-3">
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                <span class="fw-bold">Total:</span>
+                                <span class="h5 text-primary mb-0" id="totalPrice" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 0, 'POINT', 2, 'POINT')}">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Producto no disponible -->
+                    <div th:if="${producto.stock <= 0 or !producto.activo}" class="unavailable-section">
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Producto no disponible</strong>
+                            <p class="mb-0 mt-2" th:if="${producto.stock <= 0}">
+                                Este producto está temporalmente agotado. Te notificaremos cuando esté disponible.
+                            </p>
+                            <p class="mb-0 mt-2" th:if="${!producto.activo}">
+                                Este producto no está disponible en este momento.
+                            </p>
+                        </div>
+                        <button class="btn btn-secondary btn-lg w-100" disabled>
+                            <i class="bi bi-bell me-2"></i>
+                            Notificarme cuando esté disponible
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#description" role="tab">
+                                    <i class="bi bi-file-text me-2"></i>Descripción Detallada
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#specifications" role="tab">
+                                    <i class="bi bi-list-check me-2"></i>Especificaciones
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#reviews" role="tab">
+                                    <i class="bi bi-star me-2"></i>Reseñas
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="description" role="tabpanel">
+                                <p th:text="${producto.descripcion ?: 'Este producto no tiene descripción detallada disponible.'}">
+                                    Descripción detallada del producto...
+                                </p>
+                            </div>
+                            <div class="tab-pane fade" id="specifications" role="tabpanel">
+                                <div class="specifications-table">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>SKU</strong></td>
+                                                <td th:text="${producto.sku ?: 'N/A'}">SKU-001</td>
+                                            </tr>
+                                            <tr th:if="${producto.categoria}">
+                                                <td><strong>Categoría</strong></td>
+                                                <td th:text="${producto.categoria.nombre}">Categoría</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Stock disponible</strong></td>
+                                                <td th:text="${producto.stock} + ' unidades'">10 unidades</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Estado</strong></td>
+                                                <td>
+                                                    <span th:if="${producto.activo}" class="badge bg-success">Activo</span>
+                                                    <span th:unless="${producto.activo}" class="badge bg-secondary">Inactivo</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="text-center py-5">
+                                    <i class="bi bi-star text-muted" style="font-size: 3rem;"></i>
+                                    <h5 class="text-muted mt-3">Sin reseñas aún</h5>
+                                    <p class="text-muted">Sé el primero en dejar una reseña de este producto</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:insert="~{cliente/template_cliente.html::footer}"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<div th:insert="~{cliente/template_cliente.html::jsFiles}"></div>
+
+<style>
+.page-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 0;
+}
+
+.product-image-container {
+    position: relative;
+}
+
+.stock-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.product-main-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 15px;
+}
+
+.product-main-image:hover {
+    transform: scale(1.02);
+}
+
+.product-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.current-price {
+    color: #28a745 !important;
+    font-weight: bold;
+}
+
+.favorite-btn {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite-btn.active {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.quantity-input {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.quantity-input input {
+    border-left: none;
+    border-right: none;
+    font-size: 1.1rem;
+}
+
+.total-calculator {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: #667eea;
+    color: #667eea;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.detail-card {
+    border: 1px solid #e0e0e0;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+</style>
+
+<script>
+const precioBase = [[${producto.precio}]];
+
+function increaseQuantity() {
+    const input = document.getElementById('cantidad');
+    const max = parseInt(input.max);
+    if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+        updateQuantityAndTotal();
+    }
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('cantidad');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+        updateQuantityAndTotal();
+    }
+}
+
+function updateQuantityAndTotal() {
+    const cantidad = document.getElementById('cantidad').value;
+    const total = precioBase * cantidad;
+    
+    // Actualizar campos ocultos
+    document.getElementById('cantidadCarrito').value = cantidad;
+    document.getElementById('cantidadCompra').value = cantidad;
+    
+    // Actualizar total
+    document.getElementById('totalPrice').textContent = '$' + total.toFixed(2);
+}
+
+function toggleFavorite() {
+    const btn = document.querySelector('.favorite-btn');
+    const icon = btn.querySelector('i');
+    
+    if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        icon.classList.remove('bi-heart-fill');
+        icon.classList.add('bi-heart');
+    } else {
+        btn.classList.add('active');
+        icon.classList.remove('bi-heart');
+        icon.classList.add('bi-heart-fill');
+    }
+    
+    // TODO: Implementar llamada AJAX para agregar/quitar de favoritos
+}
+
+// Actualizar cantidades cuando cambie el input manualmente
+document.getElementById('cantidad')?.addEventListener('change', function() {
+    const min = parseInt(this.min);
+    const max = parseInt(this.max);
+    let value = parseInt(this.value);
+    
+    if (value < min) value = min;
+    if (value > max) value = max;
+    
+    this.value = value;
+    updateQuantityAndTotal();
+});
+
+// Inicializar total
+updateQuantityAndTotal();
+</script>
+
+</body>
+</html>

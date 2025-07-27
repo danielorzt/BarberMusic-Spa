@@ -103,7 +103,7 @@ public class LoginController {
         } catch (Exception e) {
             LOGGER.error("💥 Error durante login success: {}", e.getMessage(), e);
             flash.addFlashAttribute("error", "Error interno durante el login");
-            return "redirect:/usuario/login";
+            return "redirect:/publico/login";
         }
     }
     

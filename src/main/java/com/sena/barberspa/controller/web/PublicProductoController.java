@@ -31,10 +31,10 @@ public class PublicProductoController {
 
     @Autowired
     private IProductoService productoService;
-    
+
     @Autowired
     private IUsuarioService usuarioService;
-    
+
     @ModelAttribute
     public void addCommonAttributes(Model model, HttpSession session) {
         try {
@@ -47,11 +47,12 @@ public class PublicProductoController {
                     Usuario usuario = usuarioOpt.get();
                     model.addAttribute("usuario", usuario);
                     model.addAttribute("sesion", userId);
-                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde sesión HTTP: {} (ID: {})", usuario.getNombre(), userId);
+                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde sesión HTTP: {} (ID: {})",
+                            usuario.getNombre(), userId);
                     return;
                 }
             }
-            
+
             // Fallback: intentar obtener usuario desde Spring Security
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
@@ -61,17 +62,18 @@ public class PublicProductoController {
                     // Sincronizar la sesión HTTP con Spring Security
                     session.setAttribute("idUsuario", usuario.getId());
                     session.setAttribute("usuario", usuario);
-                    
+
                     model.addAttribute("usuario", usuario);
                     model.addAttribute("sesion", usuario.getId());
-                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde Spring Security: {} (ID: {})", usuario.getNombre(), usuario.getId());
+                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde Spring Security: {} (ID: {})",
+                            usuario.getNombre(), usuario.getId());
                     return;
                 }
             }
-            
+
             // No hay usuario autenticado
             LOGGER.debug("ℹ️ PublicProductoController: No hay usuario autenticado en la sesión");
-            
+
         } catch (Exception e) {
             LOGGER.warn("PublicProductoController: Error loading user session data: {}", e.getMessage());
         }
@@ -88,27 +90,6 @@ public class PublicProductoController {
         } catch (Exception e) {
             LOGGER.error("Error loading productos vista: {}", e.getMessage(), e);
             model.addAttribute("error", "Error cargando productos: " + e.getMessage());
-            return "publico/productosVista";
-        }
-    }
-
-    @GetMapping("/productoHome/{id}")
-    public String productoHome(@PathVariable Long id, Model model) {
-        try {
-            LOGGER.info("Loading producto home for ID: {}", id);
-            Producto producto = productoService.get(id).orElse(null);
-            if (producto != null) {
-                model.addAttribute("producto", producto);
-                LOGGER.info("Producto home loaded successfully for: {}", producto.getNombreproducto());
-                return "publico/productoHome";
-            } else {
-                LOGGER.warn("Producto not found with ID: {}", id);
-                model.addAttribute("error", "Producto no encontrado");
-                return "publico/productosVista";
-            }
-        } catch (Exception e) {
-            LOGGER.error("Error loading producto home: {}", e.getMessage(), e);
-            model.addAttribute("error", "Error cargando producto: " + e.getMessage());
             return "publico/productosVista";
         }
     }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
-<head th:insert="~{cliente/template_cliente.html::head}">
+<head th:replace="~{publico/template_user.html::head}">
 	<title>Carrito de Compras | BarberMusicSpa</title>
 </head>
 <style>
@@ -16,8 +16,10 @@
 
 <body class="index-page">
 
-	<div th:insert="~{cliente/template_cliente.html::header}" th:if="${sesion == null}"></div>
-	<div th:insert="~{cliente/template_cliente.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
+	<!-- Header para usuarios no autenticados -->
+	<div th:insert="~{publico/template_user.html::header}" th:if="${sesion == null}"></div>
+	<!-- Header para usuarios autenticados -->
+	<div th:insert="~{publico/template_user.html::usuarioCabecera}" th:unless="${sesion == null}"></div>
 
 	<main id="main">
 		<!-- ======= Breadcrumbs Section ======= -->
@@ -51,17 +53,29 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="dorden:${cart}">
-												<td class="align-middle fw-semibold" th:text="${dorden.nombre}"></td>
+											<!-- Mostrar productos en el carrito -->
+											<tr th:each="dorden:${cart}" th:if="${cart != null and !cart.isEmpty()}">
+												<td class="align-middle fw-semibold" th:text="${dorden.nombre ?: 'Producto'}"></td>
 												<td class="align-middle text-end"
-													th:text="${#strings.concat('$', #numbers.formatDecimal(dorden.total, 0, 'POINT',0, 'POINT'))}">
+													th:text="${dorden.total != null ? '$' + dorden.total : '$0'}">
 												</td>
-												<td class="align-middle text-center" th:text="${dorden.cantidad}"></td>
+												<td class="align-middle text-center" th:text="${dorden.cantidad ?: 1}"></td>
 												<td class="align-middle text-end">
-													<a th:href="@{/delete/cart/{id} (id=${dorden.producto.id})}"
+													<a th:href="@{/delete/cart/{id} (id=${dorden.producto?.id ?: 0})}"
 														class="btn btn-outline-danger btn-sm">
 														<i class="bi bi-trash me-1"></i> Eliminar
 													</a>
+												</td>
+											</tr>
+											
+											<!-- Mensaje cuando el carrito está vacío -->
+											<tr th:if="${cart == null or cart.isEmpty()}">
+												<td colspan="4" class="text-center py-4">
+													<div class="alert alert-info mb-0">
+														<i class="bi bi-cart-x fs-3 d-block mb-2"></i>
+														<h5>Tu carrito está vacío</h5>
+														<p class="mb-0">¡Explora nuestros productos y agrega algunos a tu carrito!</p>
+													</div>
 												</td>
 											</tr>
 										</tbody>
@@ -89,7 +103,7 @@
 									<div class="d-flex justify-content-between mb-2">
 										<span>Subtotal:</span>
 										<span class="fw-semibold"
-											th:text="${#strings.concat('$', #numbers.formatDecimal(orden.total, 0, 'POINT',0, 'POINT'))}"></span>
+											th:text="${orden != null and orden.total != null ? '$' + orden.total : '$0'}"></span>
 									</div>
 									<div class="d-flex justify-content-between mb-2">
 										<span>Envío:</span>
@@ -104,11 +118,11 @@
 								<div class="d-flex justify-content-between mb-4">
 									<h5>Total:</h5>
 									<h5 class="text-primary"
-										th:text="${#strings.concat('$', #numbers.formatDecimal(orden.total, 0, 'POINT',0, 'POINT'))}">
+										th:text="${orden != null and orden.total != null ? '$' + orden.total : '$0'}">
 									</h5>
 								</div>
 
-								<a th:href="@{/order}" class="btn btn-danger w-100 py-2 mb-3">
+								<a th:href="@{/cliente/checkout}" class="btn btn-danger w-100 py-2 mb-3">
 									<i class="bi bi-credit-card me-2"></i> Proceder al pago
 								</a>
 
@@ -126,7 +140,7 @@
 		</section><!-- End Shopping Cart Section -->
 	</main>
 
-	<div th:insert="~{cliente/template_cliente.html::footer}"></div>
+	<div th:insert="~{publico/template_user.html::footer}"></div>
 
 	<!-- Scroll Top -->
 	<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
@@ -136,7 +150,7 @@
 	<!-- Preloader -->
 	<div id="preloader"></div>
 
-	<div th:insert="~{cliente/template_cliente.html::jsFiles}"></div>
+	<div th:insert="~{publico/template_user.html::jsFiles}"></div>
 
 </body>
 
