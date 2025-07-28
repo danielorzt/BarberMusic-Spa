@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Panel de Empleado - BarberSpa</title>
+    <title>Mi Panel - BarberSpa</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -23,10 +23,12 @@
   </head>
   <body>
     <!-- Header -->
-    <header class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <header
+      class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm"
+    >
       <div class="container">
-        <a class="navbar-brand fw-bold" href="/">
-          <i class="bi bi-scissors me-2"></i>BarberSpa - Empleado
+        <a class="navbar-brand fw-bold text-primary" href="/">
+          <i class="bi bi-scissors me-2"></i>BarberSpa
         </a>
 
         <button
@@ -41,36 +43,61 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link active" href="/empleado/panel">Panel</a>
+              <a class="nav-link" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/empleado/agenda">Mi Agenda</a>
+              <a class="nav-link" href="/serviciosVista">Servicios</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/empleado/ordenes">Órdenes</a>
+              <a class="nav-link" href="/productosVista">Productos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/empleado/recordatorios"
-                >Recordatorios</a
-              >
+              <a class="nav-link" href="/#contacto">Contacto</a>
             </li>
           </ul>
 
           <ul class="navbar-nav">
+            <!-- Usuario autenticado -->
             <li class="nav-item dropdown">
               <a
-                class="nav-link dropdown-toggle"
+                class="nav-link dropdown-toggle active"
                 href="#"
                 id="userDropdown"
                 role="button"
                 data-bs-toggle="dropdown"
               >
                 <i class="bi bi-person-circle me-1"></i>
-                <span th:text="${sesion.nombre}">Empleado</span>
+                <span th:text="${sesion.nombre}">Cliente</span>
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/empleado/perfil">Mi Perfil</a>
+                  <a class="dropdown-item active" href="/cliente/panel"
+                    >Mi Panel</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/cliente/perfil">Mi Perfil</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/cliente/carrito"
+                    >Mi Carrito</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/cliente/compras"
+                    >Mis Compras</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/cliente/favoritos"
+                    >Favoritos</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="/cliente/agendar"
+                    >Agendar Cita</a
+                  >
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
@@ -94,11 +121,11 @@
             <div class="card border-0 shadow-sm">
               <div class="card-body text-center">
                 <h2 class="card-title">
-                  <i class="bi bi-person-badge me-2"></i>Bienvenido,
-                  <span th:text="${sesion.nombre}">Empleado</span>
+                  <i class="bi bi-person-circle me-2"></i>Bienvenido,
+                  <span th:text="${sesion.nombre}">Cliente</span>
                 </h2>
                 <p class="card-text text-muted">
-                  Panel de control para empleados de BarberSpa
+                  Panel de control para clientes de BarberSpa
                 </p>
               </div>
             </div>
@@ -114,10 +141,13 @@
                   class="bi bi-calendar-check text-primary"
                   style="font-size: 2rem"
                 ></i>
-                <h4 class="mt-2" th:text="${citasHoy != null ? citasHoy : '0'}">
+                <h4
+                  class="mt-2"
+                  th:text="${citasProgramadas != null ? citasProgramadas : '0'}"
+                >
                   0
                 </h4>
-                <p class="text-muted mb-0">Citas Hoy</p>
+                <p class="text-muted mb-0">Citas Programadas</p>
               </div>
             </div>
           </div>
@@ -125,14 +155,14 @@
           <div class="col-md-3">
             <div class="card border-0 shadow-sm text-center">
               <div class="card-body">
-                <i class="bi bi-clock text-success" style="font-size: 2rem"></i>
+                <i class="bi bi-cart text-success" style="font-size: 2rem"></i>
                 <h4
                   class="mt-2"
-                  th:text="${citasPendientes != null ? citasPendientes : '0'}"
+                  th:text="${productosCarrito != null ? productosCarrito : '0'}"
                 >
                   0
                 </h4>
-                <p class="text-muted mb-0">Pendientes</p>
+                <p class="text-muted mb-0">Productos en Carrito</p>
               </div>
             </div>
           </div>
@@ -140,17 +170,14 @@
           <div class="col-md-3">
             <div class="card border-0 shadow-sm text-center">
               <div class="card-body">
-                <i
-                  class="bi bi-check-circle text-info"
-                  style="font-size: 2rem"
-                ></i>
+                <i class="bi bi-bag text-info" style="font-size: 2rem"></i>
                 <h4
                   class="mt-2"
-                  th:text="${citasCompletadas != null ? citasCompletadas : '0'}"
+                  th:text="${comprasRealizadas != null ? comprasRealizadas : '0'}"
                 >
                   0
                 </h4>
-                <p class="text-muted mb-0">Completadas</p>
+                <p class="text-muted mb-0">Compras Realizadas</p>
               </div>
             </div>
           </div>
@@ -158,14 +185,14 @@
           <div class="col-md-3">
             <div class="card border-0 shadow-sm text-center">
               <div class="card-body">
-                <i class="bi bi-bell text-warning" style="font-size: 2rem"></i>
+                <i class="bi bi-heart text-danger" style="font-size: 2rem"></i>
                 <h4
                   class="mt-2"
-                  th:text="${recordatorios != null ? recordatorios : '0'}"
+                  th:text="${favoritos != null ? favoritos : '0'}"
                 >
                   0
                 </h4>
-                <p class="text-muted mb-0">Recordatorios</p>
+                <p class="text-muted mb-0">Favoritos</p>
               </div>
             </div>
           </div>
@@ -178,7 +205,7 @@
             <div class="card border-0 shadow-sm">
               <div class="card-header bg-white">
                 <h5 class="mb-0">
-                  <i class="bi bi-calendar-event me-2"></i>Mis Citas Asignadas
+                  <i class="bi bi-calendar-event me-2"></i>Mis Próximas Citas
                 </h5>
               </div>
               <div class="card-body">
@@ -190,22 +217,19 @@
                     <div class="d-flex align-items-center">
                       <div class="me-3">
                         <i
-                          class="bi bi-person-circle text-primary"
+                          class="bi bi-scissors text-primary"
                           style="font-size: 2rem"
                         ></i>
                       </div>
                       <div>
-                        <h6
-                          class="mb-1"
-                          th:text="${cita.cliente.nombre + ' ' + cita.cliente.apellido}"
-                        >
-                          Cliente
+                        <h6 class="mb-1" th:text="${cita.servicio.nombre}">
+                          Servicio
                         </h6>
                         <p
                           class="text-muted mb-1"
-                          th:text="${cita.servicio.nombre}"
+                          th:text="${cita.sucursal.nombre}"
                         >
-                          Servicio
+                          Sucursal
                         </p>
                         <small
                           class="text-muted"
@@ -224,8 +248,8 @@
                       <br />
                       <small
                         class="text-muted"
-                        th:text="${cita.sucursal.nombre}"
-                        >Sucursal</small
+                        th:text="'$' + ${#numbers.formatDecimal(cita.servicio.precio, 1, 2)}"
+                        >$0.00</small
                       >
                     </div>
                   </div>
@@ -235,7 +259,10 @@
                   class="text-center text-muted py-4"
                 >
                   <i class="bi bi-calendar-x" style="font-size: 3rem"></i>
-                  <p class="mt-2">No tienes citas asignadas para hoy</p>
+                  <p class="mt-2">No tienes citas programadas</p>
+                  <a href="/cliente/agendar" class="btn btn-primary">
+                    <i class="bi bi-calendar-plus me-2"></i>Agendar Cita
+                  </a>
                 </div>
               </div>
             </div>
@@ -251,26 +278,26 @@
               </div>
               <div class="card-body">
                 <div class="d-grid gap-2">
-                  <a href="/empleado/agenda" class="btn btn-primary">
-                    <i class="bi bi-calendar-check me-2"></i>Ver Mi Agenda
+                  <a href="/cliente/agendar" class="btn btn-primary">
+                    <i class="bi bi-calendar-plus me-2"></i>Agendar Cita
                   </a>
-                  <a href="/empleado/ordenes" class="btn btn-outline-primary">
-                    <i class="bi bi-cart me-2"></i>Ver Órdenes
+                  <a href="/cliente/carrito" class="btn btn-outline-primary">
+                    <i class="bi bi-cart me-2"></i>Mi Carrito
                   </a>
-                  <a
-                    href="/empleado/recordatorios"
-                    class="btn btn-outline-primary"
-                  >
-                    <i class="bi bi-bell me-2"></i>Recordatorios
+                  <a href="/cliente/compras" class="btn btn-outline-primary">
+                    <i class="bi bi-bag me-2"></i>Mis Compras
                   </a>
-                  <a href="/empleado/perfil" class="btn btn-outline-secondary">
+                  <a href="/cliente/favoritos" class="btn btn-outline-primary">
+                    <i class="bi bi-heart me-2"></i>Favoritos
+                  </a>
+                  <a href="/cliente/perfil" class="btn btn-outline-secondary">
                     <i class="bi bi-person me-2"></i>Mi Perfil
                   </a>
                 </div>
               </div>
             </div>
 
-            <!-- Información del Empleado -->
+            <!-- Información del Cliente -->
             <div class="card border-0 shadow-sm mt-3">
               <div class="card-header bg-white">
                 <h6 class="mb-0">
@@ -281,72 +308,76 @@
                 <p class="mb-2">
                   <strong>Nombre:</strong>
                   <span th:text="${sesion.nombre + ' ' + sesion.apellido}"
-                    >Empleado</span
+                    >Cliente</span
                   >
                 </p>
                 <p class="mb-2">
                   <strong>Email:</strong>
-                  <span th:text="${sesion.email}">empleado@barberspa.com</span>
+                  <span th:text="${sesion.email}">cliente@email.com</span>
                 </p>
                 <p class="mb-2">
                   <strong>Teléfono:</strong>
                   <span th:text="${sesion.telefono}">993-xxx-xxxx</span>
                 </p>
-                <p class="mb-2">
-                  <strong>Sucursal:</strong>
-                  <span
-                    th:text="${sucursal != null ? sucursal.nombre : 'No asignada'}"
-                    >Sucursal</span
-                  >
-                </p>
                 <p class="mb-0">
                   <strong>Rol:</strong>
-                  <span class="badge bg-success">EMPLEADO</span>
+                  <span class="badge bg-primary">CLIENTE</span>
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Mis Servicios -->
+        <!-- Últimas Compras -->
         <div class="row mt-4">
           <div class="col-12">
             <div class="card border-0 shadow-sm">
               <div class="card-header bg-white">
                 <h5 class="mb-0">
-                  <i class="bi bi-scissors me-2"></i>Mis Servicios Asignados
+                  <i class="bi bi-bag-check me-2"></i>Mis Últimas Compras
                 </h5>
               </div>
               <div class="card-body">
-                <div th:if="${misServicios != null and !misServicios.empty}">
+                <div th:if="${misCompras != null and !misCompras.empty}">
                   <div class="row g-3">
-                    <div th:each="servicio : ${misServicios}" class="col-md-4">
+                    <div th:each="compra : ${misCompras}" class="col-md-6">
                       <div class="card h-100 border-0 shadow-sm">
-                        <img
-                          th:src="${servicio.imagen != null ? servicio.imagen : '/assets/img/default-service.jpg'}"
-                          class="card-img-top"
-                          alt="Servicio"
-                          style="height: 150px; object-fit: cover"
-                        />
                         <div class="card-body">
-                          <h6 class="card-title" th:text="${servicio.nombre}">
-                            Servicio
-                          </h6>
-                          <p
-                            class="card-text text-muted"
-                            th:text="${servicio.descripcion}"
-                          >
-                            Descripción
-                          </p>
                           <div
-                            class="d-flex justify-content-between align-items-center"
+                            class="d-flex justify-content-between align-items-start"
                           >
-                            <span
-                              class="fw-bold text-primary"
-                              th:text="'$' + ${#numbers.formatDecimal(servicio.precio, 1, 2)}"
-                              >$0.00</span
-                            >
-                            <span class="badge bg-success">Disponible</span>
+                            <div>
+                              <h6
+                                class="card-title"
+                                th:text="'Orden #' + ${compra.id}"
+                              >
+                                Orden #123
+                              </h6>
+                              <p
+                                class="text-muted mb-1"
+                                th:text="${#temporals.format(compra.fechaOrden, 'dd/MM/yyyy')}"
+                              >
+                                Fecha
+                              </p>
+                              <small
+                                class="text-muted"
+                                th:text="${compra.items.size() + ' productos'}"
+                                >0 productos</small
+                              >
+                            </div>
+                            <div class="text-end">
+                              <strong
+                                th:text="'$' + ${#numbers.formatDecimal(compra.total, 1, 2)}"
+                                >$0.00</strong
+                              >
+                              <br />
+                              <span
+                                class="badge"
+                                th:classappend="${compra.estado == 'COMPLETADO' ? 'bg-success' : 'bg-warning'}"
+                                th:text="${compra.estado}"
+                                >Estado</span
+                              >
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -354,14 +385,14 @@
                   </div>
                 </div>
                 <div
-                  th:if="${misServicios == null or misServicios.empty}"
+                  th:if="${misCompras == null or misCompras.empty}"
                   class="text-center text-muted py-4"
                 >
-                  <i class="bi bi-scissors" style="font-size: 3rem"></i>
-                  <p class="mt-2">No tienes servicios asignados</p>
-                  <p class="text-muted">
-                    Contacta a tu administrador para que te asigne servicios.
-                  </p>
+                  <i class="bi bi-bag-x" style="font-size: 3rem"></i>
+                  <p class="mt-2">No tienes compras registradas</p>
+                  <a href="/productosVista" class="btn btn-primary">
+                    <i class="bi bi-bag me-2"></i>Ver Productos
+                  </a>
                 </div>
               </div>
             </div>
@@ -374,7 +405,7 @@
     <footer class="bg-dark text-light py-4 mt-5">
       <div class="container">
         <div class="text-center">
-          <p class="mb-0">&copy; 2024 BarberSpa. Panel de Empleado.</p>
+          <p class="mb-0">&copy; 2024 BarberSpa. Panel de Cliente.</p>
         </div>
       </div>
     </footer>

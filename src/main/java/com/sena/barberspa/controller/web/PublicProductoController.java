@@ -1,5 +1,9 @@
 package com.sena.barberspa.controller.web;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,11 +21,7 @@ import com.sena.barberspa.model.Usuario;
 import com.sena.barberspa.service.IProductoService;
 import com.sena.barberspa.service.IUsuarioService;
 
-import java.util.Optional;
-
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class PublicProductoController {
@@ -38,18 +37,36 @@ public class PublicProductoController {
     @ModelAttribute
     public void addCommonAttributes(Model model, HttpSession session) {
         try {
+            // Inicializar valores por defecto
+            model.addAttribute("sesion", null);
+            model.addAttribute("usuario", null);
+            model.addAttribute("isAuthenticated", false);
+
             // Intentar obtener usuario de la sesión HTTP primero
             Object userIdObj = session.getAttribute("idUsuario");
             if (userIdObj != null) {
-                Long userId = Long.parseLong(userIdObj.toString());
-                Optional<Usuario> usuarioOpt = usuarioService.findById(userId);
-                if (usuarioOpt.isPresent()) {
-                    Usuario usuario = usuarioOpt.get();
-                    model.addAttribute("usuario", usuario);
-                    model.addAttribute("sesion", userId);
-                    LOGGER.debug("✅ PublicProductoController: Usuario cargado desde sesión HTTP: {} (ID: {})",
-                            usuario.getNombre(), userId);
-                    return;
+                try {
+                    Long userId = Long.parseLong(userIdObj.toString());
+                    Optional<Usuario> usuarioOpt = usuarioService.findById(userId);
+                    if (usuarioOpt.isPresent()) {
+                        Usuario usuario = usuarioOpt.get();
+                        model.addAttribute("usuario", usuario);
+                        model.addAttribute("sesion", userId);
+                        model.addAttribute("isAuthenticated", true);
+                        LOGGER.debug("✅ PublicProductoController: Usuario cargado desde sesión HTTP: {} (ID: {})",
+                                usuario.getNombre(), userId);
+                        return;
+                    } else {
+                        // Usuario no encontrado en BD, limpiar sesión
+                        session.removeAttribute("idUsuario");
+                        session.removeAttribute("usuario");
+                        LOGGER.warn("Usuario no encontrado en BD, sesión limpiada para ID: {}", userId);
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("Error procesando sesión HTTP: {}", e.getMessage());
+                    // Limpiar sesión corrupta
+                    session.removeAttribute("idUsuario");
+                    session.removeAttribute("usuario");
                 }
             }
 
@@ -65,6 +82,7 @@ public class PublicProductoController {
 
                     model.addAttribute("usuario", usuario);
                     model.addAttribute("sesion", usuario.getId());
+                    model.addAttribute("isAuthenticated", true);
                     LOGGER.debug("✅ PublicProductoController: Usuario cargado desde Spring Security: {} (ID: {})",
                             usuario.getNombre(), usuario.getId());
                     return;
@@ -76,6 +94,10 @@ public class PublicProductoController {
 
         } catch (Exception e) {
             LOGGER.warn("PublicProductoController: Error loading user session data: {}", e.getMessage());
+            // Asegurar valores por defecto seguros
+            model.addAttribute("sesion", null);
+            model.addAttribute("usuario", null);
+            model.addAttribute("isAuthenticated", false);
         }
     }
 
@@ -86,11 +108,11 @@ public class PublicProductoController {
             List<Producto> productos = productoService.findAll();
             model.addAttribute("productos", productos);
             LOGGER.info("Productos vista loaded successfully with {} products", productos.size());
-            return "publico/productosVista";
+            return "public/productosVista";
         } catch (Exception e) {
             LOGGER.error("Error loading productos vista: {}", e.getMessage(), e);
             model.addAttribute("error", "Error cargando productos: " + e.getMessage());
-            return "publico/productosVista";
+            return "public/productosVista";
         }
     }
 
@@ -104,11 +126,11 @@ public class PublicProductoController {
             model.addAttribute("productos", productos);
             model.addAttribute("searchTerm", nombreproducto);
             LOGGER.info("Search completed, found {} productos", productos.size());
-            return "publico/productosVista";
+            return "public/productosVista";
         } catch (Exception e) {
             LOGGER.error("Error searching productos: {}", e.getMessage(), e);
             model.addAttribute("error", "Error en la búsqueda: " + e.getMessage());
-            return "publico/productosVista";
+            return "public/productosVista";
         }
     }
 }

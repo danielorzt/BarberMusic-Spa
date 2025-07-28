@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      th:text="${title != null ? title : 'BarberSpa - Belleza y Bienestar'}"
+    >
+      BarberSpa
+    </title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- AOS CSS -->
+    <link href="/assets/vendor/aos/aos.css" rel="stylesheet" />
+    <!-- Swiper CSS -->
+    <link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <!-- GLightbox CSS -->
+    <link
+      href="/assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header
+      th:fragment="header"
+      class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="/">
+          <i class="bi bi-scissors me-2"></i>BarberSpa
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/serviciosVista">Servicios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/productosVista">Productos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#contacto">Contacto</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav">
+            <!-- Usuario no autenticado -->
+            <li class="nav-item" th:if="${sesion == null}">
+              <a class="nav-link" href="/publico/login">
+                <i class="bi bi-person-circle me-1"></i>Iniciar Sesión
+              </a>
+            </li>
+            <li class="nav-item" th:if="${sesion == null}">
+              <a class="btn btn-primary btn-sm" href="/publico/registro"
+                >Registrarse</a
+              >
+            </li>
+
+            <!-- Usuario autenticado -->
+            <li class="nav-item dropdown" th:if="${sesion != null}">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="bi bi-person-circle me-1"></i>
+                <span th:text="${sesion.nombre}">Usuario</span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="/user/perfil">Mi Perfil</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/user/carrito">Mi Carrito</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/user/compras">Mis Compras</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/user/favoritos">Favoritos</a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="/user/agendar">Agendar Cita</a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="/cliente/cerrar"
+                    >Cerrar Sesión</a
+                  >
+                </li>
+              </ul>
+            </li>
+
+            <!-- Botón Admin para usuarios autorizados -->
+            <li
+              class="nav-item"
+              th:if="${sesion != null and (sesion.rol == 'ADMIN_SUCURSAL' or sesion.rol == 'GERENTE')}"
+            >
+              <a class="btn btn-warning btn-sm" href="/admin/panel">
+                <i class="bi bi-gear me-1"></i>Admin
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main th:fragment="content">
+      <div th:replace="${content}">
+        <!-- El contenido específico de cada página se insertará aquí -->
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer th:fragment="footer" class="bg-dark text-light py-5 mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h5><i class="bi bi-scissors me-2"></i>BarberSpa</h5>
+            <p class="text-muted">
+              Tu destino para belleza y bienestar. Ofrecemos tratamientos
+              faciales, masajes y productos de alta calidad.
+            </p>
+          </div>
+          <div class="col-md-4">
+            <h6>Enlaces Rápidos</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="/" class="text-muted text-decoration-none">Inicio</a>
+              </li>
+              <li>
+                <a
+                  href="/serviciosVista"
+                  class="text-muted text-decoration-none"
+                  >Servicios</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/productosVista"
+                  class="text-muted text-decoration-none"
+                  >Productos</a
+                >
+              </li>
+              <li>
+                <a href="/#contacto" class="text-muted text-decoration-none"
+                  >Contacto</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h6>Contacto</h6>
+            <p class="text-muted">
+              <i class="bi bi-geo-alt me-2"></i>Plaza Strada, Villahermosa<br />
+              <i class="bi bi-telephone me-2"></i>993-123-4567<br />
+              <i class="bi bi-envelope me-2"></i>info@barberspa.com
+            </p>
+          </div>
+        </div>
+        <hr class="my-4" />
+        <div class="text-center">
+          <p class="text-muted mb-0">
+            &copy; 2024 BarberSpa. Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/aos/aos.js"></script>
+    <script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="/assets/js/main.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/assets/js/sweetalert-config.js"></script>
+
+    <!-- Scripts adicionales específicos de la página -->
+    <th:block th:replace="${scripts}">
+      <!-- Scripts adicionales se insertarán aquí -->
+    </th:block>
+  </body>
+</html>

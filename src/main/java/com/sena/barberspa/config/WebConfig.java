@@ -27,5 +27,29 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(31556926)
                 .resourceChain(true);
+                
+        // Configuración específica para imágenes
+        registry.addResourceHandler("/img/**")
+                .addResourceLocations("classpath:/static/assets/img/")
+                .setCachePeriod(31556926)
+                .resourceChain(true);
+                
+        // Configuración para CSS
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("classpath:/static/assets/css/")
+                .setCachePeriod(31556926)
+                .resourceChain(true);
+                
+        // Configuración para JavaScript
+        registry.addResourceHandler("/js/**")
+                .addResourceLocations("classpath:/static/assets/js/")
+                .setCachePeriod(31556926)
+                .resourceChain(true);
+                
+        // Configuración para vendor (librerías externas)
+        registry.addResourceHandler("/vendor/**")
+                .addResourceLocations("classpath:/static/assets/vendor/")
+                .setCachePeriod(31556926)
+                .resourceChain(true);
     }
 }

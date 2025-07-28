@@ -1,9 +1,8 @@
 package com.sena.barberspa.controller.web;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -13,11 +12,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.sena.barberspa.model.*;
-import com.sena.barberspa.service.*;
+import com.sena.barberspa.model.DetalleOrden;
+import com.sena.barberspa.model.Orden;
+import com.sena.barberspa.model.Producto;
+import com.sena.barberspa.model.Servicio;
+import com.sena.barberspa.model.Sucursal;
+import com.sena.barberspa.model.Usuario;
+import com.sena.barberspa.service.IAgendamientosService;
+import com.sena.barberspa.service.IDetalleOrdenService;
+import com.sena.barberspa.service.IOrdenService;
+import com.sena.barberspa.service.IProductoService;
+import com.sena.barberspa.service.IServiciosService;
+import com.sena.barberspa.service.ISucursalesService;
+import com.sena.barberspa.service.IUsuarioService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -69,9 +80,17 @@ public class HomeController {
                         model.addAttribute("isAuthenticated", true);
                         LOGGER.debug("✅ Usuario cargado desde sesión HTTP: {}", usuario.getNombre());
                         return;
+                    } else {
+                        // Usuario no encontrado en BD, limpiar sesión
+                        session.removeAttribute(SESSION_USER_ID);
+                        session.removeAttribute("usuario");
+                        LOGGER.warn("Usuario no encontrado en BD, sesión limpiada para ID: {}", userId);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Error procesando sesión HTTP: {}", e.getMessage());
+                    // Limpiar sesión corrupta
+                    session.removeAttribute(SESSION_USER_ID);
+                    session.removeAttribute("usuario");
                 }
             }
 
@@ -82,7 +101,9 @@ public class HomeController {
                     Optional<Usuario> usuarioOpt = usuarioService.findByEmail(auth.getName());
                     if (usuarioOpt.isPresent()) {
                         Usuario usuario = usuarioOpt.get();
+                        // Sincronizar la sesión HTTP con Spring Security
                         session.setAttribute(SESSION_USER_ID, usuario.getId());
+                        session.setAttribute("usuario", usuario);
                         
                         model.addAttribute("usuario", usuario);
                         model.addAttribute("sesion", usuario.getId());
@@ -134,7 +155,7 @@ public class HomeController {
             LOGGER.info("✅ HOME: Datos cargados - {} productos, {} servicios, {} sucursales",
                     productos.size(), servicios.size(), sucursales.size());
 
-            return "publico/home";
+            return "public/home";
 
         } catch (Exception e) {
             LOGGER.error("💥 HOME: Error crítico al cargar datos para la página principal: {}", e.getMessage(), e);
@@ -143,7 +164,7 @@ public class HomeController {
             model.addAttribute("servicios", new ArrayList<>());
             model.addAttribute("sucursales", new ArrayList<>());
             model.addAttribute("error", "No se pudieron cargar los datos de la página. Por favor, intente más tarde.");
-            return "publico/home";
+            return "public/home";
         }
     }
 
@@ -158,30 +179,16 @@ public class HomeController {
             model.addAttribute("servicios", servicios);
             LOGGER.info("✅ Vista de servicios cargada con {} servicios activos.", servicios.size());
 
-            return "publico/serviciosVista";
+            return "public/serviciosVista";
         } catch (Exception e) {
             LOGGER.error("❌ Error cargando la vista de servicios: {}", e.getMessage(), e);
             model.addAttribute("error", "No se pudieron cargar los servicios. Intente más tarde.");
             model.addAttribute("servicios", new ArrayList<>());
-            return "publico/serviciosVista";
+            return "public/serviciosVista";
         }
     }
 
-    @GetMapping("/productosVista")
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public String productosVista(Model model) {
-        try {
-            List<Producto> productos = productoService.findAll().stream()
-                    .filter(p -> p.getActivo() != null && p.getActivo())
-                    .collect(Collectors.toList());
-            model.addAttribute("productos", productos);
-            LOGGER.info("✅ ProductosVista: {} productos activos cargados", productos.size());
-        } catch (Exception e) {
-            LOGGER.error("❌ Error loading products: {}", e.getMessage(), e);
-            model.addAttribute("productos", new ArrayList<>());
-        }
-        return "publico/productosVista";
-    }
+    // Método productosVista eliminado para evitar conflicto con PublicProductoController
 
     @GetMapping("/mantenimiento")
     public String mantenimiento() {
